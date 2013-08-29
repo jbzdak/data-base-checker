@@ -70,7 +70,7 @@ class TestGrades(TestFixture):
         #Other student shouldn't change
         self.assertEqual(len(self.other_student.grades.all()), 1)
 
-        activity = GradeableActivity(name = "activity")
+        activity = GradeableActivity(name = "activity2")
         activity.save()
         activity.groups.add(self.group)
         activity.save()
@@ -97,21 +97,21 @@ class TestGrades(TestFixture):
 
 class TestGrading(TestFixture):
 
-
-
     def setUp(self):
         super(TestGrading, self).setUp()
 
         self.grade_part_1 = GradePart.objects.create(
             weight = 1,
             required = True,
-            activity = self.activity
+            activity = self.activity,
+            name = "Zadanie 1"
 
         )
         self.grade_part_2 =  GradePart.objects.create(
             weight = 2,
             required = False,
-            activity = self.activity
+            activity = self.activity,
+            name = "Zadanie 2"
         )
 
         self.activity.default_grade = 812.0

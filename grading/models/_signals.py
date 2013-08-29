@@ -18,7 +18,7 @@ __all__ = []
 @receiver(post_save, sender=User)
 def on_user_create(instance, **kwargs):
     try:
-        if instance.is_active and not instance.is_staff:
+        if instance.is_active and not instance.is_staff and not kwargs.get('raw', False):
             Student.objects.get_or_create(user=instance)
     except ProgrammingError as e:
         print(e.message)
