@@ -11,35 +11,48 @@ class Migration(SchemaMigration):
         # Adding model 'Student'
         db.create_table(u'grading_student', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
             ('group', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='students', null=True, to=orm['grading.StudentGroup'])),
         ))
-        db.send_create_signal(u'grading', ['Student'])
+        db.send_create_signal('grading', ['Student'])
 
         # Adding model 'StudentGroup'
         db.create_table(u'grading_studentgroup', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100)),
         ))
-        db.send_create_signal(u'grading', ['StudentGroup'])
+        db.send_create_signal('grading', ['StudentGroup'])
 
         # Adding model 'GradeableActivity'
         db.create_table(u'grading_gradeableactivity', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
             ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('group', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='activities', null=True, to=orm['grading.StudentGroup'])),
+            ('default_grade', self.gf('django.db.models.fields.DecimalField')(default=2.0, max_digits=5, decimal_places=2)),
         ))
-        db.send_create_signal(u'grading', ['GradeableActivity'])
+        db.send_create_signal('grading', ['GradeableActivity'])
+
+        # Adding M2M table for field groups on 'GradeableActivity'
+        m2m_table_name = db.shorten_name(u'grading_gradeableactivity_groups')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('gradeableactivity', models.ForeignKey(orm['grading.gradeableactivity'], null=False)),
+            ('studentgroup', models.ForeignKey(orm['grading.studentgroup'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['gradeableactivity_id', 'studentgroup_id'])
 
         # Adding model 'GradePart'
         db.create_table(u'grading_gradepart', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100)),
             ('weight', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
+            ('default_grade', self.gf('django.db.models.fields.DecimalField')(default=2.0, max_digits=5, decimal_places=2)),
             ('required', self.gf('django.db.models.fields.BooleanField')()),
             ('activity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.GradeableActivity'])),
         ))
-        db.send_create_signal(u'grading', ['GradePart'])
+        db.send_create_signal('grading', ['GradePart'])
 
         # Adding model 'PartialGrade'
         db.create_table(u'grading_partialgrade', (
@@ -47,16 +60,19 @@ class Migration(SchemaMigration):
             ('grade', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
             ('student', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.Student'])),
             ('grade_part', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.GradePart'])),
+            ('short_description', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('long_description', self.gf('django.db.models.fields.TextField')()),
         ))
-        db.send_create_signal(u'grading', ['PartialGrade'])
+        db.send_create_signal('grading', ['PartialGrade'])
 
         # Adding model 'StudentGrade'
         db.create_table(u'grading_studentgrade', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('student', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.Student'])),
+            ('student', self.gf('django.db.models.fields.related.ForeignKey')(related_name='grades', to=orm['grading.Student'])),
             ('activity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.GradeableActivity'])),
+            ('grade', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
         ))
-        db.send_create_signal(u'grading', ['StudentGrade'])
+        db.send_create_signal('grading', ['StudentGrade'])
 
 
     def backwards(self, orm):
@@ -68,6 +84,9 @@ class Migration(SchemaMigration):
 
         # Deleting model 'GradeableActivity'
         db.delete_table(u'grading_gradeableactivity')
+
+        # Removing M2M table for field groups on 'GradeableActivity'
+        db.delete_table(db.shorten_name(u'grading_gradeableactivity_groups'))
 
         # Deleting model 'GradePart'
         db.delete_table(u'grading_gradepart')
@@ -116,43 +135,51 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        u'grading.gradeableactivity': {
-            'Meta': {'object_name': 'GradeableActivity'},
-            'group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'activities'", 'null': 'True', 'to': u"orm['grading.StudentGroup']"}),
+        'grading.gradeableactivity': {
+            'Meta': {'ordering': "('sort_key',)", 'object_name': 'GradeableActivity'},
+            'default_grade': ('django.db.models.fields.DecimalField', [], {'default': '2.0', 'max_digits': '5', 'decimal_places': '2'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'activities'", 'symmetrical': 'False', 'to': "orm['grading.StudentGroup']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        u'grading.gradepart': {
-            'Meta': {'object_name': 'GradePart'},
-            'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grading.GradeableActivity']"}),
+        'grading.gradepart': {
+            'Meta': {'ordering': "('sort_key',)", 'object_name': 'GradePart'},
+            'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.GradeableActivity']"}),
+            'default_grade': ('django.db.models.fields.DecimalField', [], {'default': '2.0', 'max_digits': '5', 'decimal_places': '2'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'required': ('django.db.models.fields.BooleanField', [], {}),
+            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'weight': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'})
         },
-        u'grading.partialgrade': {
+        'grading.partialgrade': {
             'Meta': {'object_name': 'PartialGrade'},
             'grade': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
-            'grade_part': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grading.GradePart']"}),
+            'grade_part': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.GradePart']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'student': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grading.Student']"})
+            'long_description': ('django.db.models.fields.TextField', [], {}),
+            'short_description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'student': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.Student']"})
         },
-        u'grading.student': {
+        'grading.student': {
             'Meta': {'object_name': 'Student'},
-            'group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'students'", 'null': 'True', 'to': u"orm['grading.StudentGroup']"}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'students'", 'null': 'True', 'to': "orm['grading.StudentGroup']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
         },
-        u'grading.studentgrade': {
+        'grading.studentgrade': {
             'Meta': {'object_name': 'StudentGrade'},
-            'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grading.GradeableActivity']"}),
+            'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.GradeableActivity']"}),
+            'grade': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'student': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['grading.Student']"})
+            'student': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'grades'", 'to': "orm['grading.Student']"})
         },
-        u'grading.studentgroup': {
-            'Meta': {'object_name': 'StudentGroup'},
+        'grading.studentgroup': {
+            'Meta': {'ordering': "('sort_key',)", 'object_name': 'StudentGroup'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         }
     }
 
