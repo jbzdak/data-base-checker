@@ -11,6 +11,11 @@ class StudentTest(TestCase):
         qs = Student.objects.filter(user=u)
         self.assertEqual(len(qs), 1)
 
+    def test_can_update_user(self):
+        u = User.objects.create(username = "test1", email="foo@foo.pl")
+        u.email = "bar@bar.pl"
+        u.save()
+
 class ActivityTest(TestCase):
 
     def test_sort_key_auto_set(self):
