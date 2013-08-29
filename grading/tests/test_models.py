@@ -140,3 +140,12 @@ class TestGrading(TestFixture):
         )
 
         self.assertEqual(grade_student(self.activity, self.student), 4)
+
+    def test_grade_gets_updated(self):
+
+       PartialGrade.objects.create(
+           student = self.student,
+           grade = 5.0,
+           grade_part = self.grade_part_1
+        )
+       self.assertEqual(StudentGrade.objects.get(student=self.student, activity=self.activity).grade, 3)
