@@ -16,6 +16,18 @@ class StudentTest(TestCase):
         u.email = "bar@bar.pl"
         u.save()
 
+    def test_student_not_created_for_inactive_users(self):
+        u = User.objects.create(username = "test1", email="foo@foo.pl", is_active=False)
+        qs = Student.objects.filter(user=u)
+        self.assertEqual(len(qs), 0)
+
+    def test_student_not_created_for_staff_users(self):
+        u = User.objects.create(username = "test1", email="foo@foo.pl", is_staff=True)
+        qs = Student.objects.filter(user=u)
+        self.assertEqual(len(qs), 0)
+
+
+
 class ActivityTest(TestCase):
 
     def test_sort_key_auto_set(self):

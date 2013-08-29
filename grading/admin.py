@@ -53,6 +53,42 @@ class StudentAdmin(admin.ModelAdmin):
     user__email.short_description = "Email"
     user__email.admin_order_field = "user__email"
 
+class StudentGradeAdmin(admin.ModelAdmin):
+
+    list_display = ('grade', 'student__user__first_name', 'student__user__last_name', 'student__user__email', 'activity__name')
+    search_fields = list_display
+
+    list_display_links = list_display
+
+    list_filter = ['student__group', 'activity__name']
+
+    def student__user__first_name(self, obj):
+        return obj.student.user.first_name
+
+    student__user__first_name.short_description = "First name"
+    student__user__first_name.admin_order_field  = "student__user__first_name"
+
+    def activity__name(self, obj):
+        return obj.activity.name
+
+    activity__name.short_description = "Activity name"
+    activity__name.admin_order_field = "activity__names"
+
+    def student__user__last_name(self, obj):
+        return obj.student.user.last_name
+
+    student__user__last_name.short_description = "Last name"
+    student__user__last_name.admin_order_field = "student__user__username"
+
+    def student__user__email(self, obj):
+        return obj.student.user.email
+
+    student__user__email.short_description = "Email"
+    student__user__email.admin_order_field = "student__user__email"
+
+
+
 admin.site.register(Student, StudentAdmin)
+admin.site.register(StudentGrade, StudentGradeAdmin)
 admin.site.register(StudentGroup, NamedSortableAdmin)
 admin.site.register(GradeableActivity, ActivityAdmin)

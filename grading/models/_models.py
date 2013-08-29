@@ -36,6 +36,11 @@ class Student(BaseModel):
     user = models.OneToOneField("auth.User")
     group = models.ForeignKey("StudentGroup", related_name="students", null=True, blank=True)
 
+    class Meta:
+        abstract = False
+        app_label = "grading"
+        ordering = ("user__last_name", "user__first_name", "user__email", "user__pk")
+
 
 class StudentGroup(NamedSortable):
     """
