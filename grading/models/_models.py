@@ -5,6 +5,11 @@ from django.dispatch import receiver
 
 # Create your models here.
 
+class BaseModel(models.Model):
+    class Meta:
+        abstract = True
+        app_label = "grading"
+
 class NamedSortable(models.Model):
 
     name = models.CharField("Object name", max_length=100)
@@ -12,9 +17,10 @@ class NamedSortable(models.Model):
 
     class Meta:
         abstract = True
+        app_label = "grading"
         ordering = ("sort_key",)
 
-class Student(models.Model):
+class Student(BaseModel):
 
     user = models.ForeignKey("auth.User")
     group = models.ForeignKey("StudentGroup", related_name="students", null=True, blank=True)
@@ -35,7 +41,7 @@ class GradePart(NamedSortable):
     activity = models.ForeignKey("GradeableActivity")
 
 
-class PartialGrade(models.Model):
+class PartialGrade(BaseModel):
 
     grade = models.DecimalField("Activity weight", max_digits=5, decimal_places=2)
     student = models.ForeignKey("Student")
@@ -45,7 +51,7 @@ class PartialGrade(models.Model):
     long_description = models.TextField("Long description")
 
 
-class StudentGrade(models.Model):
+class StudentGrade(BaseModel):
     student = models.ForeignKey("Student")
     activity = models.ForeignKey("GradeableActivity")
 
