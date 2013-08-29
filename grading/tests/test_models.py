@@ -1,8 +1,7 @@
 # coding=utf-8
 from django.contrib.auth.models import User
 from django.test.testcases import TestCase
-from grading.models import Student, GradeableActivity
-from grading.models._models import StudentGroup
+from grading.models import *
 
 
 class StudentTest(TestCase):
@@ -18,7 +17,7 @@ class ActivityTest(TestCase):
         a = GradeableActivity.objects.create(name="foo")
         self.assertEqual(a.sort_key, "foo")
 
-class TestGrades(TestCase):
+class TestFixture(TestCase):
 
     def setUp(self):
         self.u = User.objects.create(username = "test1", email="foo@foo.pl")
@@ -45,6 +44,7 @@ class TestGrades(TestCase):
         self.otheractivity.save()
 
 
+class TestGrades(TestFixture):
 
     def test_sync_grades_when_activity_is_added_to_group(self):
 
@@ -78,3 +78,65 @@ class TestGrades(TestCase):
 
 
 
+class TestGrading(TestFixture):
+
+
+
+    def setUp(self):
+        super(TestGrading, self).setUp()
+
+        self.grade_part_1 = GradePart.objects.create(
+            weight = 1,
+            required = True,
+            activity = self.activity
+
+        )
+        self.grade_part_2 =  GradePart.objects.create(
+            weight = 2,
+            required = False,
+            activity = self.activity
+        )
+
+        self.activity.default_grade = 812.0
+        self.activity.save()
+
+
+    def test_default_grade_retuended_when_all_activities_unfinished(self):
+
+        self.assertEqual(grade_student(self.activity, self.student), 812.0)
+
+    def test_default_grade_retuended_when_required_activities_unfinished(self):
+
+        PartialGrade.objects.create(
+           student = self.student,
+           grade = 5.0,
+           grade_part = self.grade_part_2
+        )
+
+        self.assertEqual(grade_student(self.activity, self.student), 812.0)
+
+    def test_grade_calculated_when_all_required_activitees_finished(self):
+
+        PartialGrade.objects.create(
+           student = self.student,
+           grade = 5.0,
+           grade_part = self.grade_part_1
+        )
+
+        self.assertEqual(grade_student(self.activity, self.student), 3)
+
+    def test_grade_calculated_when_all_activities_finished(self):
+
+        PartialGrade.objects.create(
+           student = self.student,
+           grade = 5,
+           grade_part = self.grade_part_2
+        )
+
+        PartialGrade.objects.create(
+           student = self.student,
+           grade = 2,
+           grade_part = self.grade_part_1
+        )
+
+        self.assertEqual(grade_student(self.activity, self.student), 4)

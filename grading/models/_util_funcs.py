@@ -1,7 +1,9 @@
 # coding=utf-8
 from grading.models._models import StudentGrade, GradePart, PartialGrade
 
-__all__ = ['sync_grade', 'sync_grades_for_activity', 'sync_grades_for_student']
+__all__ = [
+    'sync_grade', 'sync_grades_for_activity', 'sync_grades_for_student',
+    'grade_student', 'calculate_grade']
 
 def sync_grades_for_activity(activity):
     for group in activity.groups.all():
@@ -28,12 +30,15 @@ def calculate_grade(grades, weights = None):
     if weights is None:
         weights = [1 for g in grades]
 
+    weights = [float(w) for w in weights]
+    grades = [float(g) for g in grades]
+
     if not len(grades) == len(weights):
         raise ValueError("Length of partial grades array and weights must be equal")
 
     weighted = [g*w for g, w in zip(grades,weights)]
 
-    grade = sum(weighted)/sum(weights)
+    grade = sum(weighted)/float(sum(weights))
 
     return grade
 
@@ -44,22 +49,28 @@ def grade_student(activity, student):
     grades = []
     weights = []
 
+    required_grade_missing = False
+
     for gp in grade_parts.all():
         weights.append(gp.weight)
         try:
             partial_grade = PartialGrade.objects.get(
-                grade__activity = activity,
+                grade_part = gp,
                 student = student
             )
-        except GradePart.DoesNotExist:
+        except PartialGrade.DoesNotExist:
             grades.append(gp.default_grade)
+            if gp.required:
+                required_grade_missing = True
         else:
             grades.append(partial_grade.grade)
 
+    if required_grade_missing:
+        return activity.default_grade
     return calculate_grade(grades, weights)
 
 def sync_grade(grade):
-    activity = grade.activity
+    activity = grade.grade_part.activity
     student = grade.student
 
     grade = grade_student(activity, student)

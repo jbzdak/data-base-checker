@@ -40,5 +40,7 @@ def when_student_is_saved_in_group_sync_grades(instance, **kwargs):
     if instance.group is not None:
         sync_grades_for_student(instance)
 
-
+@receiver(post_save, sender=PartialGrade)
+def when_partial_grade_is_saved_update_student_grade(instance, **kwargs):
+    sync_grade(instance)
 

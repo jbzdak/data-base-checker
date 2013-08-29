@@ -31,13 +31,19 @@ class StudentGroup(NamedSortable):
 
 class GradeableActivity(NamedSortable):
     groups = models.ManyToManyField("StudentGroup", related_name="activities")
+    default_grade = models.DecimalField(
+        "Default grade", max_digits=5, decimal_places=2,
+        help_text="Grade used when some required activities are not finished",
+        default=2.0)
 
 
 class GradePart(NamedSortable):
 
     weight = models.DecimalField("Activity weight", max_digits=5, decimal_places=2)
     default_grade = models.DecimalField(
-        "Default grade", max_digits=5, decimal_places=2, help_text="Grade used when student did not get partial grade for this GradePart")
+        "Default grade", max_digits=5, decimal_places=2,
+        help_text="Grade used when student did not get partial grade for this GradePart",
+        default=2.0)
     required = models.BooleanField("Is activity required")
     activity = models.ForeignKey("GradeableActivity")
 
