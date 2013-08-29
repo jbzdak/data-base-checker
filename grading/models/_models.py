@@ -2,6 +2,8 @@ from django.db import models
 
 # Create your models here.
 
+__all__ = ['Student', 'StudentGrade', 'StudentGroup', 'GradeableActivity', 'GradePart', 'PartialGrade']
+
 class BaseModel(models.Model):
     class Meta:
         abstract = True
@@ -34,6 +36,8 @@ class GradeableActivity(NamedSortable):
 class GradePart(NamedSortable):
 
     weight = models.DecimalField("Activity weight", max_digits=5, decimal_places=2)
+    default_grade = models.DecimalField(
+        "Default grade", max_digits=5, decimal_places=2, help_text="Grade used when student did not get partial grade for this GradePart")
     required = models.BooleanField("Is activity required")
     activity = models.ForeignKey("GradeableActivity")
 
@@ -42,7 +46,7 @@ class PartialGrade(BaseModel):
 
     grade = models.DecimalField("Activity weight", max_digits=5, decimal_places=2)
     student = models.ForeignKey("Student")
-    grade_part = models.ForeignKey("GradePart")
+    grade_part = models.ForeignKey("GradePart", )
 
     short_description = models.CharField("Short description", max_length=100)
     long_description = models.TextField("Long description")
@@ -52,6 +56,6 @@ class StudentGrade(BaseModel):
     student = models.ForeignKey("Student", related_name="grades")
     activity = models.ForeignKey("GradeableActivity")
 
-    grade = models.DecimalField("Activity weight", max_digits=5, decimal_places=2)
+    grade = models.DecimalField("Grade", max_digits=5, decimal_places=2)
 
 

@@ -8,8 +8,12 @@ from django.db.utils import ProgrammingError
 from django.dispatch.dispatcher import receiver
 
 from grading.models._models import *
+from grading.models._models import NamedSortable
+from grading.models._util_funcs import *
 
 LOGGER = logging.getLogger(__name__)
+
+__all__ = []
 
 @receiver(post_save, sender=User)
 def on_user_create(instance, **kwargs):
@@ -26,26 +30,6 @@ def on_gradeable_activity_create(instance, **kwargs):
     if isinstance(instance, NamedSortable) and not instance.sort_key:
         instance.sort_key = instance.name
 
-def sync_grades_for_activity(activity):
-    for group in activity.groups.all():
-        for student in group.students.all():
-            StudentGrade.objects.get_or_create(
-                student = student,
-                activity = activity,
-                defaults = {
-                    "grade": 0.0
-                }
-            )
-
-def sync_grades_for_student(student):
-    for activity in student.group.activities.all():
-        StudentGrade.objects.get_or_create(
-                student = student,
-                activity = activity,
-                defaults = {
-                    "grade": 0.0
-                }
-        )
 
 @receiver(post_save, sender=GradeableActivity)
 def when_activity_added_sync_grades_for_students_in_group(instance, **kwargs):
@@ -55,3 +39,6 @@ def when_activity_added_sync_grades_for_students_in_group(instance, **kwargs):
 def when_student_is_saved_in_group_sync_grades(instance, **kwargs):
     if instance.group is not None:
         sync_grades_for_student(instance)
+
+
+
