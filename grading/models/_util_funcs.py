@@ -51,6 +51,9 @@ def grade_student(activity, student):
 
     required_grade_missing = False
 
+    if len(grade_parts.all()) == 0:
+        return activity.default_grade
+
     for gp in grade_parts.all():
         weights.append(gp.weight)
         try:
@@ -67,6 +70,7 @@ def grade_student(activity, student):
 
     if required_grade_missing:
         return activity.default_grade
+
     return calculate_grade(grades, weights)
 
 def sync_grade(grade):

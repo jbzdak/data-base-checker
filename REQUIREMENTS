@@ -3,3 +3,4 @@ south
 django-celery
 psycopg2
 #numpy
+sphinx
