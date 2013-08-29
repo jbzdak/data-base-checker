@@ -19,16 +19,16 @@ class Migration(SchemaMigration):
         # Adding model 'StudentGroup'
         db.create_table(u'grading_studentgroup', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
+            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
         ))
         db.send_create_signal('grading', ['StudentGroup'])
 
         # Adding model 'GradeableActivity'
         db.create_table(u'grading_gradeableactivity', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
+            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
             ('default_grade', self.gf('django.db.models.fields.DecimalField')(default=2.0, max_digits=5, decimal_places=2)),
         ))
         db.send_create_signal('grading', ['GradeableActivity'])
@@ -45,8 +45,8 @@ class Migration(SchemaMigration):
         # Adding model 'GradePart'
         db.create_table(u'grading_gradepart', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
+            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
             ('weight', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
             ('default_grade', self.gf('django.db.models.fields.DecimalField')(default=2.0, max_digits=5, decimal_places=2)),
             ('required', self.gf('django.db.models.fields.BooleanField')()),
@@ -140,17 +140,17 @@ class Migration(SchemaMigration):
             'default_grade': ('django.db.models.fields.DecimalField', [], {'default': '2.0', 'max_digits': '5', 'decimal_places': '2'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'activities'", 'symmetrical': 'False', 'to': "orm['grading.StudentGroup']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
+            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'})
         },
         'grading.gradepart': {
             'Meta': {'ordering': "('sort_key',)", 'object_name': 'GradePart'},
             'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.GradeableActivity']"}),
             'default_grade': ('django.db.models.fields.DecimalField', [], {'default': '2.0', 'max_digits': '5', 'decimal_places': '2'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
             'required': ('django.db.models.fields.BooleanField', [], {}),
-            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'weight': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'})
         },
         'grading.partialgrade': {
@@ -163,7 +163,7 @@ class Migration(SchemaMigration):
             'student': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.Student']"})
         },
         'grading.student': {
-            'Meta': {'object_name': 'Student'},
+            'Meta': {'ordering': "('user__last_name', 'user__first_name', 'user__email', 'user__pk')", 'object_name': 'Student'},
             'group': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'students'", 'null': 'True', 'to': "orm['grading.StudentGroup']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
@@ -178,8 +178,8 @@ class Migration(SchemaMigration):
         'grading.studentgroup': {
             'Meta': {'ordering': "('sort_key',)", 'object_name': 'StudentGroup'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
+            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'})
         }
     }
 

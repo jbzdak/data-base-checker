@@ -2,8 +2,8 @@ from django.shortcuts import render
 
 # Create your views here.
 from grading.models._models import StudentGroup, GradeableActivity
-from shortcuts import get_object_or_404
-from views.generic.base import TemplateView
+from django.shortcuts import get_object_or_404
+from django.views.generic.base import TemplateView
 
 
 class GradeGroupActivity(TemplateView):

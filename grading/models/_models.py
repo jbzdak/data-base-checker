@@ -15,7 +15,7 @@ class NamedSortable(models.Model):
     Class representing something that has :attr:`name` and :attr:`sort_key`
     """
 
-    name = models.CharField("Object name", max_length=100, null=False, blank=False)
+    name = models.CharField("Object name", max_length=100, null=False, blank=False, unique=True)
     sort_key = models.CharField("Sort key", max_length=100, null=False, blank=True)
 
     def __unicode__(self):
