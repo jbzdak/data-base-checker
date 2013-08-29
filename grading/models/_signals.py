@@ -1,8 +1,11 @@
 # coding=utf-8
 
 import logging
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save, pre_save
 
 from django.db.utils import ProgrammingError
+from django.dispatch.dispatcher import receiver
 
 from grading.models._models import *
 
@@ -22,3 +25,33 @@ def on_user_create(instance, **kwargs):
 def on_gradeable_activity_create(instance, **kwargs):
     if isinstance(instance, NamedSortable) and not instance.sort_key:
         instance.sort_key = instance.name
+
+def sync_grades_for_activity(activity):
+    for group in activity.groups.all():
+        for student in group.students.all():
+            StudentGrade.objects.get_or_create(
+                student = student,
+                activity = activity,
+                defaults = {
+                    "grade": 0.0
+                }
+            )
+
+def sync_grades_for_student(student):
+    for activity in student.group.activities.all():
+        StudentGrade.objects.get_or_create(
+                student = student,
+                activity = activity,
+                defaults = {
+                    "grade": 0.0
+                }
+        )
+
+@receiver(post_save, sender=GradeableActivity)
+def when_activity_added_sync_grades_for_students_in_group(instance, **kwargs):
+    sync_grades_for_activity(instance)
+
+@receiver(post_save, sender=Student)
+def when_student_is_saved_in_group_sync_grades(instance, **kwargs):
+    if instance.group is not None:
+        sync_grades_for_student(instance)

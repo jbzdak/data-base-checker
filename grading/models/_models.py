@@ -1,7 +1,4 @@
-from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save, pre_save
-from django.dispatch import receiver
 
 # Create your models here.
 
@@ -31,7 +28,7 @@ class StudentGroup(NamedSortable):
 
 
 class GradeableActivity(NamedSortable):
-    group = models.ForeignKey("StudentGroup", related_name="activities", null=True, blank=True)
+    groups = models.ManyToManyField("StudentGroup", related_name="activities")
 
 
 class GradePart(NamedSortable):
@@ -52,7 +49,7 @@ class PartialGrade(BaseModel):
 
 
 class StudentGrade(BaseModel):
-    student = models.ForeignKey("Student")
+    student = models.ForeignKey("Student", related_name="grades")
     activity = models.ForeignKey("GradeableActivity")
 
     grade = models.DecimalField("Activity weight", max_digits=5, decimal_places=2)

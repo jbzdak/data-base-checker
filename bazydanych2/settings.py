@@ -7,6 +7,8 @@ ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
+ATOMIC_REQUESTS = True
+
 MANAGERS = ADMINS
 
 DATABASES = {
@@ -152,7 +154,7 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler'
         },
         'console': {
-            "level": 'ALL',
+            "level": 'DEBUG',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler'
         }
