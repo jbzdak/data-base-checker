@@ -15,7 +15,7 @@ DATABASES = {
         'NAME': 'bd',                      # Or path to database file if using sqlite3.
         'USER': 'bd',                      # Not used with sqlite3.
         'PASSWORD': 'yorkambanmarfajakcofjenbaheishajlyishdipsEshtEcFoamOtgeybMoovTicHeukciedAdemmEchIdkabcoojHecwefDanLewElCubrEvsisujenyicpixJepNiv',                  # Not used with sqlite3.
-        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '192.168.56.10',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
         'TEST_NAME': 'bd_test'
     }
@@ -123,7 +123,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'south',
     'kombu.transport.django',
-    'bd_checker_2'
+    'bd_checker_2',
+    'grading'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
