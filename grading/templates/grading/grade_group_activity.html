@@ -25,12 +25,17 @@
             {% endfor %}
             {% endwith %}
             {% endwith %}
+            <td>
+                {% blocktrans with activity=activity.name%}
+                    Final grade for {{ activity }}
+                {% endblocktrans %}
+            </td>
         </tr>
     </thead>
     <tbody>
     {% for row in grade_forms %}
         <tr>
-        {% with student=row.0 grades=row.1 %}
+        {% with student=row.0 grades=row.1 final=row.2%}
             <td>
                 <span class="student">
                     {{ student.user.first_name }} {{ student.user.last_name}}
@@ -43,6 +48,9 @@
             </td>
             {% endwith %}
             {% endfor %}
+            <td>
+                {{ final.grade }}
+            </td>
         {% endwith %}
         </tr>
     {% endfor %}
