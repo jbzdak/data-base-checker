@@ -113,7 +113,7 @@ class PartialGrade(BaseModel):
     student = models.ForeignKey("Student")
     grade_part = models.ForeignKey("GradePart", null=False)
 
-    short_description = models.CharField("Short description", max_length=100, null=False, blank=False)
+    short_description = models.CharField("Short description", max_length=100, null=True, blank=True)
     long_description = models.TextField("Long description", null=True, blank=True)
 
 

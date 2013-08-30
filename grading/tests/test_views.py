@@ -53,3 +53,6 @@ class TestGradingView(BaseTest):
     def test_view_does_not_raise(self):
         response = self.c.get("/grading/grade/group/1/acitvity/1")
         self.assertEqual(response.status_code, 200)
+
+    def test_view_sets_to_db(self):
+        pass

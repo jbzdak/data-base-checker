@@ -2,11 +2,16 @@
 {% load i18n %}
 {% block content %}
 
+<h1>Grades </h1>
+
 {% if grade_forms %}
-<form>
+<form method="POST">
+{% csrf_token %}
 <table>
     <thead>
+        {% include "grading/grade_group_activity/submit.html" %}
         <tr>
+
             <td>{% trans "Student Grades" %}</td>
 {# Basically we generate header from the first row of data #}
             {% with row=grade_forms.0 %} {# We can assume there is at least one row #}
@@ -34,7 +39,7 @@
             {% for grade in grades %}
             {% with g=grade.instance.grade %}
             <td>
-                <input type="number" value="{% if g %}{{ grade.instance.grade }}{% endif %}" placeholder="{{ grade.grade_part.default_grade}}">
+                {{ grade.grade }} {{ grade.short_description }}
             </td>
             {% endwith %}
             {% endfor %}
@@ -42,6 +47,12 @@
         </tr>
     {% endfor %}
     </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="0"> foo </td>
+    </tr>
+    {% include "grading/grade_group_activity/submit.html" %}
+    </tfoot>
 </table>
 </form>
 {% else %}

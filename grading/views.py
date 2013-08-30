@@ -1,8 +1,9 @@
+from itertools import chain
 from django.shortcuts import render
 
 # Create your views here.
 from grading.forms import GradePartForm
-from grading.models._models import StudentGroup, GradeableActivity
+from grading.models._models import StudentGroup, GradeableActivity, PartialGrade
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 
@@ -27,15 +28,33 @@ class GradeGroupActivity(TemplateView):
 
         return super(GradeGroupActivity, self).dispatch(request)
 
+
+    def post(self, request, *args, **kwargs):
+        for form in self.__grade_forms_iter():
+            if form.is_valid():
+                form.save_if_needed()
+        return self.get(request, *args, **kwargs)
+
+
+    def __grade_forms_iter(self):
+        forms = [row[1] for row in self.grade_forms]
+        return chain(*forms)
+
+
     def __get_forms(self):
         grade_forms = []
         for st in self.group.students.all():
             activities_for_student = []
             for gp in self.activity.grade_parts.all():
                 data = None
-                if self.request.method == 'post':
+                if self.request.method.lower() == 'post':
                     data = self.request.POST
-                form = GradePartForm(gp, st, data=data)
+                instance = None
+                try:
+                    instance = PartialGrade.objects.get(student=st, grade_part=gp)
+                except PartialGrade.DoesNotExist as e:
+                    pass
+                form = GradePartForm(gp, st, data=data, instance=instance)
                 activities_for_student.append(form)
             grade_forms.append([
                 st, activities_for_student
