@@ -2,29 +2,17 @@
 from grading.models._models import StudentGrade, GradePart, PartialGrade
 
 __all__ = [
-    'sync_grade', 'sync_grades_for_activity', 'sync_grades_for_student',
+    'sync_partial_grade', 'sync_grades_for_activity', 'sync_grades_for_student',
     'grade_student', 'calculate_grade']
 
 def sync_grades_for_activity(activity):
     for group in activity.groups.all():
         for student in group.students.all():
-            StudentGrade.objects.get_or_create(
-                student = student,
-                activity = activity,
-                defaults = {
-                    "grade": 0.0
-                }
-            )
+            sync_grade(activity, student)
 
 def sync_grades_for_student(student):
     for activity in student.group.activities.all():
-        StudentGrade.objects.get_or_create(
-                student = student,
-                activity = activity,
-                defaults = {
-                    "grade": 0.0
-                }
-        )
+        sync_grade(activity, student)
 
 def calculate_grade(grades, weights = None):
     if weights is None:
@@ -77,12 +65,7 @@ def grade_student(activity, student):
 
     return calculate_grade(grades, weights)
 
-def sync_grade(grade):
-    activity = grade.grade_part.activity
-    student = grade.student
-
-    grade = grade_student(activity, student)
-
+def sync_grade(activity, student):
     grade_model, created = StudentGrade.objects.get_or_create(
         student = student,
         activity = activity,
@@ -90,5 +73,13 @@ def sync_grade(grade):
             "grade": 0.0
         }
     )
+    grade = grade_student(activity, student)
     grade_model.grade = grade
     grade_model.save()
+
+def sync_partial_grade(grade):
+    activity = grade.grade_part.activity
+    student = grade.student
+
+    sync_grade(activity, student)
+

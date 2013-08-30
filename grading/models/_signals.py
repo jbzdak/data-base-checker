@@ -2,7 +2,7 @@
 
 import logging
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 
 from django.db.utils import ProgrammingError
 from django.dispatch.dispatcher import receiver
@@ -33,10 +33,19 @@ def on_gradeable_activity_create(instance, **kwargs):
             instance.sort_key = instance.name
 
 
+@receiver(post_delete, sender=GradeableActivity)
 @receiver(post_save, sender=GradeableActivity)
 def when_activity_added_sync_grades_for_students_in_group(instance, **kwargs):
     if not kwargs.get('raw', False):
         sync_grades_for_activity(instance)
+
+
+@receiver(post_delete, sender=GradePart)
+@receiver(post_save, sender=GradePart)
+def when_grade_part_changed_sync_grades_for_students(instance, **kwargs):
+    if not kwargs.get('raw', False):
+        sync_grades_for_activity(instance.activity)
+
 
 @receiver(post_save, sender=Student)
 def when_student_is_saved_in_group_sync_grades(instance, **kwargs):
@@ -44,8 +53,11 @@ def when_student_is_saved_in_group_sync_grades(instance, **kwargs):
         if instance.group is not None:
             sync_grades_for_student(instance)
 
+
+
+@receiver(post_delete, sender=PartialGrade)
 @receiver(post_save, sender=PartialGrade)
 def when_partial_grade_is_saved_update_student_grade(instance, **kwargs):
     if not kwargs.get('raw', False):
-        sync_grade(instance)
+        sync_partial_grade(instance)
 
