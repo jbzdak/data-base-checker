@@ -61,6 +61,10 @@ def grade_student(activity, student):
                 grade_part = gp,
                 student = student
             )
+            if gp.required and gp.passing_grade is not None:
+                if partial_grade.grade < gp.passing_grade:
+                    required_grade_missing = True
+
         except PartialGrade.DoesNotExist:
             grades.append(gp.default_grade)
             if gp.required:

@@ -146,7 +146,23 @@ class TestGrading(TestFixture):
 
         PartialGrade.objects.create(
            student = self.student,
-           grade = 5,
+           grade = 3,
+           grade_part = self.grade_part_2
+        )
+
+        PartialGrade.objects.create(
+           student = self.student,
+           grade = 3.0,
+           grade_part = self.grade_part_1
+        )
+
+        self.assertEqual(grade_student(self.activity, self.student), 3)
+
+    def test_default_grade_returned_when_regired_activity_has_grade_below_passing(self):
+
+        PartialGrade.objects.create(
+           student = self.student,
+           grade = 3,
            grade_part = self.grade_part_2
         )
 
@@ -156,7 +172,7 @@ class TestGrading(TestFixture):
            grade_part = self.grade_part_1
         )
 
-        self.assertEqual(grade_student(self.activity, self.student), 4)
+        self.assertEqual(grade_student(self.activity, self.student), 812.0)
 
     def test_grade_gets_updated(self):
 
