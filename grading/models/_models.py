@@ -99,7 +99,7 @@ class GradePart(NamedSortable):
         help_text="Grade used when student did not get partial grade for this GradePart",
         default=2.0)
     required = models.BooleanField("Is activity required")
-    activity = models.ForeignKey("GradeableActivity")
+    activity = models.ForeignKey("GradeableActivity", related_name="grade_parts")
 
 
 class PartialGrade(BaseModel):
@@ -109,12 +109,12 @@ class PartialGrade(BaseModel):
     itself it contains short and long description fields.
     """
 
-    grade = models.DecimalField("Activity weight", max_digits=5, decimal_places=2)
+    grade = models.DecimalField("Activity weight", max_digits=5, decimal_places=2, null=False, blank=False)
     student = models.ForeignKey("Student")
-    grade_part = models.ForeignKey("GradePart", )
+    grade_part = models.ForeignKey("GradePart", null=False)
 
-    short_description = models.CharField("Short description", max_length=100)
-    long_description = models.TextField("Long description")
+    short_description = models.CharField("Short description", max_length=100, null=False, blank=False)
+    long_description = models.TextField("Long description", null=True, blank=True)
 
 
 class StudentGrade(BaseModel):

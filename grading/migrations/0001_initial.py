@@ -61,7 +61,7 @@ class Migration(SchemaMigration):
             ('student', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.Student'])),
             ('grade_part', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.GradePart'])),
             ('short_description', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('long_description', self.gf('django.db.models.fields.TextField')()),
+            ('long_description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
         ))
         db.send_create_signal('grading', ['PartialGrade'])
 
@@ -158,7 +158,7 @@ class Migration(SchemaMigration):
             'grade': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             'grade_part': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.GradePart']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'long_description': ('django.db.models.fields.TextField', [], {}),
+            'long_description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'short_description': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'student': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.Student']"})
         },

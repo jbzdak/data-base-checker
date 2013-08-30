@@ -1,5 +1,50 @@
 {% extends "admin/base_site.html" %}
-
+{% load i18n %}
 {% block content %}
-"OK"
+
+{% if grade_forms %}
+<form>
+<table>
+    <thead>
+        <tr>
+            <td>{% trans "Student Grades" %}</td>
+{# Basically we generate header from the first row of data #}
+            {% with row=grade_forms.0 %} {# We can assume there is at least one row #}
+            {% with student=row.0 grades=row.1 %}
+            {% for gr in grades %}
+                <td>
+                    {% blocktrans with name=gr.grade_part.name%}
+                        Mark for {{name}}
+                    {% endblocktrans %}
+                </td>
+            {% endfor %}
+            {% endwith %}
+            {% endwith %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for row in grade_forms %}
+        <tr>
+        {% with student=row.0 grades=row.1 %}
+            <td>
+                <span class="student">
+                    {{ student.user.first_name }} {{ student.user.last_name}}
+                </span>
+            </td>
+            {% for grade in grades %}
+            {% with g=grade.instance.grade %}
+            <td>
+                <input type="number" value="{% if g %}{{ grade.instance.grade }}{% endif %}" placeholder="{{ grade.grade_part.default_grade}}">
+            </td>
+            {% endwith %}
+            {% endfor %}
+        {% endwith %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</form>
+{% else %}
+    No students to grade
+{% endif %}
 {% endblock %}
