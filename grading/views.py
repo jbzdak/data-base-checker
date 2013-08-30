@@ -1,12 +1,12 @@
 from itertools import chain
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 # Create your views here.
 from grading.forms import GradePartForm
-from grading.models._models import StudentGroup, GradeableActivity, PartialGrade
+from grading.models import StudentGroup, GradeableActivity, PartialGrade, StudentGrade
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 
@@ -47,10 +47,16 @@ class GradeGroupActivity(TemplateView):
         return False
 
     def post(self, request, *args, **kwargs):
+        invalid_forms = False
         for form in self.__grade_forms_iter():
             if form.is_valid():
                 form.save_if_needed()
-        return self.get(request, *args, **kwargs)
+            else:
+                invalid_forms = True
+
+        if invalid_forms:
+            return self.get(request, *args, **kwargs)
+        return HttpResponseRedirect(redirect_to=request.path)
 
 
     def __grade_forms_iter(self):
@@ -73,8 +79,9 @@ class GradeGroupActivity(TemplateView):
                     pass
                 form = GradePartForm(gp, st, data=data, instance=instance)
                 activities_for_student.append(form)
+            grade = StudentGrade.objects.get(student=st, activity=self.activity)
             grade_forms.append([
-                st, activities_for_student
+                st, activities_for_student, grade
             ])
         return grade_forms
 
@@ -83,6 +90,8 @@ class GradeGroupActivity(TemplateView):
         context =  super(GradeGroupActivity, self).get_context_data(**kwargs)
         context.update({
             "grade_forms" : self.grade_forms,
+            "activity": self.activity,
+            "student_group": self.group
 
         })
         return context

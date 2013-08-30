@@ -42,11 +42,19 @@
                 </span>
             </td>
             {% for grade in grades %}
-            {% with g=grade.instance.grade %}
             <td>
-                {{ grade.grade }} {{ grade.short_description }}
+                <span>
+                    {{ grade.non_field_errors }}
+                </span>
+                <span>
+                {{ grade.grade.errors }}
+                {{ grade.grade }}
+                </span>
+                <span>
+                {{ grade.short_description.errors }}
+                {{ grade.short_description }}
+                </span>
             </td>
-            {% endwith %}
             {% endfor %}
             <td>
                 {{ final.grade }}

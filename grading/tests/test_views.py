@@ -4,7 +4,7 @@ from django.http.request import HttpRequest
 from django.test import Client
 from django.test.testcases import TestCase
 from grading.models import StudentGroup, GradeableActivity
-from grading.models._models import PartialGrade
+from grading.models._models import PartialGrade, StudentGrade
 from grading.views import GradeGroupActivity
 
 class BaseTest(TestCase):
@@ -90,7 +90,7 @@ class TestGradingView(BaseTest):
                 "s-4-gp-4-grade":"5"
             }
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         gp = PartialGrade.objects.get(student__pk = 1, grade_part__pk=2)
         self.assertEqual(gp.grade, 5)
 
@@ -108,12 +108,58 @@ class TestGradingView(BaseTest):
                 "s-1-gp-2-short_description":"",
             }
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         gp = PartialGrade.objects.get(student__pk = 1, grade_part__pk=2)
         self.assertEqual(gp.grade, 5)
         grade_not_modified_after_change = PartialGrade.objects.get(student__pk = 1, grade_part__pk=3)
         self.assertEqual(grade_not_modified.grade, grade_not_modified_after_change.grade)
 
+    def test_grade_gets_updated_during_full_update(self):
+        sg = StudentGrade.objects.get(student__pk = 1, activity__pk=1)
+        self.assertNotEqual(sg.grade, 5)
+        authenticated = self.c.login(username="teacher", password="foo")
+        self.assertTrue(authenticated, "Cant login")
+        response = self.c.post(
+            "/grading/grade/group/1/acitvity/1",
+            data = {
+                "s-1-gp-2-grade":"5",
+                "s-1-gp-2-short_description":"",
+                "s-1-gp-3-grade":"5",
+                "s-1-gp-3-short_description":"dsa",
+                "s-1-gp-4-grade":"5.00",
+                "s-1-gp-4-short_description":"21",
+                "s-4-gp-2-grade":"5",
+                "s-4-gp-2-short_description":"312",
+                "s-4-gp-3-grade":"5",
+                "s-4-gp-3-short_description":"32",
+                "s-4-gp-4-grade":"5"
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        sg = StudentGrade.objects.get(student__pk = 1, activity__pk=1)
+        self.assertEqual(sg.grade, 5)
 
-
-
+    def test_zero_grade(self):
+        sg = StudentGrade.objects.get(student__pk = 1, activity__pk=1)
+        self.assertNotEqual(sg.grade, 2.0)
+        authenticated = self.c.login(username="teacher", password="foo")
+        self.assertTrue(authenticated, "Cant login")
+        response = self.c.post(
+            "/grading/grade/group/1/acitvity/1",
+            data = {
+                "s-1-gp-2-grade":"0",
+                "s-1-gp-2-short_description":"das",
+                "s-1-gp-3-grade":"5",
+                "s-1-gp-3-short_description":"dsa",
+                "s-1-gp-4-grade":"5.00",
+                "s-1-gp-4-short_description":"21",
+                "s-4-gp-2-grade":"5",
+                "s-4-gp-2-short_description":"312",
+                "s-4-gp-3-grade":"5",
+                "s-4-gp-3-short_description":"32",
+                "s-4-gp-4-grade":"5"
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        sg = StudentGrade.objects.get(student__pk = 1, activity__pk=1)
+        self.assertEqual(sg.grade, 2.0)
