@@ -44,13 +44,6 @@ class GradePartForm(ModelForm):
         if self.needs_save:
             self.save()
 
-    def __mark_changed(self):
-        self.fields['grade'].widget.attrs.update({
-            "class": "changed"
-        })
-        self.fields['short_description'].widget.attrs.update({
-             "class": "changed"
-        })
 
     def save(self, commit = True):
         old_instance = None
@@ -61,10 +54,7 @@ class GradePartForm(ModelForm):
         new_grade.grade_part = self.grade_part
         if commit:
             new_grade.save()
-        if old_instance is None:
-            self.__mark_changed()
-        if old_instance and old_instance.grade != new_grade.grade or old_instance.short_description != new_grade.short_description:
-            self.__mark_changed()
+
         return new_grade
 
     class Meta:
