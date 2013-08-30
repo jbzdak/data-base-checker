@@ -81,7 +81,7 @@ class TestGrades(TestFixture):
         self.assertEqual(len(self.other_student.grades.all()), 1)
 
         for g in self.student.grades.all():
-            self.assertEqual(g.grade, 0.0)
+            self.assertEqual(g.grade, 2.0)
 
     def test_sync_grades_when_student_is_added_to_group(self):
         u = User.objects.create(username = "test2", email="foo@foo.pl")
@@ -180,5 +180,20 @@ class TestGrading(TestFixture):
            student = self.student,
            grade = 5.0,
            grade_part = self.grade_part_1
-        )
+       )
+
        self.assertEqual(StudentGrade.objects.get(student=self.student, activity=self.activity).grade, 3)
+
+    def test_grade_gets_updated_if_we_add_new_grade_part(self):
+        #Updates the database so grade is calculated
+        self.test_grade_calculated_when_all_activities_finished()
+        #Sanity check
+        self.assertNotEqual(grade_student(self.activity, self.student), 812.0)
+
+        GradePart.objects.create(
+            name = "test-xxx",
+            required = True,
+            activity = self.activity,
+        )
+
+        self.assertEqual(grade_student(self.activity, self.student), 812.0)

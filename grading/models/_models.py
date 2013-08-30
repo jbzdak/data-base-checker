@@ -93,7 +93,7 @@ class GradePart(NamedSortable):
         Activity this instance is attached to.
     """
 
-    weight = models.DecimalField("Activity weight", max_digits=5, decimal_places=2)
+    weight = models.DecimalField("Activity weight", max_digits=5, decimal_places=2, default=1, blank=True)
     default_grade = models.DecimalField(
         "Default grade", max_digits=5, decimal_places=2,
         help_text="Grade used when student did not get partial grade for this GradePart",
