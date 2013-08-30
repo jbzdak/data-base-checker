@@ -5,5 +5,7 @@
     so we need to add a swithc to GradePart that will enavle either taking
     latest PartialGrade or hightest (in which case we need to emit error
     to user that tries to lower the grade)
+1b. Store user that saved particular PartialGrade (will increase transparency)
 2. Enable 'coures' functionality. Course would be the same as Group but
    studdent (account) would be allowed to have many courses.
+3. Add detailed grading information that displays grade parts.
