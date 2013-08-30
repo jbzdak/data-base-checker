@@ -5,10 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 # Create your views here.
+from django.views.generic.list import ListView
 from grading.forms import GradePartForm
 from grading.models import StudentGroup, GradeableActivity, PartialGrade, StudentGrade
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
+from grading.models._models import Student
 
 
 class GradeGroupActivity(TemplateView):
@@ -95,6 +97,33 @@ class GradeGroupActivity(TemplateView):
 
         })
         return context
+
+class ShowMyGrades(ListView):
+
+    template_name = "grading/my_grades.html"
+
+    model = StudentGrade
+
+    def __init__(self, **kwargs):
+        super(ShowMyGrades, self).__init__(**kwargs)
+        self.request = None
+        self.student = None
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.student = get_object_or_404(Student, user = self.request.user)
+        return super(ShowMyGrades, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super(ShowMyGrades, self).get_context_data(**kwargs)
+        ctx.update({
+            "student": self.student
+        })
+        return ctx
+
+
+    def get_queryset(self):
+        return self.student.grades.all()
 
 
 

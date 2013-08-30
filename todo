@@ -1,0 +1,9 @@
+
+1. Enable many PartialGrades for single GradePart in this case we should
+   only take one with hightest value
+1a .this will mess with editing grades by hand,
+    so we need to add a swithc to GradePart that will enavle either taking
+    latest PartialGrade or hightest (in which case we need to emit error
+    to user that tries to lower the grade)
+2. Enable 'coures' functionality. Course would be the same as Group but
+   studdent (account) would be allowed to have many courses.

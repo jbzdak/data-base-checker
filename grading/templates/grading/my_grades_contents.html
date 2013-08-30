@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<h1>{% blocktrans with first_name=student.user.first_name last_name=student.user.last_name %}
+        Displaying grades for {{ first_name }} {{ last_name }}
+{% endblocktrans %}</h1>
+<ul>
+
+</ul>
+{% for grade in object_list %}
+<li>{% blocktrans with name=grade.activity.name grade=grade.grade%}
+Activity: {{ name }} grade: {{ grade }}
+{% endblocktrans %}</li>
+{% endfor %}
