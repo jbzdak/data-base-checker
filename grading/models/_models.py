@@ -98,6 +98,10 @@ class GradePart(NamedSortable):
         "Default grade", max_digits=5, decimal_places=2,
         help_text="Grade used when student did not get partial grade for this GradePart",
         default=2.0)
+    passing_grade = models.DecimalField(
+        "Passing grade", max_digits=5, decimal_places=2,
+        help_text="If grade is lower than passing grade we will assume this as not finished task",
+        default=3.0)
     required = models.BooleanField("Is activity required")
     activity = models.ForeignKey("GradeableActivity", related_name="grade_parts")
 

@@ -1,4 +1,7 @@
 from itertools import chain
+from django.http.response import HttpResponse
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 # Create your views here.
@@ -19,7 +22,11 @@ class GradeGroupActivity(TemplateView):
         self.request = None
         self.grade_forms = None
 
+    @method_decorator(login_required)
     def dispatch(self, request, group_id, activity_id):
+
+        if not self.check_permissions():
+            return HttpResponse(status=403)
 
         self.group = get_object_or_404(StudentGroup, pk=group_id)
         self.activity = get_object_or_404(GradeableActivity, pk=activity_id)
@@ -28,6 +35,16 @@ class GradeGroupActivity(TemplateView):
 
         return super(GradeGroupActivity, self).dispatch(request)
 
+    def check_permissions(self):
+        user = self.request.user
+
+        if user.is_staff:
+            return user.has_perm("grading.change_partialgrade") and user.has_perm("grading.change_student")
+
+        if user.has_perm("grading.can_see_students_data") and user.has_perm("grading.can_grade"):
+            return True
+
+        return False
 
     def post(self, request, *args, **kwargs):
         for form in self.__grade_forms_iter():

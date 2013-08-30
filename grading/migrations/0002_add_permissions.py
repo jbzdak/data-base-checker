@@ -1,102 +1,39 @@
 # -*- coding: utf-8 -*-
 import datetime
+from django.contrib.contenttypes.models import ContentType
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
 
+from django.contrib.auth.models import Permission, Group
 
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        # Adding model 'Student'
-        db.create_table(u'grading_student', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('group', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='students', null=True, to=orm['grading.StudentGroup'])),
-        ))
-        db.send_create_signal('grading', ['Student'])
 
-        # Adding model 'StudentGroup'
-        db.create_table(u'grading_studentgroup', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
-            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-        ))
-        db.send_create_signal('grading', ['StudentGroup'])
+        db.send_pending_create_signals()
 
-        # Adding model 'GradeableActivity'
-        db.create_table(u'grading_gradeableactivity', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
-            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('default_grade', self.gf('django.db.models.fields.DecimalField')(default=2.0, max_digits=5, decimal_places=2)),
-        ))
-        db.send_create_signal('grading', ['GradeableActivity'])
+        ct = ContentType.objects.get(app_label="grading", model="student")
 
-        # Adding M2M table for field groups on 'GradeableActivity'
-        m2m_table_name = db.shorten_name(u'grading_gradeableactivity_groups')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('gradeableactivity', models.ForeignKey(orm['grading.gradeableactivity'], null=False)),
-            ('studentgroup', models.ForeignKey(orm['grading.studentgroup'], null=False))
-        ))
-        db.create_unique(m2m_table_name, ['gradeableactivity_id', 'studentgroup_id'])
+        see, __ = Permission.objects.get_or_create(
+            codename = "can_see_students_data",
+            name = "Can see students_data",
+            content_type = ct)
+        grade, __ = Permission.objects.get_or_create(
+            codename = "can_grade",
+            name = "Can grade",
+            content_type = ct)
 
-        # Adding model 'GradePart'
-        db.create_table(u'grading_gradepart', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
-            ('sort_key', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('weight', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
-            ('default_grade', self.gf('django.db.models.fields.DecimalField')(default=2.0, max_digits=5, decimal_places=2)),
-            ('required', self.gf('django.db.models.fields.BooleanField')()),
-            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(related_name='grade_parts', to=orm['grading.GradeableActivity'])),
-        ))
-        db.send_create_signal('grading', ['GradePart'])
+        teachers, __ = Group.objects.get_or_create(name="teachers")
 
-        # Adding model 'PartialGrade'
-        db.create_table(u'grading_partialgrade', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('grade', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
-            ('student', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.Student'])),
-            ('grade_part', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.GradePart'])),
-            ('short_description', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('long_description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
-        ))
-        db.send_create_signal('grading', ['PartialGrade'])
+        teachers.permissions.add(see)
+        teachers.permissions.add(grade)
 
-        # Adding model 'StudentGrade'
-        db.create_table(u'grading_studentgrade', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('student', self.gf('django.db.models.fields.related.ForeignKey')(related_name='grades', to=orm['grading.Student'])),
-            ('activity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.GradeableActivity'])),
-            ('grade', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
-        ))
-        db.send_create_signal('grading', ['StudentGrade'])
+        teachers.save()
 
 
     def backwards(self, orm):
-        # Deleting model 'Student'
-        db.delete_table(u'grading_student')
-
-        # Deleting model 'StudentGroup'
-        db.delete_table(u'grading_studentgroup')
-
-        # Deleting model 'GradeableActivity'
-        db.delete_table(u'grading_gradeableactivity')
-
-        # Removing M2M table for field groups on 'GradeableActivity'
-        db.delete_table(db.shorten_name(u'grading_gradeableactivity_groups'))
-
-        # Deleting model 'GradePart'
-        db.delete_table(u'grading_gradepart')
-
-        # Deleting model 'PartialGrade'
-        db.delete_table(u'grading_partialgrade')
-
-        # Deleting model 'StudentGrade'
-        db.delete_table(u'grading_studentgrade')
-
+        "Write your backwards methods here."
 
     models = {
         u'auth.group': {
@@ -184,3 +121,4 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['grading']
+    symmetrical = True

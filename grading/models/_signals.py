@@ -28,20 +28,24 @@ def on_user_create(instance, **kwargs):
 
 @receiver(pre_save)
 def on_gradeable_activity_create(instance, **kwargs):
-    if isinstance(instance, NamedSortable) and not instance.sort_key:
-        instance.sort_key = instance.name
+    if not kwargs.get('raw', False):
+        if isinstance(instance, NamedSortable) and not instance.sort_key:
+            instance.sort_key = instance.name
 
 
 @receiver(post_save, sender=GradeableActivity)
 def when_activity_added_sync_grades_for_students_in_group(instance, **kwargs):
-    sync_grades_for_activity(instance)
+    if not kwargs.get('raw', False):
+        sync_grades_for_activity(instance)
 
 @receiver(post_save, sender=Student)
 def when_student_is_saved_in_group_sync_grades(instance, **kwargs):
-    if instance.group is not None:
-        sync_grades_for_student(instance)
+    if not kwargs.get('raw', False):
+        if instance.group is not None:
+            sync_grades_for_student(instance)
 
 @receiver(post_save, sender=PartialGrade)
 def when_partial_grade_is_saved_update_student_grade(instance, **kwargs):
-    sync_grade(instance)
+    if not kwargs.get('raw', False):
+        sync_grade(instance)
 

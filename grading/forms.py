@@ -1,10 +1,8 @@
 # coding=utf-8
-from copy import copy
 from django.core.exceptions import ValidationError
 from django.forms.models import ModelForm
 from grading.models import PartialGrade
 from django.utils.translation import ugettext_lazy as _
-
 
 class GradePartForm(ModelForm):
 
@@ -16,7 +14,7 @@ class GradePartForm(ModelForm):
         self.needs_save = False
 
         if "prefix" not in kwargs:
-            kwargs['prefix'] = "s/{s.student.pk}/gp/{s.grade_part.pk}".format(s=self)
+            kwargs['prefix'] = "s-{s.student.pk}-gp-{s.grade_part.pk}".format(s=self)
 
         super(GradePartForm, self).__init__(*args, **kwargs)
 
@@ -38,7 +36,7 @@ class GradePartForm(ModelForm):
                 _("If short description is set you should also set grade", code="descr-no-grade")
             )
         self.needs_save = False
-        if 'grade' in cleaned_data:
+        if cleaned_data.get('grade', None):
             self.needs_save = True
         return cleaned_data
 
