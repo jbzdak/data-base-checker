@@ -10,7 +10,7 @@ from grading.forms import GradePartForm
 from grading.models import StudentGroup, GradeableActivity, PartialGrade, StudentGrade
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
-from grading.models._models import Student
+from grading.models import Student
 
 
 class GradeGroupActivity(TemplateView):
