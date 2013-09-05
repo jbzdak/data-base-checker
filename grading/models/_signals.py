@@ -26,13 +26,6 @@ def on_user_create(instance, **kwargs):
             LOGGER.warning("Adding user before tables for grading subsystem. Student model was not installed for this user.")
 
 
-@receiver(pre_save)
-def on_gradeable_activity_create(instance, **kwargs):
-    if not kwargs.get('raw', False):
-        if isinstance(instance, NamedSortable) and not instance.sort_key:
-            instance.sort_key = instance.name
-
-
 @receiver(post_delete, sender=GradeableActivity)
 @receiver(post_save, sender=GradeableActivity)
 def when_activity_added_sync_grades_for_students_in_group(instance, **kwargs):

@@ -26,6 +26,12 @@ class NamedSortable(models.Model):
         app_label = "grading"
         ordering = ("sort_key",)
 
+    def save(self, *args, **kwargs):
+        if self.pk is None and not self.sort_key:
+            self.sort_key = self.name
+        super(NamedSortable, self).save(*args, **kwargs)
+
+
 class Student(BaseModel):
     """
     Represents a person that can be graded. By default all newly created users get
