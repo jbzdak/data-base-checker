@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.test.testcases import TestCase
 from grading.models import *
 
@@ -8,21 +8,29 @@ class StudentTest(TestCase):
 
     def test_user_creation_creates_student(self):
         u = User.objects.create(username = "test1", email="foo@foo.pl")
+        u.groups.add(Group.objects.get(name = "students"))
+        u.save()
         qs = Student.objects.filter(user=u)
         self.assertEqual(len(qs), 1)
 
     def test_can_update_user(self):
         u = User.objects.create(username = "test1", email="foo@foo.pl")
+        u.groups.add(Group.objects.get(name = "students"))
+        u.save()
         u.email = "bar@bar.pl"
         u.save()
 
     def test_student_not_created_for_inactive_users(self):
         u = User.objects.create(username = "test1", email="foo@foo.pl", is_active=False)
+        u.groups.add(Group.objects.get(name = "students"))
+        u.save()
         qs = Student.objects.filter(user=u)
         self.assertEqual(len(qs), 0)
 
     def test_student_not_created_for_staff_users(self):
         u = User.objects.create(username = "test1", email="foo@foo.pl", is_staff=True)
+        u.groups.add(Group.objects.get(name = "students"))
+        u.save()
         qs = Student.objects.filter(user=u)
         self.assertEqual(len(qs), 0)
 
@@ -38,9 +46,14 @@ class TestFixture(TestCase):
 
     def setUp(self):
         self.u = User.objects.create(username = "test1", email="foo@foo.pl")
+        self.u.groups.add(Group.objects.get(name = "students"))
+        self.u.save()
         self.student =  Student.objects.filter(user=self.u).get()
 
         self.other_user = User.objects.create(username = "other", email="foo@foo.pl")
+        self.other_user.groups.add(Group.objects.get(name = "students"))
+        self.other_user.save()
+
         self.other_student =Student.objects.filter(user=self.other_user).get()
         self.group = StudentGroup.objects.create(name = "group")
         self.other_group = StudentGroup.objects.create(name = "other_group")
@@ -85,6 +98,8 @@ class TestGrades(TestFixture):
 
     def test_sync_grades_when_student_is_added_to_group(self):
         u = User.objects.create(username = "test2", email="foo@foo.pl")
+        u.groups.add(Group.objects.get(name = "students"))
+        u.save()
         student =  Student.objects.filter(user=u).get()
 
         # Before addition there should be no grades

@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import logging
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save, pre_save, post_delete
 
 from django.db.utils import ProgrammingError
@@ -18,7 +18,9 @@ __all__ = []
 @receiver(post_save, sender=User)
 def on_user_create(instance, **kwargs):
     try:
-        if instance.is_active and not instance.is_staff and not kwargs.get('raw', False):
+        if kwargs.get('raw', False):
+            return
+        if instance.is_active and not instance.is_staff and instance.groups.filter(name = "students"):
             Student.objects.get_or_create(user=instance)
     except ProgrammingError as e:
         print(e.message)

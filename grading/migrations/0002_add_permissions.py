@@ -29,6 +29,8 @@ class Migration(DataMigration):
         teachers.permissions.add(see)
         teachers.permissions.add(grade)
 
+        Group.objects.get_or_create(name="students")
+
         teachers.save()
 
 
