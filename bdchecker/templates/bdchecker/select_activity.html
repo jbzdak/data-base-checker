@@ -5,7 +5,7 @@
     <ul>
     {% for activity in object_list %}
         <li>
-            <a href="#">{{ activity.name }}</a>
+            <a href="{% url "perform-activity" activity_id=activity.pk %}">{{ activity.name }}</a>
         </li>
     {% endfor %}
     </ul>
