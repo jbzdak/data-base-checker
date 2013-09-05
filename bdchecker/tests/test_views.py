@@ -5,8 +5,6 @@ from django.test.testcases import TestCase
 
 class TestSelectActivity(TestCase):
 
-
-
     def setUp(self):
         super(TestSelectActivity, self).setUp()
         self.c = Client()

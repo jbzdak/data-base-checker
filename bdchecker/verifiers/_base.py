@@ -44,9 +44,9 @@ def verifier(name):
 
 class VerifyResult(object):
 
-    def __init__(self):
-        self.grade = None
-        self.message = None
+    def __init__(self, grade=None, message=None):
+        self.grade = grade
+        self.message = message
 
     def as_dict(self):
         return {
@@ -70,5 +70,7 @@ class Verifier(object):
         :rtype:VerifyResult
         """
 
-
-
+@verifier("test_ok")
+class TestOkVerifier(Verifier):
+    def __call__(self, verifier_input):
+        return VerifyResult(5.0, 'TEST OK')
