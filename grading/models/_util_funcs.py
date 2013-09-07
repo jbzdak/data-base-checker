@@ -6,7 +6,7 @@ __all__ = [
     'grade_student', 'calculate_grade']
 
 def sync_grades_for_activity(activity):
-    for group in activity.groups.all():
+    for group in activity.courses.all():
         for student in group.students.all():
             sync_grade(activity, student)
 

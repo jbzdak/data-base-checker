@@ -55,8 +55,8 @@ class TestFixture(TestCase):
         self.other_user.save()
 
         self.other_student =Student.objects.filter(user=self.other_user).get()
-        self.group = StudentGroup.objects.create(name = "group")
-        self.other_group = StudentGroup.objects.create(name = "other_group")
+        self.group = Course.objects.create(name = "group")
+        self.other_group = Course.objects.create(name = "other_group")
 
         self.student.group = self.group
         self.student.save()
@@ -65,12 +65,12 @@ class TestFixture(TestCase):
 
         self.activity = GradeableActivity(name = "activity")
         self.activity.save()
-        self.activity.groups.add(self.group)
+        self.activity.courses.add(self.group)
         self.activity.save()
 
         self.otheractivity = GradeableActivity(name = "other")
         self.otheractivity.save()
-        self.otheractivity.groups.add(self.other_group)
+        self.otheractivity.courses.add(self.other_group)
         self.otheractivity.save()
 
 
@@ -85,7 +85,7 @@ class TestGrades(TestFixture):
 
         activity = GradeableActivity(name = "activity2")
         activity.save()
-        activity.groups.add(self.group)
+        activity.courses.add(self.group)
         activity.save()
 
         #Now we should have two grades

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.http.request import HttpRequest
 from django.test import Client
 from django.test.testcases import TestCase
-from grading.models import StudentGroup, GradeableActivity
+from grading.models import Course, GradeableActivity
 from grading.models._models import PartialGrade, StudentGrade
 from grading.views import GradeGroupActivity
 
@@ -14,7 +14,7 @@ class BaseTest(TestCase):
     def setUp(self):
         super(BaseTest, self).setUp()
 
-        self.group = StudentGroup.objects.get(name = "group1")
+        self.group = Course.objects.get(name = "group1")
         self.activity = GradeableActivity.objects.get(name = "test1")
         self.c = Client()
 

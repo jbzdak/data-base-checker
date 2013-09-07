@@ -90,5 +90,5 @@ class StudentGradeAdmin(admin.ModelAdmin):
 
 admin.site.register(Student, StudentAdmin)
 admin.site.register(StudentGrade, StudentGradeAdmin)
-admin.site.register(StudentGroup, NamedSortableAdmin)
+admin.site.register(Course, NamedSortableAdmin)
 admin.site.register(GradeableActivity, ActivityAdmin)

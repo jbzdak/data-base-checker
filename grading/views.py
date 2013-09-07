@@ -7,7 +7,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.views.generic.list import ListView
 from grading.forms import GradePartForm
-from grading.models import StudentGroup, GradeableActivity, PartialGrade, StudentGrade
+from grading.models import Course, GradeableActivity, PartialGrade, StudentGrade
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 from grading.models import Student
@@ -30,7 +30,7 @@ class GradeGroupActivity(TemplateView):
         if not self.check_permissions():
             return HttpResponse(status=403)
 
-        self.group = get_object_or_404(StudentGroup, pk=group_id)
+        self.group = get_object_or_404(Course, pk=group_id)
         self.activity = get_object_or_404(GradeableActivity, pk=activity_id)
 
         self.grade_forms = self.__get_forms()

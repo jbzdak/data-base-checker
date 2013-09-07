@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 
-__all__ = ['Student', 'StudentGrade', 'StudentGroup', 'GradeableActivity', 'GradePart', 'PartialGrade']
+__all__ = ['Student', 'StudentGrade', 'Course', 'GradeableActivity', 'GradePart', 'PartialGrade']
 
 class BaseModel(models.Model):
     class Meta:
@@ -40,7 +40,7 @@ class Student(BaseModel):
     """
 
     user = models.OneToOneField("auth.User")
-    group = models.ForeignKey("StudentGroup", related_name="students", null=True, blank=True)
+    group = models.ForeignKey("Course", related_name="students", null=True, blank=True)
 
     class Meta:
         abstract = False
@@ -48,7 +48,7 @@ class Student(BaseModel):
         ordering = ("user__last_name", "user__first_name", "user__email", "user__pk")
 
 
-class StudentGroup(NamedSortable):
+class Course(NamedSortable):
     """
     Group of students. Groups can be assigned :class:`.GradeableActivity`, for
     each of these activities students will get grades.
@@ -76,7 +76,7 @@ class GradeableActivity(NamedSortable):
     are grades for particular assigments.
     """
 
-    groups = models.ManyToManyField("StudentGroup", related_name="activities")
+    courses = models.ManyToManyField("Course", related_name="activities")
     default_grade = models.DecimalField(
         "Default grade", max_digits=5, decimal_places=2,
         help_text="Grade used when some required activities are not finished",
