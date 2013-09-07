@@ -9,7 +9,7 @@ from grading.views import GradeGroupActivity
 
 class BaseTest(TestCase):
 
-    fixtures = ['test_fixture_2.json']
+    fixtures = ['grading_test.json']
 
     def setUp(self):
         super(BaseTest, self).setUp()
@@ -20,7 +20,7 @@ class BaseTest(TestCase):
 
 class TestGradingViewInternals(BaseTest):
 
-    fixtures = ['test_fixture_2.json']
+    fixtures = ['grading_test.json']
 
     def setUp(self):
         super(TestGradingViewInternals, self).setUp()
@@ -108,7 +108,7 @@ class TestGradingView(BaseTest):
                 "s-1-gp-2-short_description":"",
             }
         )
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302, str(response))
         gp = PartialGrade.objects.get(student__pk = 1, grade_part__pk=2)
         self.assertEqual(gp.grade, 5)
         grade_not_modified_after_change = PartialGrade.objects.get(student__pk = 1, grade_part__pk=3)
@@ -116,7 +116,7 @@ class TestGradingView(BaseTest):
 
     def test_grade_gets_updated_during_full_update(self):
         sg = StudentGrade.objects.get(student__pk = 1, activity__pk=1)
-        self.assertNotEqual(sg.grade, 5)
+        self.assertNotEqual(float(sg.grade), 5)
         authenticated = self.c.login(username="teacher", password="foo")
         self.assertTrue(authenticated, "Cant login")
         response = self.c.post(
@@ -137,13 +137,13 @@ class TestGradingView(BaseTest):
         )
         self.assertEqual(response.status_code, 302)
         sg = StudentGrade.objects.get(student__pk = 1, activity__pk=1)
-        self.assertEqual(sg.grade, 5)
+        self.assertEqual(float(sg.grade), 5)
 
     def test_zero_grade(self):
         sg = StudentGrade.objects.get(student__pk = 1, activity__pk=1)
-        self.assertNotEqual(sg.grade, 2.0)
+        self.assertNotEqual(float(sg.grade), 2.0)
         authenticated = self.c.login(username="teacher", password="foo")
-        self.assertTrue(authenticated, "Cant login")
+        self.assertTrue(authenticated, "Can't login")
         response = self.c.post(
             "/grading/grade/course/1/acitvity/1",
             data = {
@@ -162,4 +162,10 @@ class TestGradingView(BaseTest):
         )
         self.assertEqual(response.status_code, 302)
         sg = StudentGrade.objects.get(student__pk = 1, activity__pk=1)
-        self.assertEqual(sg.grade, 2.0)
+        self.assertEqual(float(sg.grade), 2.0)
+
+class TestAutogradingGradeView(TestCase):
+
+    fixtures = [
+        'test_fixture_3'
+    ]

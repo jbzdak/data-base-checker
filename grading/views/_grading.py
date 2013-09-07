@@ -45,7 +45,8 @@ class GradeGroupActivity(LoginView, TemplateView):
         user = self.request.user
 
         if user.is_staff:
-            return user.has_perm("grading.change_partialgrade") and user.has_perm("grading.change_student")
+            if user.has_perm("grading.change_partialgrade") and user.has_perm("grading.change_student"):
+                return True
 
         if user.has_perm("grading.can_see_students_data") and user.has_perm("grading.can_grade"):
             return True
