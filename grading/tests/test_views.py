@@ -54,19 +54,19 @@ class TestGradingView(BaseTest):
 
 
     def test_view_requires_login(self):
-        response = self.c.get("/grading/grade/group/1/acitvity/1")
+        response = self.c.get("/grading/grade/course/1/acitvity/1")
         self.assertEqual(response.status_code, 302)
 
     def test_view_rejects_user_without_perms(self):
         authenticated = self.c.login(username="no-permission", password="foo")
         self.assertTrue(authenticated, "Cant login")
-        response = self.c.get("/grading/grade/group/1/acitvity/1")
+        response = self.c.get("/grading/grade/course/1/acitvity/1")
         self.assertEqual(response.status_code, 403)
 
     def test_user_with_permissions(self):
         authenticated = self.c.login(username="teacher", password="foo")
         self.assertTrue(authenticated, "Cant login")
-        response = self.c.get("/grading/grade/group/1/acitvity/1")
+        response = self.c.get("/grading/grade/course/1/acitvity/1")
         self.assertEqual(response.status_code, 200)
 
     def test_full_update(self):
@@ -75,7 +75,7 @@ class TestGradingView(BaseTest):
         authenticated = self.c.login(username="teacher", password="foo")
         self.assertTrue(authenticated, "Cant login")
         response = self.c.post(
-            "/grading/grade/group/1/acitvity/1",
+            "/grading/grade/course/1/acitvity/1",
             data = {
                 "s-1-gp-2-grade":"5",
                 "s-1-gp-2-short_description":"",
@@ -102,7 +102,7 @@ class TestGradingView(BaseTest):
         self.assertNotEqual(gp.grade, 5)
         grade_not_modified = PartialGrade.objects.get(student__pk = 1, grade_part__pk=3)
         response = self.c.post(
-            "/grading/grade/group/1/acitvity/1",
+            "/grading/grade/course/1/acitvity/1",
             data = {
                 "s-1-gp-2-grade":"5",
                 "s-1-gp-2-short_description":"",
@@ -120,7 +120,7 @@ class TestGradingView(BaseTest):
         authenticated = self.c.login(username="teacher", password="foo")
         self.assertTrue(authenticated, "Cant login")
         response = self.c.post(
-            "/grading/grade/group/1/acitvity/1",
+            "/grading/grade/course/1/acitvity/1",
             data = {
                 "s-1-gp-2-grade":"5",
                 "s-1-gp-2-short_description":"",
@@ -145,7 +145,7 @@ class TestGradingView(BaseTest):
         authenticated = self.c.login(username="teacher", password="foo")
         self.assertTrue(authenticated, "Cant login")
         response = self.c.post(
-            "/grading/grade/group/1/acitvity/1",
+            "/grading/grade/course/1/acitvity/1",
             data = {
                 "s-1-gp-2-grade":"0",
                 "s-1-gp-2-short_description":"das",

@@ -27,13 +27,13 @@ class UserInline(admin.StackedInline):
     fields = ('firtst_name', 'last_name', 'email')
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('user__first_name', 'user__last_name', 'user__email', 'group')
+    list_display = ('user__first_name', 'user__last_name', 'user__email', 'course')
     search_fields = list_display
 
     list_display_links = ('user__first_name', 'user__last_name', 'user__email')
 
-    list_filter = ['group']
-    list_editable = ['group']
+    list_filter = ['course']
+    list_editable = ['course']
 
     def user__first_name(self, obj):
         return obj.user.first_name

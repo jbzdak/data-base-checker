@@ -11,7 +11,7 @@ def sync_grades_for_activity(activity):
             sync_grade(activity, student)
 
 def sync_grades_for_student(student):
-    for activity in student.group.activities.all():
+    for activity in student.course.activities.all():
         sync_grade(activity, student)
 
 def calculate_grade(grades, weights = None):

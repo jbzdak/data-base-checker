@@ -40,7 +40,7 @@ class Student(BaseModel):
     """
 
     user = models.OneToOneField("auth.User")
-    group = models.ForeignKey("Course", related_name="students", null=True, blank=True)
+    course = models.ForeignKey("Course", related_name="students", null=True, blank=True)
 
     class Meta:
         abstract = False
@@ -64,7 +64,7 @@ class GradeableActivity(NamedSortable):
     by :class:`GradePart` instances.
 
     Relation between :class:`GradeableActivity` and :class:`Student` is through
-    group in which student is registered.
+    course in which student is registered.
 
     Grades are calculdated from the following formula:
 
@@ -134,9 +134,9 @@ class StudentGrade(BaseModel):
 
     Grades get calculated to student if:
 
-    * Student is added to group that contains activities (student will get grade
+    * Student is added to course that contains activities (student will get grade
       for each activity)
-    * Activity is added to group (all students will get grades for this activity)
+    * Activity is added to course (all students will get grades for this activity)
     * Any :class:.PartialGrade is added/udated/deleted.
     """
 

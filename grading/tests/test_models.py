@@ -55,12 +55,12 @@ class TestFixture(TestCase):
         self.other_user.save()
 
         self.other_student =Student.objects.filter(user=self.other_user).get()
-        self.group = Course.objects.create(name = "group")
+        self.group = Course.objects.create(name = "course")
         self.other_group = Course.objects.create(name = "other_group")
 
-        self.student.group = self.group
+        self.student.course = self.group
         self.student.save()
-        self.other_student.group = self.other_group
+        self.other_student.course = self.other_group
         self.other_student.save()
 
         self.activity = GradeableActivity(name = "activity")
@@ -104,7 +104,7 @@ class TestGrades(TestFixture):
 
         # Before addition there should be no grades
         self.assertEqual(len(student.grades.all()), 0)
-        student.group = self.group
+        student.course = self.group
         student.save()
         self.assertEqual(len(student.grades.all()), 1)
 

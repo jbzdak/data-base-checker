@@ -7,7 +7,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('grading.views',
     url(
-        r'grade/group/(?P<group_id>\d+)/acitvity/(?P<activity_id>\d+)',
+        r'grade/course/(?P<group_id>\d+)/acitvity/(?P<activity_id>\d+)',
         GradeGroupActivity.as_view()
     ),
     url(

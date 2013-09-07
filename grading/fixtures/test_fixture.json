@@ -103,7 +103,7 @@
         "model": "auth.permission",
         "fields": {
             "codename": "add_group",
-            "name": "Can add group",
+            "name": "Can add course",
             "content_type": 2
         }
     },
@@ -112,7 +112,7 @@
         "model": "auth.permission",
         "fields": {
             "codename": "change_group",
-            "name": "Can change group",
+            "name": "Can change course",
             "content_type": 2
         }
     },
@@ -121,7 +121,7 @@
         "model": "auth.permission",
         "fields": {
             "codename": "delete_group",
-            "name": "Can delete group",
+            "name": "Can delete course",
             "content_type": 2
         }
     },
@@ -373,7 +373,7 @@
         "model": "auth.permission",
         "fields": {
             "codename": "add_studentgroup",
-            "name": "Can add student group",
+            "name": "Can add student course",
             "content_type": 12
         }
     },
@@ -382,7 +382,7 @@
         "model": "auth.permission",
         "fields": {
             "codename": "change_studentgroup",
-            "name": "Can change student group",
+            "name": "Can change student course",
             "content_type": 12
         }
     },
@@ -391,7 +391,7 @@
         "model": "auth.permission",
         "fields": {
             "codename": "delete_studentgroup",
-            "name": "Can delete student group",
+            "name": "Can delete student course",
             "content_type": 12
         }
     },

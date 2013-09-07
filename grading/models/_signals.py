@@ -45,7 +45,7 @@ def when_grade_part_changed_sync_grades_for_students(instance, **kwargs):
 @receiver(post_save, sender=Student)
 def when_student_is_saved_in_group_sync_grades(instance, **kwargs):
     if not kwargs.get('raw', False):
-        if instance.group is not None:
+        if instance.course is not None:
             sync_grades_for_student(instance)
 
 

@@ -12,8 +12,8 @@
         "pk": 2,
         "model": "contenttypes.contenttype",
         "fields": {
-            "model": "group",
-            "name": "group",
+            "model": "course",
+            "name": "course",
             "app_label": "auth"
         }
     },
@@ -103,7 +103,7 @@
         "model": "contenttypes.contenttype",
         "fields": {
             "model": "studentgroup",
-            "name": "student group",
+            "name": "student course",
             "app_label": "grading"
         }
     },
@@ -610,7 +610,7 @@
             "action_time": "2013-08-29T14:58:41.664Z",
             "object_repr": "Student object",
             "object_id": "1",
-            "change_message": "Zmieniono group",
+            "change_message": "Zmieniono course",
             "user": 1,
             "content_type": 11
         }
@@ -623,7 +623,7 @@
             "action_time": "2013-08-29T14:58:41.686Z",
             "object_repr": "Student object",
             "object_id": "4",
-            "change_message": "Zmieniono group",
+            "change_message": "Zmieniono course",
             "user": 1,
             "content_type": 11
         }
@@ -788,7 +788,7 @@
         "pk": 1,
         "model": "grading.student",
         "fields": {
-            "group": 1,
+            "course": 1,
             "user": 1
         }
     },
@@ -796,7 +796,7 @@
         "pk": 2,
         "model": "grading.student",
         "fields": {
-            "group": null,
+            "course": null,
             "user": 4
         }
     },
@@ -804,7 +804,7 @@
         "pk": 4,
         "model": "grading.student",
         "fields": {
-            "group": 1,
+            "course": 1,
             "user": 5
         }
     },
@@ -812,7 +812,7 @@
         "pk": 5,
         "model": "grading.student",
         "fields": {
-            "group": null,
+            "course": null,
             "user": 6
         }
     },
@@ -820,7 +820,7 @@
         "pk": 6,
         "model": "grading.student",
         "fields": {
-            "group": null,
+            "course": null,
             "user": 7
         }
     }
