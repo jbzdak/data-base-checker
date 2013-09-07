@@ -164,8 +164,10 @@ class TestGradingView(BaseTest):
         sg = StudentGrade.objects.get(student__pk = 1, activity__pk=1)
         self.assertEqual(float(sg.grade), 2.0)
 
-class TestAutogradingGradeView(TestCase):
+class TestAutogradingGradeView(BaseTest):
 
-    fixtures = [
-        'test_fixture_3'
-    ]
+    def test_proper_status(self):
+        authenticated = self.c.login(username="teacher", password="foo")
+        self.assertTrue(authenticated, "Cant login")
+        response = self.c.get('/grading/autograde/5')
+        self.assertEqual(response.status_code, 200)

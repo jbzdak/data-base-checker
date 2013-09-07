@@ -1,40 +1,25 @@
+# -*- coding: utf-8 -*-
 import datetime
-from django.contrib.contenttypes.models import ContentType
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-from django.contrib.auth.models import Permission, Group
 
-class Migration(DataMigration):
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-
-        db.send_pending_create_signals()
-
-        ct = ContentType.objects.get(app_label="grading", model="student")
-
-        see, __ = Permission.objects.get_or_create(
-            codename = "can_see_students_data",
-            name = "Can see students_data",
-            content_type = ct)
-        grade, __ = Permission.objects.get_or_create(
-            codename = "can_grade",
-            name = "Can grade",
-            content_type = ct)
-
-        teachers, __ = Group.objects.get_or_create(name="teachers")
-
-        teachers.permissions.add(see)
-        teachers.permissions.add(grade)
-
-        Group.objects.get_or_create(name="students")
-
-        teachers.save()
+        # Adding model 'GradingBooleanInput'
+        db.create_table(u'grading_gradingbooleaninput', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user_input', self.gf('django.db.models.fields.BooleanField')(default=False)),
+        ))
+        db.send_create_signal('grading', ['GradingBooleanInput'])
 
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        # Deleting model 'GradingBooleanInput'
+        db.delete_table(u'grading_gradingbooleaninput')
+
 
     models = {
         u'auth.group': {
@@ -115,6 +100,11 @@ class Migration(DataMigration):
             'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'weight': ('django.db.models.fields.DecimalField', [], {'default': '1', 'max_digits': '5', 'decimal_places': '2', 'blank': 'True'})
         },
+        'grading.gradingbooleaninput': {
+            'Meta': {'object_name': 'GradingBooleanInput'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'user_input': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+        },
         'grading.partialgrade': {
             'Meta': {'unique_together': "(('student', 'grade_part'),)", 'object_name': 'PartialGrade'},
             'grade': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
@@ -140,4 +130,3 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['grading']
-    symmetrical = True

@@ -3,6 +3,7 @@
 
 {% block grading_contents %}
     <form method="POST">
+    {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">{% trans "Submit!" %}</button>
     </form>

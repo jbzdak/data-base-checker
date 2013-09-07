@@ -36,8 +36,8 @@ class AutogradeGradePartView(StudentView):
         self.current_grade = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.grade_part = get_object_or_404(AutogradeableGradePart, pk = kwargs['grade_part_id'])
-        self.autograder = self.grade_part.autograder
+        self.grade_part = get_object_or_404(AutogradeableGradePart, pk = kwargs['grade_part'])
+        self.autograder = self.grade_part.autograder()
         try:
             self.current_grade = PartialGrade.objects.get(
                 grade_part=self.grade_part,

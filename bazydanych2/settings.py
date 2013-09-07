@@ -124,7 +124,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'south',
-    'kombu.transport.django',
+    #'kombu.transport.django',
     'grading'
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',

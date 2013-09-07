@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 # Create your models here.
-from grading.autograding._base import get_autograders
+from grading.autograding import get_autograders
 from picklefield.fields import PickledObjectField
 
 __all__ = [
@@ -206,5 +206,3 @@ class StudentGrade(BaseModel):
     activity = models.ForeignKey("GradeableActivity")
 
     grade = models.DecimalField("Grade", max_digits=5, decimal_places=2)
-
-
