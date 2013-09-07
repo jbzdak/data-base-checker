@@ -8,7 +8,7 @@ from django.db.utils import ProgrammingError
 from django.dispatch.dispatcher import receiver
 
 from grading.models._models import *
-from grading.models._models import NamedSortable
+from grading.models._models import NamedSortable, AutogradedActivity
 from grading.models._util_funcs import *
 
 LOGGER = logging.getLogger(__name__)
@@ -27,7 +27,8 @@ def on_user_create(instance, **kwargs):
         if "does not exist" in e.args[0] and 'grading_student' in e.args[0]:
             LOGGER.warning("Adding user before tables for grading subsystem. Student model was not installed for this user.")
 
-
+@receiver(post_delete, sender=AutogradedActivity)
+@receiver(post_save, sender=AutogradedActivity)
 @receiver(post_delete, sender=GradeableActivity)
 @receiver(post_save, sender=GradeableActivity)
 def when_activity_added_sync_grades_for_students_in_group(instance, **kwargs):

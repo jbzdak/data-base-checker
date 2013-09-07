@@ -1,8 +1,16 @@
+from django.contrib.contenttypes.generic import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 # Create your models here.
+from grading.autograding._base import get_autograders
+from picklefield.fields import PickledObjectField
 
-__all__ = ['Student', 'StudentGrade', 'Course', 'GradeableActivity', 'GradePart', 'PartialGrade']
+__all__ = [
+    'Student', 'StudentGrade', 'Course',
+    'GradeableActivity', 'GradePart', 'PartialGrade',
+    'AutogradeableGradePart', 'AutogradedActivity',
+    'AutogradingResult']
 
 class BaseModel(models.Model):
     class Meta:
@@ -108,16 +116,11 @@ class GradePart(NamedSortable):
         "Passing grade", max_digits=5, decimal_places=2,
         help_text="If grade is lower than passing grade we will assume this as not finished task",
         default=3.0)
-    required = models.BooleanField("Is activity required")
+    required = models.BooleanField("Is activity required", default=False)
     activity = models.ForeignKey("GradeableActivity", related_name="grade_parts")
 
+class BasePartialGrade(BaseModel):
 
-class PartialGrade(BaseModel):
-
-    """
-    Grade for given :class:`.Student` for given :class:.GradePart. Apart from grade
-    itself it contains short and long description fields.
-    """
 
     grade = models.DecimalField("Activity weight", max_digits=5, decimal_places=2, null=False, blank=False)
     student = models.ForeignKey("Student")
@@ -125,6 +128,65 @@ class PartialGrade(BaseModel):
 
     short_description = models.CharField("Short description", max_length=100, null=True, blank=True)
     long_description = models.TextField("Long description", null=True, blank=True)
+
+    class Meta:
+        unique_together = ("student", "grade_part")
+        abstract = True
+        app_label = "grading"
+
+
+class PartialGrade(BasePartialGrade):
+
+    """
+    Grade for given :class:`.Student` for given :class:.GradePart. Apart from grade
+    itself it contains short and long description fields.
+    """
+
+    pass
+
+class AutogradingResult(BasePartialGrade):
+
+    autograder_input_content_type = models.ForeignKey(ContentType, null=True, blank=True, editable=False)
+    autograder_input_pk = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    autograder_input = GenericForeignKey('content_type', 'object_id')
+
+    grading_result = PickledObjectField()
+
+    def fill(self, student_input, grading_result):
+        self.autograder_input = student_input
+        self.grade = grading_result.grade
+        self.short_description = grading_result.comment
+        self.grading_result = grading_result
+
+
+class AutogradedActivity(GradeableActivity):
+
+    class Meta:
+        proxy = True
+        app_label = "grading"
+
+class AutogradeableGradePart(GradePart):
+
+    parent = models.OneToOneField(GradePart, parent_link=True, related_name="bdchecker_part")
+
+    autograding_controller = models.CharField(
+        choices=[(name, name) for name in get_autograders().keys()],
+        max_length=1000)
+
+    def __init__(self, *args, **kwargs):
+        super(AutogradeableGradePart, self).__init__(*args, **kwargs)
+        self._meta.get_field('name').blank = True
+
+    def save(self, *args, **kwargs):
+        if not self.name:
+            self.name = self.autograding_controller
+
+        super(AutogradeableGradePart, self).save(*args, **kwargs)
+
+
+    @property
+    def autograder(self):
+        return get_autograders()[self.autograding_controller]
 
 
 class StudentGrade(BaseModel):

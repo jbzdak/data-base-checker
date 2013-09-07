@@ -60,7 +60,7 @@ class StudentGradeAdmin(admin.ModelAdmin):
 
     list_display_links = list_display
 
-    list_filter = ['student__group', 'activity__name']
+    list_filter = ['student__course', 'activity__name']
 
     def student__user__first_name(self, obj):
         return obj.student.user.first_name
@@ -87,7 +87,17 @@ class StudentGradeAdmin(admin.ModelAdmin):
     student__user__email.admin_order_field = "student__user__email"
 
 
+class AutoGraderGradePartAdmin(admin.TabularInline):
+    model = AutogradeableGradePart
+    fields = ['pk', 'autograding_controller', 'name', 'weight', 'required']
+    readonly_fields = ['pk']
 
+class AutogradeableActivityAdmin(admin.ModelAdmin):
+    inlines = [
+        AutoGraderGradePartAdmin
+    ]
+
+admin.site.register(AutogradedActivity, AutogradeableActivityAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(StudentGrade, StudentGradeAdmin)
 admin.site.register(Course, NamedSortableAdmin)

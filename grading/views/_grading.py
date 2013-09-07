@@ -11,9 +11,13 @@ from grading.models import Course, GradeableActivity, PartialGrade, StudentGrade
 from django.shortcuts import get_object_or_404
 from django.views.generic.base import TemplateView
 from grading.models import Student
+from grading.views._base import StudentView, LoginView
 
+__all__ = [
+    "GradeGroupActivity", "ShowMyGrades"
+]
 
-class GradeGroupActivity(TemplateView):
+class GradeGroupActivity(LoginView, TemplateView):
 
     template_name = "grading/grade_group_activity.html"
 
@@ -98,7 +102,7 @@ class GradeGroupActivity(TemplateView):
         })
         return context
 
-class ShowMyGrades(ListView):
+class ShowMyGrades(StudentView, ListView):
 
     template_name = "grading/my_grades.html"
 
@@ -108,11 +112,6 @@ class ShowMyGrades(ListView):
         super(ShowMyGrades, self).__init__(**kwargs)
         self.request = None
         self.student = None
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        self.student = get_object_or_404(Student, user = self.request.user)
-        return super(ShowMyGrades, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         ctx = super(ShowMyGrades, self).get_context_data(**kwargs)

@@ -2,6 +2,7 @@
 from django.contrib.auth.models import User, Group
 from django.test.testcases import TestCase
 from grading.models import *
+from grading.autograding import get_autograders
 
 
 class StudentTest(TestCase):
@@ -212,3 +213,12 @@ class TestGrading(TestFixture):
         )
 
         self.assertEqual(grade_student(self.activity, self.student), 812.0)
+
+class TestAutogradeableGradePart(TestFixture):
+
+    def test_name_is_set(self):
+        model = AutogradeableGradePart.objects.create(
+            activity = self.activity,
+            autograding_controller = get_autograders()['test']
+        )
+        self.assertEqual(model.name, model.autograding_controller)

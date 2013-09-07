@@ -66,6 +66,33 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('grading', ['PartialGrade'])
 
+        # Adding unique constraint on 'PartialGrade', fields ['student', 'grade_part']
+        db.create_unique(u'grading_partialgrade', ['student_id', 'grade_part_id'])
+
+        # Adding model 'AutogradingResult'
+        db.create_table(u'grading_autogradingresult', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('grade', self.gf('django.db.models.fields.DecimalField')(max_digits=5, decimal_places=2)),
+            ('student', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.Student'])),
+            ('grade_part', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.GradePart'])),
+            ('short_description', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
+            ('long_description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
+            ('autograder_input_content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
+            ('autograder_input_pk', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
+            ('grading_result', self.gf('picklefield.fields.PickledObjectField')()),
+        ))
+        db.send_create_signal('grading', ['AutogradingResult'])
+
+        # Adding unique constraint on 'AutogradingResult', fields ['student', 'grade_part']
+        db.create_unique(u'grading_autogradingresult', ['student_id', 'grade_part_id'])
+
+        # Adding model 'AutogradeableGradePart'
+        db.create_table(u'grading_autogradeablegradepart', (
+            ('parent', self.gf('django.db.models.fields.related.OneToOneField')(related_name='bdchecker_part', unique=True, primary_key=True, to=orm['grading.GradePart'])),
+            ('autograding_controller', self.gf('django.db.models.fields.CharField')(max_length=1000)),
+        ))
+        db.send_create_signal('grading', ['AutogradeableGradePart'])
+
         # Adding model 'StudentGrade'
         db.create_table(u'grading_studentgrade', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -77,6 +104,12 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+        # Removing unique constraint on 'AutogradingResult', fields ['student', 'grade_part']
+        db.delete_unique(u'grading_autogradingresult', ['student_id', 'grade_part_id'])
+
+        # Removing unique constraint on 'PartialGrade', fields ['student', 'grade_part']
+        db.delete_unique(u'grading_partialgrade', ['student_id', 'grade_part_id'])
+
         # Deleting model 'Student'
         db.delete_table(u'grading_student')
 
@@ -95,12 +128,18 @@ class Migration(SchemaMigration):
         # Deleting model 'PartialGrade'
         db.delete_table(u'grading_partialgrade')
 
+        # Deleting model 'AutogradingResult'
+        db.delete_table(u'grading_autogradingresult')
+
+        # Deleting model 'AutogradeableGradePart'
+        db.delete_table(u'grading_autogradeablegradepart')
+
         # Deleting model 'StudentGrade'
         db.delete_table(u'grading_studentgrade')
 
 
     models = {
-        u'auth.course': {
+        u'auth.group': {
             'Meta': {'object_name': 'Group'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
@@ -136,6 +175,23 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'grading.autogradeablegradepart': {
+            'Meta': {'ordering': "('sort_key',)", 'object_name': 'AutogradeableGradePart', '_ormbases': ['grading.GradePart']},
+            'autograding_controller': ('django.db.models.fields.CharField', [], {'max_length': '1000'}),
+            'parent': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'bdchecker_part'", 'unique': 'True', 'primary_key': 'True', 'to': "orm['grading.GradePart']"})
+        },
+        'grading.autogradingresult': {
+            'Meta': {'unique_together': "(('student', 'grade_part'),)", 'object_name': 'AutogradingResult'},
+            'autograder_input_content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']", 'null': 'True', 'blank': 'True'}),
+            'autograder_input_pk': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'grade': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
+            'grade_part': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.GradePart']"}),
+            'grading_result': ('picklefield.fields.PickledObjectField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'long_description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'short_description': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
+            'student': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.Student']"})
+        },
         'grading.course': {
             'Meta': {'ordering': "('sort_key',)", 'object_name': 'Course'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -162,7 +218,7 @@ class Migration(SchemaMigration):
             'weight': ('django.db.models.fields.DecimalField', [], {'default': '1', 'max_digits': '5', 'decimal_places': '2', 'blank': 'True'})
         },
         'grading.partialgrade': {
-            'Meta': {'object_name': 'PartialGrade'},
+            'Meta': {'unique_together': "(('student', 'grade_part'),)", 'object_name': 'PartialGrade'},
             'grade': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'decimal_places': '2'}),
             'grade_part': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.GradePart']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

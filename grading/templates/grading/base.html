@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    {% block grading_body %}
+    {% block grading_contents %}
+        {%  if template_to_include %}
+            {%  include template_to_include %}
+        {% endif %}
+    {% endblock grading_contents %}
+    {% endblock grading_body %}
+</body>
+</html>

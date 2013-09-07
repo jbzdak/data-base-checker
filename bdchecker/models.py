@@ -21,7 +21,6 @@ class BDCheckerGradePart(GradePart):
 
     parent = models.OneToOneField("grading.GradePart", parent_link=True, related_name="bdchecker_part")
 
-    part_type = models.SmallIntegerField(choices=part_types)
     verifier_name = models.CharField(
         choices=[(name, name) for name in get_verifiers().keys()],
         max_length=1000)
