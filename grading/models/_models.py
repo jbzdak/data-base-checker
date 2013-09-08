@@ -119,7 +119,12 @@ class GradePart(NamedSortable):
     required = models.BooleanField("Is activity required", default=False)
     activity = models.ForeignKey("GradeableActivity", related_name="grade_parts")
 
-class BasePartialGrade(BaseModel):
+class PartialGrade(BaseModel):
+
+    """
+    Grade for given :class:`.Student` for given :class:.GradePart. Apart from grade
+    itself it contains short and long description fields.
+    """
 
 
     grade = models.DecimalField("Activity weight", max_digits=5, decimal_places=2, null=False, blank=False)
@@ -131,20 +136,10 @@ class BasePartialGrade(BaseModel):
 
     class Meta:
         unique_together = ("student", "grade_part")
-        abstract = True
         app_label = "grading"
 
 
-class PartialGrade(BasePartialGrade):
-
-    """
-    Grade for given :class:`.Student` for given :class:.GradePart. Apart from grade
-    itself it contains short and long description fields.
-    """
-
-    pass
-
-class AutogradingResult(BasePartialGrade):
+class AutogradingResult(PartialGrade):
 
     autograder_input_content_type = models.ForeignKey(ContentType, null=True, blank=True, editable=False)
     autograder_input_pk = models.PositiveIntegerField(null=True, blank=True, editable=False)
