@@ -136,7 +136,6 @@ class BasePartialGrade(BaseModel):
     long_description = models.TextField("Long description", null=True, blank=True)
 
     class Meta:
-        unique_together = ("student", "grade_part")
         abstract = True
         app_label = "grading"
         ordering = ['save_date']
@@ -149,7 +148,10 @@ class PartialGrade(BasePartialGrade):
     itself it contains short and long description fields.
     """
 
-    pass
+    class Meta:
+        unique_together = ("student", "grade_part")
+        app_label = "grading"
+        ordering = ['save_date']
 
 class AutogradingResult(BasePartialGrade):
 

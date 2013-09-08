@@ -25,12 +25,9 @@ class GradeTask(AutogradeGradePartView, FormView):
         instance = form.save()
 
         resut = self.autograder.autograde(self.current_grade, instance)
-        autograding_result_model, __ = AutogradingResult.objects.get_or_create(
+        autograding_result_model = AutogradingResult(
             student = self.student,
-            grade_part = self.grade_part,
-            defaults = {
-                'grade': self.grade_part.default_grade
-            }
+            grade_part = self.grade_part
         )
         autograding_result_model.fill(instance, resut)
         autograding_result_model.save()
