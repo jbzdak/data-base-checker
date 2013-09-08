@@ -4,7 +4,7 @@ from django.http.request import HttpRequest
 from django.test import Client
 from django.test.testcases import TestCase
 from grading.models import Course, GradeableActivity
-from grading.models._models import PartialGrade, StudentGrade
+from grading.models._models import PartialGrade, StudentGrade, GradePart
 from grading.views import GradeGroupActivity
 
 class BaseTest(TestCase):
@@ -171,3 +171,49 @@ class TestAutogradingGradeView(BaseTest):
         self.assertTrue(authenticated, "Cant login")
         response = self.c.get('/grading/autograde/5')
         self.assertEqual(response.status_code, 200)
+
+    def __test_invalid_form(self, data):
+        PartialGrade.objects.all().delete()
+        authenticated = self.c.login(username="teacher", password="foo")
+        self.assertTrue(authenticated, "Cant login")
+        response = self.c.post('/grading/autograde/5', data)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Fill required input")
+        self.assertEqual(len(PartialGrade.objects.all()), 0)
+
+    def test_invalid_data_1(self):
+        self.__test_invalid_form({})
+
+    def test_invalid_data_2(self):
+        self.__test_invalid_form({"user_input": "on"})
+
+    def __test_valid_data(self, data, grade):
+        PartialGrade.objects.all().delete()
+        authenticated = self.c.login(username="teacher", password="foo")
+        self.assertTrue(authenticated, "Cant login")
+        response = self.c.post('/grading/autograde/5', data, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.redirect_chain), 1)
+        self.assertContains(response, str(grade))
+        self.assertEqual(len(PartialGrade.objects.all()), 1)
+        g = PartialGrade.objects.get()
+        self.assertEqual(g.grade, grade)
+
+
+    def test_valid_data_1(self):
+        data = {
+            "required_input": "on"
+        }
+
+        self.__test_valid_data(data, 2.0)
+
+    def test_valid_data_2(self):
+        data = {
+            "required_input": "on",
+            "user_input": "on"
+
+        }
+
+        self.__test_valid_data(data, 5.0)
+
