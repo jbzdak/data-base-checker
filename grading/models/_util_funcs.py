@@ -2,8 +2,10 @@
 from grading.models._models import StudentGrade, GradePart, PartialGrade
 
 __all__ = [
-    'sync_partial_grade', 'sync_grades_for_activity', 'sync_grades_for_student',
-    'grade_student', 'calculate_grade']
+    'sync_partial_grade', 'sync_grades_for_activity',
+    'sync_grades_for_student', 'grade_student', 'calculate_grade',
+    'sync_partial_grade_with_autograde'
+]
 
 def sync_grades_for_activity(activity):
     for group in activity.courses.all():
@@ -83,3 +85,31 @@ def sync_partial_grade(grade):
 
     sync_grade(activity, student)
 
+def sync_partial_grade_with_autograde(autograde):
+
+    currently_syncing = getattr(autograde, "currently_syncing", False)
+
+    if not currently_syncing:
+
+        autograde.currently_syncing = True
+
+        try:
+
+            partial_grade, __ = PartialGrade.objects.get_or_create(
+                student = autograde.student,
+                grade_part = autograde.grade_part,
+                defaults = {
+                    "grade" : autograde.grade
+                }
+            )
+            partial_grade.short_description = autograde.short_description
+            partial_grade.long_description = autograde.long_description
+            partial_grade.grade = autograde.grade
+            partial_grade.save()
+
+            autograde.already_synced = True
+
+            autograde.partial_grade = partial_grade
+            autograde.save()
+        finally:
+            autograde.currently_syncing = False

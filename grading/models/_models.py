@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 # Create your models here.
+from django.template.defaultfilters import slugify
 from grading.autograding import get_autograders
 from picklefield.fields import PickledObjectField
 
@@ -25,6 +26,7 @@ class NamedSortable(models.Model):
 
     name = models.CharField("Object name", max_length=100, null=False, blank=False, unique=True)
     sort_key = models.CharField("Sort key", max_length=100, null=False, blank=True)
+    slug_field = models.SlugField(unique=True, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -35,8 +37,10 @@ class NamedSortable(models.Model):
         ordering = ("sort_key",)
 
     def save(self, *args, **kwargs):
-        if self.pk is None and not self.sort_key:
+        if not self.sort_key:
             self.sort_key = self.name
+        if not self.slug_field:
+            self.slug_field = slugify(self.name)
         super(NamedSortable, self).save(*args, **kwargs)
 
 
@@ -119,27 +123,35 @@ class GradePart(NamedSortable):
     required = models.BooleanField("Is activity required", default=False)
     activity = models.ForeignKey("GradeableActivity", related_name="grade_parts")
 
-class PartialGrade(BaseModel):
-
-    """
-    Grade for given :class:`.Student` for given :class:.GradePart. Apart from grade
-    itself it contains short and long description fields.
-    """
+class BasePartialGrade(BaseModel):
 
 
     grade = models.DecimalField("Activity weight", max_digits=5, decimal_places=2, null=False, blank=False)
     student = models.ForeignKey("Student")
     grade_part = models.ForeignKey("GradePart", null=False)
 
+    save_date = models.DateTimeField(auto_now_add=True)
+
     short_description = models.CharField("Short description", max_length=100, null=True, blank=True)
     long_description = models.TextField("Long description", null=True, blank=True)
 
     class Meta:
         unique_together = ("student", "grade_part")
+        abstract = True
         app_label = "grading"
+        ordering = ['save_date']
 
 
-class AutogradingResult(PartialGrade):
+class PartialGrade(BasePartialGrade):
+
+    """
+    Grade for given :class:`.Student` for given :class:.GradePart. Apart from grade
+    itself it contains short and long description fields.
+    """
+
+    pass
+
+class AutogradingResult(BasePartialGrade):
 
     autograder_input_content_type = models.ForeignKey(ContentType, null=True, blank=True, editable=False)
     autograder_input_pk = models.PositiveIntegerField(null=True, blank=True, editable=False)
@@ -147,12 +159,13 @@ class AutogradingResult(PartialGrade):
 
     grading_result = PickledObjectField()
 
+    partial_grade = models.ForeignKey(PartialGrade, related_name="autogrades", null=True, blank=True)
+
     def fill(self, student_input, grading_result):
         self.autograder_input = student_input
         self.grade = grading_result.grade
         self.short_description = grading_result.comment
         self.grading_result = grading_result
-
 
 class AutogradedActivity(GradeableActivity):
 
@@ -162,7 +175,7 @@ class AutogradedActivity(GradeableActivity):
 
 class AutogradeableGradePart(GradePart):
 
-    parent = models.OneToOneField(GradePart, parent_link=True, related_name="bdchecker_part")
+    parent = models.OneToOneField(GradePart, parent_link=True, related_name="autograde")
 
     autograding_controller = models.CharField(
         choices=[(name, name) for name in get_autograders().keys()],

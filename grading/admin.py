@@ -12,9 +12,13 @@ class NamedSortableAdmin(admin.ModelAdmin):
         }),
         ('Advanced options', {
             'classes': ('collapse',),
-            'fields': ['sort_key']
+            'fields': ['sort_key', "slug_field"]
         }),
     )
+
+    prepopulated_fields = {
+        "slug_field" : ["name"]
+    }
 
 class GradePartInline(admin.TabularInline):
     model = GradePart

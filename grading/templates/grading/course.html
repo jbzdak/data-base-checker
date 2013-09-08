@@ -1,0 +1,10 @@
+{% load i18n %}
+<div id="{{ course.slug_field }}" class="course">
+    <h1>{% blocktrans with name=course.name %}Course {{ name }}{% endblocktrans %}</h1>
+
+    <ul>
+        {% for activity in course.activities.all %}
+        <li><a href="{% url "activity" name=activity.slug_field %}">{{ activity.name }}</a> </li>
+        {% endfor %}
+    </ul>
+</div>

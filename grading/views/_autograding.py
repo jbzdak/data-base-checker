@@ -1,13 +1,16 @@
 # coding=utf-8
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.http.response import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
 from grading.views._base import *
 
 from grading.models import *
+
 
 class GradeTask(AutogradeGradePartView, FormView):
 
@@ -50,4 +53,40 @@ class GradingResult(StudentView, TemplateView):
         ctx['object'] = self.autograde_result
         ctx['template_to_include'] = 'grading/autograde_result.html'
         return ctx
+
+class CourseView(StudentView, GradingBase):
+
+    mixin_template = "grading/course.html"
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.course =  get_object_or_404(Course, slug_field=kwargs['name'])
+        return super(CourseView, self).dispatch(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        ctx = super(CourseView, self).get_context_data(**kwargs)
+        ctx.update({
+            'course': self.course
+        })
+        return ctx
+
+
+class GradeActivity(StudentView, GradingBase):
+
+    mixin_template = 'autograding/autograde_activity.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.activity = get_object_or_404(GradeableActivity, slug_field=kwargs['name'])
+        return super(GradeActivity, self).dispatch(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        ctx =  super(GradeActivity, self).get_context_data(**kwargs)
+        ctx.update({
+            "student": self.student,
+            "activity": self.activity
+        })
+        return ctx
+
 

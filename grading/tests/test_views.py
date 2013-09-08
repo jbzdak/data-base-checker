@@ -4,7 +4,7 @@ from django.http.request import HttpRequest
 from django.test import Client
 from django.test.testcases import TestCase
 from grading.models import Course, GradeableActivity
-from grading.models._models import PartialGrade, StudentGrade, GradePart
+from grading.models import PartialGrade, StudentGrade
 from grading.views import GradeGroupActivity
 
 class BaseTest(TestCase):

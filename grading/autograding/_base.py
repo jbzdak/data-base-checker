@@ -66,6 +66,9 @@ class Autograder(object):
     def submission_contenttype(self):
         return ContentType.objects.get_for_model(self.SubmissionModel)
 
+    def can_grade_student(self, student):
+        return True
+
     @abc.abstractmethod
     def autograde(self, current_grade, model_instance):
         """

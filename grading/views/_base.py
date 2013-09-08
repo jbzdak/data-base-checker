@@ -2,10 +2,26 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from grading.models._models import Student, AutogradeableGradePart, PartialGrade
 
-__all__ = ['StudentView', 'LoginView', 'AutogradeGradePartView']
+__all__ = [
+    'StudentView', 'LoginView', 'AutogradeGradePartView', 'GradingBase'
+]
+
+class GradingBase(TemplateView):
+
+    template_name = "grading/base.html"
+
+    mixin_template = None
+
+    def get_context_data(self, **kwargs):
+        ctx = super(GradingBase, self).get_context_data(**kwargs)
+        ctx.update({
+            'template_to_include': self.mixin_template
+        })
+        return ctx
+
 
 class LoginView(View):
 

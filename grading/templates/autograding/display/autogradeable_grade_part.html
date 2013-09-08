@@ -1,0 +1,50 @@
+{% load i18n %}
+{% load tgrading %}
+{% load humanize %}
+
+<div class="grade-part">
+    <h3 id="{{ part.slug }}">{% blocktrans with name=part.name%}Part "{{ name }}"{% endblocktrans %}</h3>
+
+    {% with grade=part|grade_for_student:student %}
+    {% if grade %}
+    <p>
+        {% blocktrans with grade=grade.grade %}
+    This task is already graded, you got: <strong>{{ grade }}.</strong>
+        {% endblocktrans %}
+    </p>
+    {% endif %}
+    {% endwith %}
+
+    <p>
+    {% if part|can_grade:student %}
+        <a href="{% url "do-autograde" grade_part=part.pk %}">{% trans "Perform this activity again" %}</a>
+    {% else %}
+        {% trans "Can't perform grading now"%}
+    {% endif %}
+    </p>
+
+    <div class="details">
+    {% comment %} TODO: Autofold this with jQuery {% endcomment %}
+    {% with grade=part|grade_for_student:student %}
+    {% if grade and part.autograde %}
+    {% with auto=part.autograde %}
+    <h4>{% trans "Attempt list" %}</h4>
+    <ol>
+    {% for part in grade.autogrades.all %}
+        <li>
+            <p>{% blocktrans with grade=part.grade desc=grade.short_description date=hrade.save_date|naturaltime %}
+            Attempt at {{ date }} result: {{ grade }}, description: {{ desc }}
+        {% endblocktrans %}. <a href="{% url "show-result" pk=part.pk %}">{% trans "Details" %}</a></p>
+        </li>
+
+    {% endfor %}
+     </ol>
+    {% endwith %}
+    {% endif %}
+    {% endwith %}
+    </div>
+
+
+
+
+</div>

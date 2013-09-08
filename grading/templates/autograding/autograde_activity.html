@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<div class="activty">
+    <h1>{% blocktrans with name=activity.name %}Activity {{ name }}{% endblocktrans %}</h1>
+
+    <h2>{% trans "Elements in this activity" %}</h2>
+
+    {% for part in activity.grade_parts.all %}
+        {% include "autograding/display/autogradeable_grade_part.html" %}
+    {% empty %}
+        {% trans "List is empty" %}
+    {% endfor %}
+</div>

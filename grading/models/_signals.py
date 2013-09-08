@@ -8,7 +8,6 @@ from django.db.utils import ProgrammingError
 from django.dispatch.dispatcher import receiver
 
 from grading.models._models import *
-from grading.models._models import NamedSortable, AutogradedActivity
 from grading.models._util_funcs import *
 
 LOGGER = logging.getLogger(__name__)
@@ -42,14 +41,11 @@ def when_grade_part_changed_sync_grades_for_students(instance, **kwargs):
     if not kwargs.get('raw', False):
         sync_grades_for_activity(instance.activity)
 
-
 @receiver(post_save, sender=Student)
 def when_student_is_saved_in_group_sync_grades(instance, **kwargs):
     if not kwargs.get('raw', False):
         if instance.course is not None:
             sync_grades_for_student(instance)
-
-
 
 @receiver(post_delete, sender=PartialGrade)
 @receiver(post_save, sender=PartialGrade)
@@ -57,3 +53,7 @@ def when_partial_grade_is_saved_update_student_grade(instance, **kwargs):
     if not kwargs.get('raw', False):
         sync_partial_grade(instance)
 
+@receiver(post_save, sender=AutogradingResult)
+def sync_partial_grade_with_autograde_signal(instance, **kwargs):
+    if not kwargs.get('raw', False):
+        sync_partial_grade_with_autograde(instance)
