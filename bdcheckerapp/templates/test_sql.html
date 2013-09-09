@@ -1,0 +1,21 @@
+{% extends "grading/base.html" %}
+
+{% block grading_additional_head %}
+    <script type="application/javascript" src="{{ STATIC_URL }}codemirror/js/codemirror.js"></script>
+    <script type="application/javascript" src="{{ STATIC_URL }}codemirror/js/sql.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}codemirror/css/codemirror.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}codemirror/css/base16-dark.css"/>
+    <script type="application/javascript" src="{{ STATIC_URL }}bdhecker/load_codemirror.js">
+
+
+    </script>
+{% endblock grading_additional_head %}
+
+{% block grading_contents %}
+    <form>
+    <textarea id="id_submission">
+
+    </textarea>
+    </form>
+{% endblock %}
