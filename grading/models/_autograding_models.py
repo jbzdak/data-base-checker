@@ -15,3 +15,10 @@ class GradingBooleanInput(models.Model):
 
     class Meta:
         app_label = "grading"
+
+class GradingTextInput(models.Model):
+
+    user_input = models.TextField(blank=False)
+
+    class Meta:
+        app_label = "grading"
