@@ -186,6 +186,7 @@ class AutogradeableGradePart(GradePart):
     def __init__(self, *args, **kwargs):
         super(AutogradeableGradePart, self).__init__(*args, **kwargs)
         self._meta.get_field('name').blank = True
+        self._meta.get_field('autograding_controller')._choices = [(name, name) for name in get_autograders().keys()]
 
     def save(self, *args, **kwargs):
         if not self.name:

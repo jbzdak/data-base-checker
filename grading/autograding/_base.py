@@ -2,6 +2,7 @@
 import abc
 from copy import copy
 from django.contrib.contenttypes.models import ContentType
+from django.utils import six
 
 _AUTOGRADER_CACHE = {}
 
@@ -26,15 +27,31 @@ def get_autograders():
 class AutograderMetaclass(abc.ABCMeta):
     def __new__(cls, *args, **kwargs):
         type = super(AutograderMetaclass, cls).__new__(cls, *args, **kwargs)
-        if not getattr(type, "__abstractmethods__", set()):
-            _AUTOGRADER_CACHE[type.NAME] = type
+        cls.__maybe_add(type)
         return type
 
+    @staticmethod
+    def __maybe_add(type):
+        if getattr(type, "__abstractmethods__", set()):
+            return
+        if not getattr(type, "NAME", None):
+            return
+        _AUTOGRADER_CACHE[type.NAME] = type
+
+
+class AutogradingException(Exception):
+
+    def __init__(self, grading_result):
+        super(AutogradingException, self).__init__()
+        self.grading_result = grading_result
+
+
 class GradingResult(object):
-    def __init__(self, grade, comment):
+    def __init__(self, grade, comment, long_message=None):
         super(GradingResult, self).__init__()
         self.grade = grade
         self.comment = comment
+        self.long_message = long_message
 
     def render(self):
         #TODO do it better
@@ -42,10 +59,8 @@ class GradingResult(object):
         Grade {}
         """.format(self.grade)
 
+class Autograder(six.with_metaclass(AutograderMetaclass)):
 
-class Autograder(object):
-
-    __metaclass__ = AutograderMetaclass
 
     NAME = None
 
@@ -74,4 +89,7 @@ class Autograder(object):
         """
         :returns: verification results
         :rtype:VerifyResult
+
+        :raises:`AutogradingException` This exception is alternate way to return
+        grade it typically means thtah student input was invalid
         """

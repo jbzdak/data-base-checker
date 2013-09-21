@@ -1,4 +1,4 @@
 # coding=utf-8
 
-from _grading import *
-from _autograding import *
+from grading.views._grading import *
+from grading.views._autograding import *

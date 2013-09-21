@@ -3,4 +3,4 @@
 from grading.models._models import *
 from grading.models import _signals
 from grading.models._util_funcs import *
-import _autograding_models
+from grading.models._autograding_models import *

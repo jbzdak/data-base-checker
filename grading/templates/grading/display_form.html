@@ -1,6 +1,10 @@
 {% extends "grading/base.html" %}
 {% load i18n %}
 
+{% block grading_additional_head %}
+    {{ form.media }}
+{% endblock %}
+
 {% block grading_contents %}
     <form method="POST">
     {% csrf_token %}

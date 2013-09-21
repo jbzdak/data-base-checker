@@ -20,6 +20,15 @@ DATABASES = {
         'HOST': '192.168.56.10',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
         'TEST_NAME': 'bd_test'
+    },
+    'zaj1db': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'zaj1db',                      # Or path to database file if using sqlite3.
+        'USER': 'bd',                      # Not used with sqlite3.
+        'PASSWORD': 'yorkambanmarfajakcofjenbaheishajlyishdipsEshtEcFoamOtgeybMoovTicHeukciedAdemmEchIdkabcoojHecwefDanLewElCubrEvsisujenyicpixJepNiv',                  # Not used with sqlite3.
+        'HOST': '192.168.56.10',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'TEST_NAME': 'bd_test'
     }
 }
 
@@ -126,8 +135,8 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'south',
     #'kombu.transport.django',
-    'grading',
     'bdcheckerapp',
+    'grading',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -177,3 +186,5 @@ LOGGING = {
 # DJCELERY CONFIG
 
 BROKER_URL = 'django://'
+
+ZAJ1_DATABASE = "bdchecker_zaj1"
