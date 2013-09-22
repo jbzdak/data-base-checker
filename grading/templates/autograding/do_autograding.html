@@ -6,6 +6,17 @@
 {% endblock %}
 
 {% block grading_contents %}
+
+    <h1>{% blocktrans %}
+        Now grading {{ name }}
+    {% endblocktrans %}</h1>
+
+
+    <p>
+        {{ autograder.DESCRIPTION }}
+    </p>
+
+
     <form method="POST">
     {% csrf_token %}
     {{ form.as_p }}

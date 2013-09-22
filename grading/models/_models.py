@@ -180,7 +180,7 @@ class AutogradeableGradePart(GradePart):
     parent = models.OneToOneField(GradePart, parent_link=True, related_name="autograde")
 
     autograding_controller = models.CharField(
-        choices=[(name, name) for name in get_autograders().keys()],
+        choices=[("1", "This should be autofilledd"), ("2", "This should be autofilledd")],
         max_length=1000)
 
     def __init__(self, *args, **kwargs):

@@ -2,7 +2,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic.base import View, TemplateView
+from django.views.generic.base import View, TemplateView, ContextMixin
 from grading.models._models import Student, AutogradeableGradePart, PartialGrade
 
 __all__ = [
@@ -44,12 +44,20 @@ class StudentView(LoginView):
         self.student = get_object_or_404(Student, user = self.request.user)
         return super(StudentView, self).dispatch(request, *args, **kwargs)
 
-class AutogradeGradePartView(StudentView):
+class AutogradeGradePartView(ContextMixin, StudentView, ):
     def __init__(self, **kwargs):
         super(AutogradeGradePartView, self).__init__(**kwargs)
         self.grade_part = None
         self.autograder = None
         self.current_grade = None
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['autograder'] = self.autograder
+        ctx['grade_part'] = self.grade_part
+        ctx['current_grade'] = self.current_grade
+        return ctx
+
 
     def dispatch(self, request, *args, **kwargs):
         self.grade_part = get_object_or_404(AutogradeableGradePart, pk = kwargs['grade_part'])

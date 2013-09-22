@@ -2,6 +2,7 @@
 
 import os
 from configparser import ConfigParser
+from bdcheckerapp.forms import SQLInputForm
 from grading.autograding.autograders.compare_sql_results import CompareQueriesAutograder
 
 DIRNAME = os.path.abspath(os.path.split(__file__)[0])
@@ -20,3 +21,8 @@ for key in cp['DEFAULT']:
         NAME = key
         CONFIG_FILE = CONFIG_FILE
         DESCRIPTION = cp.get('DEFAULT', key + '.description', fallback=None)
+        DJANGO_DB = "zaj1db"
+
+        @property
+        def SubmissionForm(self):
+            return SQLInputForm

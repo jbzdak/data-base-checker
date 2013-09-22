@@ -8,7 +8,7 @@ from grading.models import GradingTextInput
 class SQLInputForm(ModelForm):
 
     user_input = CharField(
-        widget=Textarea()
+        widget=Textarea(), label="Wprowadź swoje zapytanie"
     )
 
     class Meta:
@@ -19,11 +19,14 @@ class SQLInputForm(ModelForm):
         __js_pref = 'codemirror/js/'
         __css_pref = 'codemirror/css/'
 
-        css = [
-            __css_pref + 'codemirror.css',
-            __css_pref + 'sql.css']
+        css = {
+            "all": [
+                __css_pref + 'codemirror.css',
+                __css_pref + 'base16-dark.css'
+            ]
+        }
         js = [
             __js_pref + '/codemirror.js',
-            __js_pref + '/base16-light.css',
+            __js_pref + '/sql.js',
             'bdhecker/load_codemirror.js'
         ]

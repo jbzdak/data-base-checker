@@ -4,7 +4,7 @@ if not window.bdchecker?
 
 onload = () =>
 
-  textarea = document.getElementById("id_submission")
+  textarea = document.getElementById("id_user_input")
 
   window.bdchecker.codemirror = CodeMirror.fromTextArea textarea,
     mode: 'text/x-plsql',

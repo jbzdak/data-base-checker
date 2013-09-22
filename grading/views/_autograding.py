@@ -6,6 +6,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from grading.autograding._base import AutogradingException
 
 from grading.views._base import *
 
@@ -14,7 +15,7 @@ from grading.models import *
 
 class GradeTask(AutogradeGradePartView, FormView):
 
-    template_name = "grading/display_form.html"
+    template_name = "autograding/do_autograding.html"
 
 
     def get_form_class(self):
@@ -24,7 +25,11 @@ class GradeTask(AutogradeGradePartView, FormView):
 
         instance = form.save()
 
-        resut = self.autograder.autograde(self.current_grade, instance)
+        try:
+            resut = self.autograder.autograde(self.current_grade, instance)
+        except AutogradingException as e:
+            resut = e.grading_result
+
         autograding_result_model = AutogradingResult(
             student = self.student,
             grade_part = self.grade_part
@@ -34,9 +39,9 @@ class GradeTask(AutogradeGradePartView, FormView):
 
         return redirect("show-result", pk=autograding_result_model.pk)
 
-class GradingResult(StudentView, TemplateView):
+class GradingResult(StudentView, GradingBase):
 
-    template_name = "grading/base.html"
+    mixin_template = "autograding/autograde_result.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.autograde_result = AutogradingResult.objects.get(pk = kwargs['pk'])
@@ -48,7 +53,6 @@ class GradingResult(StudentView, TemplateView):
     def get_context_data(self, **kwargs):
         ctx =  super(GradingResult, self).get_context_data(**kwargs)
         ctx['object'] = self.autograde_result
-        ctx['template_to_include'] = 'grading/autograde_result.html'
         return ctx
 
 class CourseView(StudentView, GradingBase):

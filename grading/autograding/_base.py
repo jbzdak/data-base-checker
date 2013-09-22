@@ -2,6 +2,7 @@
 import abc
 from copy import copy
 from django.contrib.contenttypes.models import ContentType
+from django.template.loader import render_to_string
 from django.utils import six
 
 _AUTOGRADER_CACHE = {}
@@ -47,17 +48,25 @@ class AutogradingException(Exception):
 
 
 class GradingResult(object):
+
+    template_name = "autograding/grading_result_default_template.html"
+
     def __init__(self, grade, comment, long_message=None):
         super(GradingResult, self).__init__()
         self.grade = grade
         self.comment = comment
         self.long_message = long_message
 
+    def get_template_name(self):
+        return self.template_name
+
+    def grading_ctx(self):
+        return {
+            "obj": self
+        }
+
     def render(self):
-        #TODO do it better
-        return """
-        Grade {}
-        """.format(self.grade)
+        return render_to_string(self.get_template_name(), self.grading_ctx())
 
 class Autograder(six.with_metaclass(AutograderMetaclass)):
 

@@ -1,0 +1,18 @@
+
+<p>Your grade is: {{obj.grade}}</p>
+
+{% if obj.comment %}
+    <p>
+        {{obj.comment}}
+    </p>
+{% endif %}
+
+
+{% if obj.long_message %}
+    <h4>Additional details</h4>
+    <p>
+        {{obj.long_message}}
+    </p>
+{% endif %}
+
+

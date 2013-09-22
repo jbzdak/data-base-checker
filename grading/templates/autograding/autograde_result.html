@@ -1,0 +1,18 @@
+{% load i18n %}
+<div id="autograding-result">
+    <h1>Wyniki</h1>
+    <p>
+        {{ object.grading_result.render }}
+    </p>
+    <p>
+    {% with activity=object.grade_part.activity  %}
+        <ul>
+            <li>
+                <a href="{% url "student-course" name=activity.slug_field %}">
+                    {% trans "Return to activity" %}
+                </a>
+            </li>
+        </ul>
+    {% endwith %}
+    </p>
+</div>

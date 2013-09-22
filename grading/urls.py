@@ -8,7 +8,8 @@ admin.autodiscover()
 urlpatterns = patterns('grading.views',
     url(
         r'grade/course/(?P<group_id>\d+)/acitvity/(?P<activity_id>\d+)',
-        GradeGroupActivity.as_view()
+        GradeGroupActivity.as_view(),
+        name = "autograde-activity"
     ),
     url(
         r'my_grades',
@@ -17,6 +18,6 @@ urlpatterns = patterns('grading.views',
     url(r'autograde/(?P<grade_part>\d+)', GradeTask.as_view(), name="do-autograde"),
     url(r'autograde/view/(?P<pk>\d+)', GradingResult.as_view(), name="show-result"),
     url(r'activity/(?P<name>[\w\d\-]+)', GradeActivity.as_view(), name="activity"),
-    url(r'course/(?P<name>[\w\d\-]+)', CourseView.as_view() )
+    url(r'course/(?P<name>[\w\d\-]+)', CourseView.as_view(), name="student-course")
 
 )

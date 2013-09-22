@@ -2,7 +2,9 @@
 
 from configparser import ConfigParser
 import unittest
-from django.db import transaction, connection
+
+from django.utils.translation import ugettext_lazy as _
+from django.db import transaction, connections, DatabaseError
 from django.forms import CharField
 
 from django.forms.models import ModelForm
@@ -60,11 +62,8 @@ class CompareQueriesAutograder(SQLAutograder):
 
         for kw in self.__INVALID_KEYWORDS:
             if kw in user_sql:
-                message = "Zapytanie zawierało niedozwolone słowo kluczowe SQL: {}".format(kw)
+                message = _("Query contained illegal SQL: {}").format(kw)
                 raise AutogradingException(GradingResult(2.0, message))
-
-
-
 
     def __descr(self, descr):
         return [c[0] for c in descr]
@@ -73,9 +72,16 @@ class CompareQueriesAutograder(SQLAutograder):
         self.__tc.assertEqual(
             self.__descr(cursor1.description),
             self.__descr(cursor2.description),
-            u"Opisy kolumn są różne dla Waszego zapytania oraz zapytania modelowego. " +
-            u"Sprawdź proszę kolumny zapytań."
+            _(u"Column metadata is different for model query and your query.")
         )
+
+    def __raise_from_exception(self, exc):
+        gr = GradingResult(
+            2.0,
+            _("There is an syntactic error in your sql code."),
+            _("Exception details are: {}").format(str(exc))
+        )
+        raise AutogradingException(gr) from exc
 
 
     def autograde(self, current_grade, model_instance):
@@ -86,19 +92,22 @@ class CompareQueriesAutograder(SQLAutograder):
 
             self.__verify_user_sql(sql)
 
-            user_sql = connection[self.DJANGO_DB].cursor()
-            expected_sql = connection[self.DJANGO_DB].cursor()
+            user_sql = connections[self.DJANGO_DB].cursor()
+            expected_sql = connections[self.DJANGO_DB].cursor()
 
             expected_sql.execute(self.expected_sql)
-            user_sql.execute(sql)
+            try:
+                user_sql.execute(sql)
+            except DatabaseError as e:
+                self.__raise_from_exception(e)
 
             try:
                 self.__assert_metadata(expected_sql, user_sql)
                 self.__tc.assertEqual(list(user_sql.fetchall()), list(expected_sql.fetchall()))
             except AssertionError as e:
                 return GradingResult(
-                    2.0, "Niepoprawny wynik zapytania", e.message)
+                    2.0, _("Query returned invalid results"), str(e))
 
-            return GradingResult(5.0, "Wszystko działa")
+            return GradingResult(5.0, _("OK"))
 
 
