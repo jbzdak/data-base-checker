@@ -12,8 +12,8 @@ class Migration(SchemaMigration):
         db.create_table('bdcheckerapp_team', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('activity', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.GradeableActivity'])),
-            ('student_1', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['grading.Student'])),
-            ('student_2', self.gf('django.db.models.fields.FloatField')()),
+            ('student_1', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['grading.Student'])),
+            ('student_2', self.gf('django.db.models.fields.related.ForeignKey')(related_name='+', to=orm['grading.Student'])),
         ))
         db.send_create_signal('bdcheckerapp', ['Team'])
 
@@ -28,10 +28,10 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Group'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['auth.Permission']", 'blank': 'True'})
+            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'to': "orm['auth.Permission']", 'symmetrical': 'False'})
         },
         'auth.permission': {
-            'Meta': {'unique_together': "(('content_type', 'codename'),)", 'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'object_name': 'Permission'},
+            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
             'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -40,28 +40,28 @@ class Migration(SchemaMigration):
         'auth.user': {
             'Meta': {'object_name': 'User'},
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'user_set'", 'symmetrical': 'False', 'to': "orm['auth.Group']", 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'blank': 'True', 'max_length': '75'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'blank': 'True', 'max_length': '30'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'user_set'", 'blank': 'True', 'to': "orm['auth.Group']", 'symmetrical': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'blank': 'True', 'max_length': '30'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'user_set'", 'symmetrical': 'False', 'to': "orm['auth.Permission']", 'blank': 'True'}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'user_set'", 'blank': 'True', 'to': "orm['auth.Permission']", 'symmetrical': 'False'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         'bdcheckerapp.team': {
             'Meta': {'object_name': 'Team'},
             'activity': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.GradeableActivity']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'student_1': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['grading.Student']"}),
-            'student_2': ('django.db.models.fields.FloatField', [], {})
+            'student_1': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['grading.Student']"}),
+            'student_2': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['grading.Student']"})
         },
         'contenttypes.contenttype': {
-            'Meta': {'unique_together': "(('app_label', 'model'),)", 'ordering': "('name',)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
+            'Meta': {'db_table': "'django_content_type'", 'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType'},
             'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -71,23 +71,23 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "('sort_key',)", 'object_name': 'Course'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
-            'slug_field': ('django.db.models.fields.SlugField', [], {'blank': 'True', 'unique': 'True', 'max_length': '50', 'null': 'True'}),
-            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'})
+            'slug_field': ('django.db.models.fields.SlugField', [], {'null': 'True', 'blank': 'True', 'unique': 'True', 'max_length': '50'}),
+            'sort_key': ('django.db.models.fields.CharField', [], {'blank': 'True', 'max_length': '100'})
         },
         'grading.gradeableactivity': {
             'Meta': {'object_name': 'GradeableActivity'},
-            'courses': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'activities'", 'symmetrical': 'False', 'to': "orm['grading.Course']"}),
-            'default_grade': ('django.db.models.fields.DecimalField', [], {'max_digits': '5', 'default': '2.0', 'decimal_places': '2'}),
+            'courses': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'activities'", 'to': "orm['grading.Course']", 'symmetrical': 'False'}),
+            'default_grade': ('django.db.models.fields.DecimalField', [], {'default': '2.0', 'max_digits': '5', 'decimal_places': '2'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'slug_field': ('django.db.models.fields.SlugField', [], {'blank': 'True', 'unique': 'True', 'max_length': '50', 'null': 'True'}),
-            'sort_key': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'})
+            'slug_field': ('django.db.models.fields.SlugField', [], {'null': 'True', 'blank': 'True', 'unique': 'True', 'max_length': '50'}),
+            'sort_key': ('django.db.models.fields.CharField', [], {'blank': 'True', 'max_length': '100'})
         },
         'grading.student': {
             'Meta': {'ordering': "('user__last_name', 'user__first_name', 'user__email', 'user__pk')", 'object_name': 'Student'},
-            'course': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'students'", 'to': "orm['grading.Course']", 'blank': 'True', 'null': 'True'}),
+            'course': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'students'", 'blank': 'True', 'null': 'True', 'to': "orm['grading.Course']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'student_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100', 'null': 'True'}),
+            'student_id': ('django.db.models.fields.CharField', [], {'null': 'True', 'unique': 'True', 'max_length': '100'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'student'", 'unique': 'True', 'to': "orm['auth.User']"})
         }
     }

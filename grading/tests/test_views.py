@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.http.request import HttpRequest
 from django.test import Client
 from django.test.testcases import TestCase
+from django.utils.formats import localize
 from grading.models import Course, GradeableActivity
 from grading.models import PartialGrade, StudentGrade
 from grading.views import GradeGroupActivity
@@ -195,7 +196,8 @@ class TestAutogradingGradeView(BaseTest):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 1)
-        self.assertContains(response, str(grade))
+
+        self.assertContains(response, localize(grade, True))
         self.assertEqual(len(PartialGrade.objects.all()), 1)
         g = PartialGrade.objects.get()
         self.assertEqual(g.grade, grade)

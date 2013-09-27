@@ -46,7 +46,7 @@ def grade_student(activity, student, grade):
 
     if len(grade_parts.all()) == 0:
         grade.grade = activity.default_grade
-        grade.short_description = _("No tasks for activity were done")
+        grade.short_description = _("No grade parts assigned to activity")
         return
 
     for gp in grade_parts.all():

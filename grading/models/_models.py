@@ -4,6 +4,7 @@ from django.db import models
 
 # Create your models here.
 from django.template.defaultfilters import slugify
+from django.utils.encoding import python_2_unicode_compatible
 from grading.autograding import get_autograders
 from picklefield.fields import PickledObjectField
 
@@ -28,7 +29,7 @@ class UniqueNamedSortable(models.Model):
 
     name = models.CharField("Object name", max_length=100, null=False, blank=False, unique=True)
     sort_key = models.CharField("Sort key", max_length=100, null=False, blank=True)
-    slug_field = models.SlugField(unique=True, null=True, blank=True)
+    slug_field = models.SlugField(max_length=100, unique=True, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -53,7 +54,7 @@ class NamedSortable(models.Model):
 
     name = models.CharField("Object name", max_length=100, null=False, blank=False)
     sort_key = models.CharField("Sort key", max_length=100, null=False, blank=True)
-    slug_field = models.SlugField(unique=True, null=True, blank=True)
+    slug_field = models.SlugField(max_length=100, unique=True, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -70,7 +71,7 @@ class NamedSortable(models.Model):
             self.slug_field = slugify(self.name)
         super().save(*args, **kwargs)
 
-
+@python_2_unicode_compatible
 class Student(BaseModel):
     """
     Represents a person that can be graded. By default all newly created users get
@@ -84,6 +85,12 @@ class Student(BaseModel):
         max_length=100, unique=True, null=True)
     course = models.ForeignKey(
         "Course", related_name="students", null=True, blank=True)
+
+    def __str__(self):
+        return "{} {}".format(self.user.first_name, self.user.last_name)
+
+
+
 
     class Meta:
         abstract = False
@@ -168,7 +175,7 @@ class BasePartialGrade(BaseModel):
     student = models.ForeignKey("Student")
     grade_part = models.ForeignKey("GradePart", null=False)
 
-    save_date = models.DateTimeField(auto_now=True)
+    save_date = models.DateTimeField(auto_now=True, null=True)
 
     short_description = models.TextField("Short description", null=True, blank=True)
     long_description = models.TextField("Long description", null=True, blank=True)

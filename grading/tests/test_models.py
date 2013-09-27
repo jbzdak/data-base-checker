@@ -136,7 +136,10 @@ class TestGrading(TestFixture):
 
     def test_default_grade_retuended_when_all_activities_unfinished(self):
 
-        self.assertEqual(grade_student(self.activity, self.student), 812.0)
+        sg = StudentGrade()
+        grade_student(self.activity, self.student, sg)
+        self.assertEqual(sg.grade, 812.0)
+        self.assertIn('Zadanie 1', sg.short_description)
 
     def test_default_grade_retuended_when_required_activities_unfinished(self):
 
@@ -146,7 +149,11 @@ class TestGrading(TestFixture):
            grade_part = self.grade_part_2
         )
 
-        self.assertEqual(grade_student(self.activity, self.student), 812.0)
+        sg = StudentGrade()
+        grade_student(self.activity, self.student, sg)
+
+        self.assertEqual(sg.grade, 812.0)
+        self.assertIn('Zadanie 1', sg.short_description)
 
     def test_grade_calculated_when_all_required_activitees_finished(self):
 
@@ -156,7 +163,10 @@ class TestGrading(TestFixture):
            grade_part = self.grade_part_1
         )
 
-        self.assertEqual(grade_student(self.activity, self.student), 3)
+        sg = StudentGrade()
+        grade_student(self.activity, self.student, sg)
+
+        self.assertEqual(sg.grade, 3)
 
     def test_grade_calculated_when_all_activities_finished(self):
 
@@ -172,7 +182,10 @@ class TestGrading(TestFixture):
            grade_part = self.grade_part_1
         )
 
-        self.assertEqual(grade_student(self.activity, self.student), 3)
+        sg = StudentGrade()
+        grade_student(self.activity, self.student, sg)
+
+        self.assertEqual(sg.grade, 3)
 
     def test_default_grade_returned_when_regired_activity_has_grade_below_passing(self):
 
@@ -188,7 +201,10 @@ class TestGrading(TestFixture):
            grade_part = self.grade_part_1
         )
 
-        self.assertEqual(grade_student(self.activity, self.student), 812.0)
+        sg = StudentGrade()
+        grade_student(self.activity, self.student, sg)
+
+        self.assertEqual(sg.grade, 812.0)
 
     def test_grade_gets_updated(self):
 
@@ -204,7 +220,11 @@ class TestGrading(TestFixture):
         #Updates the database so grade is calculated
         self.test_grade_calculated_when_all_activities_finished()
         #Sanity check
-        self.assertNotEqual(grade_student(self.activity, self.student), 812.0)
+
+        sg = StudentGrade()
+        grade_student(self.activity, self.student, sg)
+
+        self.assertNotEqual(sg.grade, 812.0)
 
         GradePart.objects.create(
             name = "test-xxx",
@@ -212,7 +232,9 @@ class TestGrading(TestFixture):
             activity = self.activity,
         )
 
-        self.assertEqual(grade_student(self.activity, self.student), 812.0)
+        sg = StudentGrade()
+        grade_student(self.activity, self.student, sg)
+        self.assertEqual(sg.grade, 812.0)
 
 class TestAutogradeableGradePart(TestFixture):
 

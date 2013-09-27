@@ -32,8 +32,8 @@ class TeamManager(models.Manager):
 
 class Team(models.Model):
     activity = models.ForeignKey("grading.GradeableActivity")
-    student_1 = models.ForeignKey("grading.Student")
-    student_2 = models.FloatField("grading.Student")
+    student_1 = models.ForeignKey("grading.Student", related_name="+")
+    student_2 = models.ForeignKey("grading.Student", related_name="+")
 
     objects = TeamManager()
 
