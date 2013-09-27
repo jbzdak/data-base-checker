@@ -158,6 +158,7 @@ class GradePart(NamedSortable):
 
     class Meta:
         app_label = "grading"
+        ordering = ["sort_key"]
         unique_together = [("activity", "name")]
 
 class BasePartialGrade(BaseModel):
@@ -167,7 +168,7 @@ class BasePartialGrade(BaseModel):
     student = models.ForeignKey("Student")
     grade_part = models.ForeignKey("GradePart", null=False)
 
-    save_date = models.DateTimeField(auto_now_add=True)
+    save_date = models.DateTimeField(auto_now=True)
 
     short_description = models.TextField("Short description", null=True, blank=True)
     long_description = models.TextField("Long description", null=True, blank=True)
@@ -252,5 +253,8 @@ class StudentGrade(BaseModel):
 
     student = models.ForeignKey("Student", related_name="grades")
     activity = models.ForeignKey("GradeableActivity")
-
     grade = models.DecimalField("Grade", max_digits=5, decimal_places=2)
+
+    short_description = models.TextField("Short description", null=True, blank=True)
+    long_description = models.TextField("Long description", null=True, blank=True)
+

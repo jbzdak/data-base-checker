@@ -86,8 +86,9 @@ class StudentGradeAdmin(admin.ModelAdmin):
 
 class AutoGraderGradePartAdmin(admin.TabularInline):
     model = AutogradeableGradePart
-    fields = ['pk', 'autograding_controller', 'name', 'weight', 'required']
+    fields = ['pk', 'autograding_controller', 'name', 'sort_key', 'weight', 'required']
     readonly_fields = ['pk']
+    ordering = ["sort_key"]
 
 class AutogradeableActivityAdmin(NamedSortableAdmin):
     inlines = [

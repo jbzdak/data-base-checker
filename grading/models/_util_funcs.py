@@ -1,5 +1,6 @@
 # coding=utf-8
-from grading.models._models import StudentGrade, GradePart, PartialGrade
+from django.utils.translation import ugettext_lazy as _
+from grading.models import StudentGrade, GradePart, PartialGrade
 
 __all__ = [
     'sync_partial_grade', 'sync_grades_for_activity',
@@ -32,17 +33,21 @@ def calculate_grade(grades, weights = None):
 
     return grade
 
-def grade_student(activity, student):
+def grade_student(activity, student, grade):
+
     grade_parts = GradePart.objects.filter(
         activity = activity
     )
+
     grades = []
     weights = []
 
-    required_grade_missing = False
+    missing_required_grades = []
 
     if len(grade_parts.all()) == 0:
-        return activity.default_grade
+        grade.grade = activity.default_grade
+        grade.short_description = _("No tasks for activity were done")
+        return
 
     for gp in grade_parts.all():
         weights.append(gp.weight)
@@ -53,36 +58,40 @@ def grade_student(activity, student):
             )
             if gp.required and gp.passing_grade is not None:
                 if partial_grade.grade < gp.passing_grade:
-                    required_grade_missing = True
+                    missing_required_grades.append(gp)
 
         except PartialGrade.DoesNotExist:
             grades.append(gp.default_grade)
             if gp.required:
-                required_grade_missing = True
+                missing_required_grades.append(gp)
         else:
             grades.append(partial_grade.grade)
 
-    if required_grade_missing:
-        return activity.default_grade
+    if missing_required_grades:
+        grade.grade =  activity.default_grade
+        part_names = [gp.name for gp in missing_required_grades]
+        grade.short_description = _("Some required tasks were missing or grade was to low, these tasks were {}").format(part_names)
+        return
 
-    return calculate_grade(grades, weights)
+    grade.grade = calculate_grade(grades, weights)
+    grade.short_description = _("Grade was calculated as weighted average of parts")
+    return
 
 def sync_grade(activity, student):
     grade_model, created = StudentGrade.objects.get_or_create(
         student = student,
         activity = activity,
         defaults = {
-            "grade": 0.0
+            "grade": activity.default_grade,
+            "short_description": _("Default grade after student/activity creation")
         }
     )
-    grade = grade_student(activity, student)
-    grade_model.grade = grade
+    grade_student(activity, student, grade=grade_model)
     grade_model.save()
 
 def sync_partial_grade(grade):
     activity = grade.grade_part.activity
     student = grade.student
-
     sync_grade(activity, student)
 
 def sync_partial_grade_with_autograde(autograde):
