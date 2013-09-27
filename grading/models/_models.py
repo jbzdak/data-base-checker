@@ -18,7 +18,9 @@ class BaseModel(models.Model):
         abstract = True
         app_label = "grading"
 
-class NamedSortable(models.Model):
+
+
+class UniqueNamedSortable(models.Model):
 
     """
     Class representing something that has :attr:`name` and :attr:`sort_key`
@@ -41,7 +43,32 @@ class NamedSortable(models.Model):
             self.sort_key = self.name
         if not self.slug_field:
             self.slug_field = slugify(self.name)
-        super(NamedSortable, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
+
+class NamedSortable(models.Model):
+
+    """
+    Class representing something that has :attr:`name` and :attr:`sort_key`
+    """
+
+    name = models.CharField("Object name", max_length=100, null=False, blank=False)
+    sort_key = models.CharField("Sort key", max_length=100, null=False, blank=True)
+    slug_field = models.SlugField(unique=True, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+        app_label = "grading"
+        ordering = ("sort_key",)
+
+    def save(self, *args, **kwargs):
+        if not self.sort_key:
+            self.sort_key = self.name
+        if not self.slug_field:
+            self.slug_field = slugify(self.name)
+        super().save(*args, **kwargs)
 
 
 class Student(BaseModel):
@@ -64,7 +91,7 @@ class Student(BaseModel):
         ordering = ("user__last_name", "user__first_name", "user__email", "user__pk")
 
 
-class Course(NamedSortable):
+class Course(UniqueNamedSortable):
     """
     Group of students. Groups can be assigned :class:`.GradeableActivity`, for
     each of these activities students will get grades.
@@ -98,6 +125,8 @@ class GradeableActivity(NamedSortable):
         help_text="Grade used when some required activities are not finished",
         default=2.0)
 
+    class Meta:
+        app_label = "grading"
 
 class GradePart(NamedSortable):
 
@@ -127,6 +156,10 @@ class GradePart(NamedSortable):
     required = models.BooleanField("Is activity required", default=False)
     activity = models.ForeignKey("GradeableActivity", related_name="grade_parts")
 
+    class Meta:
+        app_label = "grading"
+        unique_together = [("activity", "name")]
+
 class BasePartialGrade(BaseModel):
 
 
@@ -136,7 +169,7 @@ class BasePartialGrade(BaseModel):
 
     save_date = models.DateTimeField(auto_now_add=True)
 
-    short_description = models.CharField("Short description", max_length=100, null=True, blank=True)
+    short_description = models.TextField("Short description", null=True, blank=True)
     long_description = models.TextField("Long description", null=True, blank=True)
 
     class Meta:

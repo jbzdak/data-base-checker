@@ -14,6 +14,8 @@ from grading.autograding import Autograder, GradingResult, AutogradingException
 from grading.models import GradingTextInput
 
 
+__all__ = ['CompareQueriesAutograder']
+
 class SQLInputForm(ModelForm):
 
     user_input = CharField(

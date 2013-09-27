@@ -6,19 +6,12 @@ from django.contrib import admin
 from grading.models import *
 
 class NamedSortableAdmin(admin.ModelAdmin):
-    fieldsets = (
-        (None, {
-            'fields': ['name']
-        }),
-        ('Advanced options', {
-            'classes': ('collapse',),
-            'fields': ['sort_key', "slug_field"]
-        }),
-    )
 
     prepopulated_fields = {
         "slug_field" : ["name"]
     }
+
+    list_display = ["name"]
 
 class GradePartInline(admin.TabularInline):
     model = GradePart
@@ -96,7 +89,7 @@ class AutoGraderGradePartAdmin(admin.TabularInline):
     fields = ['pk', 'autograding_controller', 'name', 'weight', 'required']
     readonly_fields = ['pk']
 
-class AutogradeableActivityAdmin(admin.ModelAdmin):
+class AutogradeableActivityAdmin(NamedSortableAdmin):
     inlines = [
         AutoGraderGradePartAdmin
     ]

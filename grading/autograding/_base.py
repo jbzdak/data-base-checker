@@ -37,6 +37,8 @@ class AutograderMetaclass(abc.ABCMeta):
             return
         if not getattr(type, "NAME", None):
             return
+        if not isinstance(type.NAME, six.text_type):
+            raise ValueError()
         _AUTOGRADER_CACHE[type.NAME] = type
 
 

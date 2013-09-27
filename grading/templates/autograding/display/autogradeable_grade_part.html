@@ -32,7 +32,7 @@
     <ol>
     {% for part in grade.autogrades.all %}
         <li>
-            <p>{% blocktrans with grade=part.grade desc=grade.short_description date=hrade.save_date|naturaltime %}
+            <p>{% blocktrans with grade=part.grade desc=part.short_description date=hrade.save_date|naturaltime %}
             Attempt at {{ date }} result: {{ grade }}, description: {{ desc }}
         {% endblocktrans %}. <a href="{% url "show-result" pk=part.pk %}">{% trans "Details" %}</a></p>
         </li>

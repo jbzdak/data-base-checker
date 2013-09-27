@@ -8,7 +8,7 @@
         {{ object.grading_result.render }}
     </p>
     <p>
-    {% with activity=object.grade_part.activity part=object.grade_part  %}
+     {% with activity=object.grade_part.activity part=object.grade_part  %}
         <ul>
             <li>
                 <a href="{% url "activity" name=activity.slug_field %}#{{ part.slug_field  }}">

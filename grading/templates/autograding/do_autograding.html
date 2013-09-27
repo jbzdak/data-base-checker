@@ -7,17 +7,19 @@
 
 {% block grading_contents %}
 
-    <h1>{% blocktrans %}
-        Now grading {{ name }}
+    <h1>{% blocktrans with name=grade_part.name|lower %}
+        Now grading: "{{ name }}"
     {% endblocktrans %}</h1>
 
 
+    {% if autograder.DESCRIPTION %}
     <p>
         {{ autograder.DESCRIPTION }}
     </p>
+    {% endif %}
 
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">{% trans "Submit!" %}</button>
