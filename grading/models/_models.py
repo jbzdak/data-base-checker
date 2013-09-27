@@ -265,3 +265,7 @@ class StudentGrade(BaseModel):
     short_description = models.TextField("Short description", null=True, blank=True)
     long_description = models.TextField("Long description", null=True, blank=True)
 
+    @property
+    def passed(self):
+        return self.grade > self.activity.default_grade
+

@@ -3,6 +3,19 @@
 <div class="activty">
     <h1>{% blocktrans with name=activity.name %}Activity {{ name }}{% endblocktrans %}</h1>
 
+    <p>
+        {% if student_grade.passed %}
+        {% blocktrans with grade=student_grade.grade %}
+            Currently you have <strong>passed</strong> this activity with grade {{ grade }}.
+        {% endblocktrans %}
+        {% else %}
+        {% blocktrans with grade=student_grade.grade desc=student_grade.short_description %}
+            Curently you fail this activity with grade {{ grade }}. <br>
+            <small><strong>Details:</strong>{{ desc }}</small>
+        {% endblocktrans %}
+        {% endif %}
+    </p>
+
     <h2>{% trans "Elements in this activity" %}</h2>
 
     {% for part in activity.grade_parts.all %}

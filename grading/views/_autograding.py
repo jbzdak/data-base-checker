@@ -86,7 +86,8 @@ class GradeActivity(StudentView, GradingBase):
         ctx =  super(GradeActivity, self).get_context_data(**kwargs)
         ctx.update({
             "student": self.student,
-            "activity": self.activity
+            "activity": self.activity,
+            "student_grade": get_object_or_404(StudentGrade, student=self.student, activity=self.activity)
         })
         return ctx
 
