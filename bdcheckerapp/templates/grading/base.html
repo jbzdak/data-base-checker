@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block additional_head %}
+
+    {% block grading_additional_head %}
+
+    {% endblock  %}
+{% endblock %}
+
+{% block body %}
+    {% block grading_body %}
+    {% block grading_contents %}
+        {%  if template_to_include %}
+            {%  include template_to_include %}
+        {% endif %}
+    {% endblock grading_contents %}
+    {% endblock grading_body %}
+{% endblock %}

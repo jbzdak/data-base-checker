@@ -9,7 +9,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grading/', include("grading.urls")),
- #   url(r'test_sql', TestSql.as_view())
+    url(r'^konto/', include("bdcheckerapp.login_urls")),
+    url(r'^register/', include('bdcheckerapp.registration.backend.urls'),),
 )
 
 if settings.DEBUG:

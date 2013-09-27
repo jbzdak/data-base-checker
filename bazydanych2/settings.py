@@ -42,6 +42,12 @@ ALLOWED_HOSTS = []
 # In a Windows environment this must be set to your system time zone.
 TIME_ZONE = 'Europe/Warsaw'
 
+LOGIN_URL="/konto/login"
+
+ACCOUNT_ACTIVATION_DAYS = 3
+
+AUTOREGISTER_TO_COURSE = "group1"
+
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'pl-pl'
@@ -134,11 +140,9 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'south',
-    #'kombu.transport.django',
-    'bdcheckerapp',
     'grading',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'registration',
+    'bdcheckerapp'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -182,6 +186,8 @@ LOGGING = {
     }
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/tmp/app-messages'
 
 # DJCELERY CONFIG
 

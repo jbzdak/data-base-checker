@@ -51,8 +51,12 @@ class Student(BaseModel):
     :attr:`grading.models._signals.on_user_create`.
     """
 
-    user = models.OneToOneField("auth.User")
-    course = models.ForeignKey("Course", related_name="students", null=True, blank=True)
+    user = models.OneToOneField(
+        "auth.User", related_name="student")
+    student_id = models.CharField(
+        max_length=100, unique=True, null=True)
+    course = models.ForeignKey(
+        "Course", related_name="students", null=True, blank=True)
 
     class Meta:
         abstract = False

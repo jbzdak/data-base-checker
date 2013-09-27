@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{%  block contents %}
+    {% block form_header %}
+    {% if form_header %}
+        <h1>{{ form_header }}</h1>
+    {% endif %}
+    {% endblock %}
+    <form target="{{ form_target }}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Wyślij</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,3 @@
+
+{% url "registration_activate" activation_key=activation_key as link %}
+By aktywować konto kliknij na tego linka: <a href="{{ link }}">{{ link }}</a>,

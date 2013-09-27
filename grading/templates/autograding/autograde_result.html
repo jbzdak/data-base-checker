@@ -1,17 +1,25 @@
 {% load i18n %}
+
+{% load tgrading %}
+
 <div id="autograding-result">
     <h1>Wyniki</h1>
     <p>
         {{ object.grading_result.render }}
     </p>
     <p>
-    {% with activity=object.grade_part.activity  %}
+    {% with activity=object.grade_part.activity part=object.grade_part  %}
         <ul>
             <li>
-                <a href="{% url "student-course" name=activity.slug_field %}">
+                <a href="{% url "activity" name=activity.slug_field %}#{{ part.slug_field  }}">
                     {% trans "Return to activity" %}
                 </a>
             </li>
+            {% if part|can_grade:student %}
+            <li>
+                <a href="{% url "do-autograde" grade_part=part.pk %}">{% trans "Perform this activity again" %}</a>
+            </li>
+            {% endif %}
         </ul>
     {% endwith %}
     </p>

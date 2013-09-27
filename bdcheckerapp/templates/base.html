@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    {% block additional_head %}
+
+    {% endblock  %}
+</head>
+<body>
+    {% block body %}
+    {% block contents %}
+        {%  if template_to_include %}
+            {%  include template_to_include %}
+        {% endif %}
+    {% endblock contents %}
+    {% endblock body %}
+</body>
+</html>

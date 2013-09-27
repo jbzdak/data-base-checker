@@ -40,6 +40,7 @@ class StudentView(LoginView):
         super(StudentView, self).__init__(**kwargs)
         self.student = None
 
+    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.student = get_object_or_404(Student, user = self.request.user)
         return super(StudentView, self).dispatch(request, *args, **kwargs)

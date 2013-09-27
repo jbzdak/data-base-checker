@@ -3,7 +3,7 @@
 {% load humanize %}
 
 <div class="grade-part">
-    <h3 id="{{ part.slug }}">{% blocktrans with name=part.name%}Part "{{ name }}"{% endblocktrans %}</h3>
+    <h3 id="{{ part.slug_field }}">{% blocktrans with name=part.name%}Part "{{ name }}"{% endblocktrans %}</h3>
 
     {% with grade=part|grade_for_student:student %}
     {% if grade %}
