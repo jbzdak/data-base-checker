@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
@@ -17,13 +18,15 @@ class GradeTask(AutogradeGradePartView, FormView):
 
     template_name = "autograding/do_autograding.html"
 
-
     def get_form_class(self):
         return self.autograder.SubmissionForm
 
     def form_valid(self, form):
 
         instance = form.save()
+
+        if not self.autograder.can_grade_student(self.grade_part, self.student):
+            raise PermissionDenied()
 
         try:
             resut = self.autograder.autograde(self.current_grade, instance)

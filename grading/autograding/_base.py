@@ -1,6 +1,7 @@
 # coding=utf-8
 import abc
 from copy import copy
+from datetime import datetime
 from django.contrib.contenttypes.models import ContentType
 from django.template.loader import render_to_string
 from django.utils import six
@@ -38,7 +39,7 @@ class AutograderMetaclass(abc.ABCMeta):
         if not getattr(type, "NAME", None):
             return
         if not isinstance(type.NAME, six.text_type):
-            raise ValueError()
+            raise ValueError("Autograder name {} is not an instance of {}".format(type.NAME, six.text_type))
         _AUTOGRADER_CACHE[type.NAME] = type
 
 
@@ -93,7 +94,9 @@ class Autograder(six.with_metaclass(AutograderMetaclass)):
         return ContentType.objects.get_for_model(self.SubmissionModel)
 
     def can_grade_student(self, grade_part, student):
-        return True
+        if grade_part.may_be_autograded_to is None:
+            return True
+        return datetime.now() < grade_part.may_be_autograded_to
 
     @abc.abstractmethod
     def autograde(self, current_grade, model_instance):

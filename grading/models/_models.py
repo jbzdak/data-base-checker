@@ -133,6 +133,10 @@ class GradeableActivity(NamedSortable):
         help_text="Grade used when some required activities are not finished",
         default=2.0)
 
+    may_be_autograded_to = models.DateTimeField(
+        "May be autograded to", default=None, null=True, blank=True
+    )
+
     class Meta:
         app_label = "grading"
 
@@ -253,6 +257,10 @@ class AutogradeableGradePart(GradePart):
         choices=[("1", "This should be autofilledd"), ("2", "This should be autofilledd")],
         max_length=1000)
 
+    may_be_autograded_to = models.DateTimeField(
+        "May be autograded to", default=None, null=True, blank=True
+    )
+
     def __init__(self, *args, **kwargs):
         super(AutogradeableGradePart, self).__init__(*args, **kwargs)
         self._meta.get_field('name').blank = True
@@ -261,6 +269,9 @@ class AutogradeableGradePart(GradePart):
     def save(self, *args, **kwargs):
         if not self.name:
             self.name = self.autograding_controller
+
+        if not self.pk and not self.may_be_autograded_to:
+            self.may_be_autograded_to = self.activity.may_be_autograded_to
 
         super(AutogradeableGradePart, self).save(*args, **kwargs)
 
