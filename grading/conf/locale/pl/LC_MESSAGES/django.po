@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-01 22:39+0200\n"
+"POT-Creation-Date: 2013-10-01 22:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,51 +78,53 @@ msgid "You did use word '{}' which is forbidden"
 msgstr "Użyłeś słowa kluczowego: '{}' które jest zakazane"
 
 #: autograding/autograders/compare_sql_results.py:96
-#,
-msgid "You must use at least {expecyed} subselects, I detected you used {used}"
-msgstr "Musisz użyć co naj"
+msgid "You must use at least {expected} subselects, I detected you used {used}"
+msgstr ""
+"Musisz użyć co najmniej {expected} pod zapytań, według mnie użyłeś: {used}"
 
 #: autograding/autograders/compare_sql_results.py:99
 msgid "You used a subselect which is forbidden"
-msgstr ""
+msgstr "Użyłeś podzapytania, co jest zakazane!"
 
 #: autograding/autograders/compare_sql_results.py:134
 msgid "Query returned invalid results"
-msgstr ""
+msgstr "Zapytanie zwróciło niepoprawne wyniki"
 
 #: autograding/autograders/compare_sql_results.py:136
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: autograding/autograders/form_autograder.py:56
 msgid "Following entries were invalid: {}"
-msgstr ""
+msgstr "Podane wartości były niepoprawne: {}"
 
 #: models/_util_funcs.py:49
 msgid "No grade parts assigned to activity"
-msgstr ""
+msgstr "W tej aktywności nie przypisano jeszcze zadań"
 
 #: models/_util_funcs.py:73
 msgid ""
 "Some required tasks were missing or grade was to low, these tasks were {}"
 msgstr ""
+"Niektóre z wymaganych zadań nie zostały wykonane, lub ocena z nich uzyskana "
+"była zbyt niska. Tymi zadaniami były: {}. "
 
 #: models/_util_funcs.py:77
 msgid "Grade was calculated as weighted average of parts"
-msgstr ""
+msgstr "Ocena została obliczona jako średnia ważona części"
 
 #: models/_util_funcs.py:86
 msgid "Default grade after student/activity creation"
-msgstr ""
+msgstr "Domyślna ocena po utorzeniu studenta lub aktywności"
 
 #: templates/admin/grading/student/change_form.html:7
 msgid "Change user"
-msgstr ""
+msgstr "Zmień użytkownika"
 
 #: templates/autograding/autograde_activity.html:4
 #, python-format
 msgid "Activity %(name)s"
-msgstr ""
+msgstr "Aktywność: %(name)s"
 
 #: templates/autograding/autograde_activity.html:8
 #, python-format
@@ -131,7 +133,8 @@ msgid ""
 "            Currently you have <strong>passed</strong> this activity with "
 "grade %(grade)s.\n"
 "        "
-msgstr ""
+msgstr "\n"
+"Udało Ci się <strong>zaliczyć</strong> tą aktywność z oceną: %(grade)s."
 
 #: templates/autograding/autograde_activity.html:12
 #, python-format
@@ -141,23 +144,26 @@ msgid ""
 "            <small><strong>Details:</strong>%(desc)s</small>\n"
 "        "
 msgstr ""
+"\n"
+"Nie udało Ci się zaliczyć tej aktywności, otrzymujesz ocenę:%(grade)s."
+"<small><strong>Szczegóły:</strong>%(desc)s</small>"
 
 #: templates/autograding/autograde_activity.html:19
 msgid "Elements in this activity"
-msgstr ""
+msgstr "Zadania w tej aktywności"
 
 #: templates/autograding/autograde_activity.html:24
 msgid "List is empty"
-msgstr ""
+msgstr "Lista jest pusta"
 
 #: templates/autograding/autograde_result.html:15
 msgid "Return to activity"
-msgstr ""
+msgstr "Powróć do aktywności"
 
 #: templates/autograding/autograde_result.html:20
 #: templates/autograding/display/autogradeable_grade_part.html:20
 msgid "Perform this activity again"
-msgstr ""
+msgstr "Wykonaj tą aktywność ponownie"
 
 #: templates/autograding/do_autograding.html:10
 #, python-format
@@ -166,15 +172,17 @@ msgid ""
 "        Now grading: \"%(name)s\"\n"
 "    "
 msgstr ""
+"\n"
+"Teraz oceniamy: \"%(name)s\""
 
 #: templates/autograding/do_autograding.html:25
 msgid "Submit!"
-msgstr ""
+msgstr "Wyślij!"
 
 #: templates/autograding/display/autogradeable_grade_part.html:6
 #, python-format
 msgid "Part \"%(name)s\""
-msgstr ""
+msgstr "Zadanie: \"%(name)s\""
 
 #: templates/autograding/display/autogradeable_grade_part.html:11
 #, python-format
@@ -182,15 +190,15 @@ msgid ""
 "\n"
 "    This task is already graded, you got: <strong>%(grade)s.</strong>\n"
 "        "
-msgstr ""
+msgstr "\nTo zadanie jest już ocenione! Otrzymałeś: <strong>%(grade)s.</strong> "
 
 #: templates/autograding/display/autogradeable_grade_part.html:22
 msgid "Can't perform grading now"
-msgstr ""
+msgstr "Nie można teraz odenić tego zadania!"
 
 #: templates/autograding/display/autogradeable_grade_part.html:32
 msgid "Attempt list"
-msgstr ""
+msgstr "Lista prób"
 
 #: templates/autograding/display/autogradeable_grade_part.html:36
 #, python-format
@@ -198,20 +206,20 @@ msgid ""
 "\n"
 "            Attempt at %(date)s result: %(grade)s, description: %(desc)s\n"
 "        "
-msgstr ""
+msgstr "\nPróba z %(date)s ocena: %(grade)s, opis: %(desc)s"
 
 #: templates/autograding/display/autogradeable_grade_part.html:38
 msgid "Details"
-msgstr ""
+msgstr "Szczegóły"
 
 #: templates/grading/course.html:3
 #, python-format
 msgid "Course %(name)s"
-msgstr ""
+msgstr "Kurs %(name)s"
 
 #: templates/grading/grade_group_activity.html:15
 msgid "Student Grades"
-msgstr ""
+msgstr "Oceny studentów"
 
 #: templates/grading/grade_group_activity.html:21
 #, python-format
@@ -219,7 +227,7 @@ msgid ""
 "\n"
 "                        Mark for %(name)s\n"
 "                    "
-msgstr ""
+msgstr "\nOcena za %(name)s"
 
 #: templates/grading/grade_group_activity.html:29
 #, python-format
@@ -227,18 +235,18 @@ msgid ""
 "\n"
 "                    Final grade for %(activity)s\n"
 "                "
-msgstr ""
+msgstr "\nOcena sumaryczna z aktywności: %(activity)s"
 
 #: templates/grading/my_grades_contents.html:3
 #, python-format
 msgid ""
 "\n"
 "        Displaying grades for %(first_name)s %(last_name)s\n"
-msgstr ""
+msgstr "\nWyświetlamy oceny dla %(first_name)s %(last_name)s\n"
 
 #: templates/grading/my_grades_contents.html:10
 #, python-format
 msgid ""
 "\n"
 "Activity: %(name)s grade: %(grade)s\n"
-msgstr ""
+msgstr "\nAktywność:  %(name)s  ocena: %(grade)s\n"
