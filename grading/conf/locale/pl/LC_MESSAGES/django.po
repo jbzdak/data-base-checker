@@ -1,0 +1,244 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-10-01 22:39+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: forms.py:24
+msgid "Grade"
+msgstr "Ocena: "
+
+#: forms.py:28
+msgid "Grade description"
+msgstr "Opis do Oceny: "
+
+#: forms.py:36
+msgid "If short description is set you should also set grade"
+msgstr "Kiedy ustawias opis oceny, powinieneś również wystawić ocenę"
+
+#: autograding/autograders/compare_input_autograder.py:15
+msgid "Submitted file"
+msgstr "Wysyłany plik"
+
+#: autograding/autograders/compare_input_autograder.py:68
+msgid "File contents are different than expected"
+msgstr "Zawartość pliku jest inna niż oczekiwana"
+
+#: autograding/autograders/compare_input_autograder.py:83
+msgid ""
+"File is to large to be graded, this submission allows maximum of {max_size} "
+"bytes"
+msgstr ""
+"Plik jest zbyt duży by był oceniany, w tym miejscu możesz załączyć pliki nie "
+"większe niż {max_size}bajtów"
+
+#: autograding/autograders/compare_input_autograder.py:85
+msgid ""
+"Content comparator returned following diff\n"
+": {diff}"
+msgstr ""
+"Porównywarka zawartości zwróciła taką różnicę pomiędzy oczekiwanym plikiem a "
+"plikiem otrzymanym: {diff}"
+
+#: autograding/autograders/compare_sql_results.py:62
+msgid "Query contained illegal SQL: {}"
+msgstr "Zapytanie zawiera nielegalne słowa kluczowe: {}"
+
+#: autograding/autograders/compare_sql_results.py:72
+msgid "Column metadata is different for model query and your query."
+msgstr "Zazwy kolumn zapytania są inne niż dla zapytania modelowego"
+
+#: autograding/autograders/compare_sql_results.py:78
+msgid "There is an syntactic error in your sql code."
+msgstr "Twoje zapytanie zawiera błąd składniowy"
+
+#: autograding/autograders/compare_sql_results.py:79
+msgid "Exception details are: {}"
+msgstr "Detale wyjątku to: {}"
+
+#: autograding/autograders/compare_sql_results.py:88
+msgid "You did not use word '{}' which is required"
+msgstr "Nie użyłeś słowa kluczowego: '{}', słowo to jest wymagane."
+
+#: autograding/autograders/compare_sql_results.py:91
+msgid "You did use word '{}' which is forbidden"
+msgstr "Użyłeś słowa kluczowego: '{}' które jest zakazane"
+
+#: autograding/autograders/compare_sql_results.py:96
+#,
+msgid "You must use at least {expecyed} subselects, I detected you used {used}"
+msgstr "Musisz użyć co naj"
+
+#: autograding/autograders/compare_sql_results.py:99
+msgid "You used a subselect which is forbidden"
+msgstr ""
+
+#: autograding/autograders/compare_sql_results.py:134
+msgid "Query returned invalid results"
+msgstr ""
+
+#: autograding/autograders/compare_sql_results.py:136
+msgid "OK"
+msgstr ""
+
+#: autograding/autograders/form_autograder.py:56
+msgid "Following entries were invalid: {}"
+msgstr ""
+
+#: models/_util_funcs.py:49
+msgid "No grade parts assigned to activity"
+msgstr ""
+
+#: models/_util_funcs.py:73
+msgid ""
+"Some required tasks were missing or grade was to low, these tasks were {}"
+msgstr ""
+
+#: models/_util_funcs.py:77
+msgid "Grade was calculated as weighted average of parts"
+msgstr ""
+
+#: models/_util_funcs.py:86
+msgid "Default grade after student/activity creation"
+msgstr ""
+
+#: templates/admin/grading/student/change_form.html:7
+msgid "Change user"
+msgstr ""
+
+#: templates/autograding/autograde_activity.html:4
+#, python-format
+msgid "Activity %(name)s"
+msgstr ""
+
+#: templates/autograding/autograde_activity.html:8
+#, python-format
+msgid ""
+"\n"
+"            Currently you have <strong>passed</strong> this activity with "
+"grade %(grade)s.\n"
+"        "
+msgstr ""
+
+#: templates/autograding/autograde_activity.html:12
+#, python-format
+msgid ""
+"\n"
+"            Curently you fail this activity with grade %(grade)s. <br>\n"
+"            <small><strong>Details:</strong>%(desc)s</small>\n"
+"        "
+msgstr ""
+
+#: templates/autograding/autograde_activity.html:19
+msgid "Elements in this activity"
+msgstr ""
+
+#: templates/autograding/autograde_activity.html:24
+msgid "List is empty"
+msgstr ""
+
+#: templates/autograding/autograde_result.html:15
+msgid "Return to activity"
+msgstr ""
+
+#: templates/autograding/autograde_result.html:20
+#: templates/autograding/display/autogradeable_grade_part.html:20
+msgid "Perform this activity again"
+msgstr ""
+
+#: templates/autograding/do_autograding.html:10
+#, python-format
+msgid ""
+"\n"
+"        Now grading: \"%(name)s\"\n"
+"    "
+msgstr ""
+
+#: templates/autograding/do_autograding.html:25
+msgid "Submit!"
+msgstr ""
+
+#: templates/autograding/display/autogradeable_grade_part.html:6
+#, python-format
+msgid "Part \"%(name)s\""
+msgstr ""
+
+#: templates/autograding/display/autogradeable_grade_part.html:11
+#, python-format
+msgid ""
+"\n"
+"    This task is already graded, you got: <strong>%(grade)s.</strong>\n"
+"        "
+msgstr ""
+
+#: templates/autograding/display/autogradeable_grade_part.html:22
+msgid "Can't perform grading now"
+msgstr ""
+
+#: templates/autograding/display/autogradeable_grade_part.html:32
+msgid "Attempt list"
+msgstr ""
+
+#: templates/autograding/display/autogradeable_grade_part.html:36
+#, python-format
+msgid ""
+"\n"
+"            Attempt at %(date)s result: %(grade)s, description: %(desc)s\n"
+"        "
+msgstr ""
+
+#: templates/autograding/display/autogradeable_grade_part.html:38
+msgid "Details"
+msgstr ""
+
+#: templates/grading/course.html:3
+#, python-format
+msgid "Course %(name)s"
+msgstr ""
+
+#: templates/grading/grade_group_activity.html:15
+msgid "Student Grades"
+msgstr ""
+
+#: templates/grading/grade_group_activity.html:21
+#, python-format
+msgid ""
+"\n"
+"                        Mark for %(name)s\n"
+"                    "
+msgstr ""
+
+#: templates/grading/grade_group_activity.html:29
+#, python-format
+msgid ""
+"\n"
+"                    Final grade for %(activity)s\n"
+"                "
+msgstr ""
+
+#: templates/grading/my_grades_contents.html:3
+#, python-format
+msgid ""
+"\n"
+"        Displaying grades for %(first_name)s %(last_name)s\n"
+msgstr ""
+
+#: templates/grading/my_grades_contents.html:10
+#, python-format
+msgid ""
+"\n"
+"Activity: %(name)s grade: %(grade)s\n"
+msgstr ""

@@ -93,7 +93,7 @@ class CompareQueriesAutograder(SQLAutograder):
         detected_count = sql.count("select")
         if subselect_count:
             if detected_count <= subselect_count:
-                errors.append(_("You must use at least {} subselects, I detected you used {}".format(subselect_count, detected_count)))
+                errors.append(_("You must use at least {expected} subselects, I detected you used {used}".format(expected=subselect_count, used=detected_count)))
         if subselect_count == 0:
             if detected_count != 1:
                 errors.append(_("You used a subselect which is forbidden".format(subselect_count, detected_count)))
