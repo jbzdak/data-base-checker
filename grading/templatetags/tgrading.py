@@ -25,4 +25,4 @@ def can_grade(grade_part, student):
             )
         except AutogradeableGradePart.DoesNotExist:
             return False
-    return grade_part.autograder().can_grade_student(student)
+    return grade_part.autograder().can_grade_student(grade_part, student)

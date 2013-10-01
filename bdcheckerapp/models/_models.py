@@ -8,6 +8,7 @@ import bdcheckerapp.autograding
 
 from grading.models._models import PartialGrade, AutogradingResult
 
+__all__= ['Team']
 
 class TeamManager(models.Manager):
 
@@ -18,6 +19,9 @@ class TeamManager(models.Manager):
             )
         except Team.DoesNotExist:
             return None
+
+    def all_teams_for_student(self, student):
+        return Team.objects.filter(Q(student_1=student) | Q(student_2=student))
 
     def get_other_student(self, student, activity):
         team = self.get_team_for_student(student, activity)
@@ -37,30 +41,10 @@ class Team(models.Model):
 
     objects = TeamManager()
 
-def sync_students_in_team(autograding_result):
-    partial_grade = autograding_result.partial_grade
-    grade_part = partial_grade.grade_part
-    sender_student = partial_grade.student
-    activity = grade_part.activity
+    class Meta:
+        unique_together = [
+            ['activity', 'student_1'],
+            ['activity', 'student_2']
+        ]
+        app_label = "bdcheckerapp"
 
-    other = Team.objects.get_other_student(sender_student, activity)
-
-    if other is None:
-        return
-
-    grade_copy = copy(autograding_result)
-    grade_copy.pk = None
-    grade_copy.partial_grade, __ = PartialGrade.objects.get_or_create(
-        student = other,
-        grade_part = grade_part,
-    )
-    grade_copy.short_description = "[From team!]:{}".format(autograding_result.short_description)
-    grade_copy.save()
-
-
-@receiver(post_save, sender=AutogradingResult)
-def autograding_result_signal(instance, **kwargs):
-    if kwargs.get('raw', False):
-        return
-
-    sync_students_in_team(instance)

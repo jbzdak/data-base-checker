@@ -92,7 +92,7 @@ class Autograder(six.with_metaclass(AutograderMetaclass)):
     def submission_contenttype(self):
         return ContentType.objects.get_for_model(self.SubmissionModel)
 
-    def can_grade_student(self, student):
+    def can_grade_student(self, grade_part, student):
         return True
 
     @abc.abstractmethod

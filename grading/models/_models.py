@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 # Create your models here.
+from django.db.models.manager import Manager
 from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 from grading.autograding import get_autograders
@@ -135,6 +136,22 @@ class GradeableActivity(NamedSortable):
     class Meta:
         app_label = "grading"
 
+
+class GradePartManager(Manager):
+
+    def grade(self, grade_part, student, grade, short_message=None):
+        partial_grade, __ = PartialGrade.objects.get_or_create(
+            grade_part=grade_part,
+            student=student,
+            defaults = {
+                "grade": grade
+            }
+        )
+        partial_grade.grade=grade
+        partial_grade.short_description = short_message
+        partial_grade.save()
+        return partial_grade
+
 class GradePart(NamedSortable):
 
     """
@@ -155,13 +172,21 @@ class GradePart(NamedSortable):
     default_grade = models.DecimalField(
         "Default grade", max_digits=5, decimal_places=2,
         help_text="Grade used when student did not get partial grade for this GradePart",
-        default=2.0)
+        default=None)
     passing_grade = models.DecimalField(
         "Passing grade", max_digits=5, decimal_places=2,
         help_text="If grade is lower than passing grade we will assume this as not finished task",
         default=3.0)
     required = models.BooleanField("Is activity required", default=False)
     activity = models.ForeignKey("GradeableActivity", related_name="grade_parts")
+
+    objects = GradePartManager()
+
+    def save(self, *args, **kwargs):
+        if self.default_grade is None :
+            self.default_grade = self.activity.default_grade
+        super().save(*args, **kwargs)
+
 
     class Meta:
         app_label = "grading"

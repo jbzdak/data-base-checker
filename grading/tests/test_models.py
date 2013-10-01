@@ -133,7 +133,6 @@ class TestGrading(TestFixture):
         self.activity.default_grade = 812.0
         self.activity.save()
 
-
     def test_default_grade_retuended_when_all_activities_unfinished(self):
 
         sg = StudentGrade()
@@ -143,11 +142,7 @@ class TestGrading(TestFixture):
 
     def test_default_grade_retuended_when_required_activities_unfinished(self):
 
-        PartialGrade.objects.create(
-           student = self.student,
-           grade = 5.0,
-           grade_part = self.grade_part_2
-        )
+        GradePart.objects.grade(self.grade_part_2, self.student, 5)
 
         sg = StudentGrade()
         grade_student(self.activity, self.student, sg)
@@ -157,11 +152,7 @@ class TestGrading(TestFixture):
 
     def test_grade_calculated_when_all_required_activitees_finished(self):
 
-        PartialGrade.objects.create(
-           student = self.student,
-           grade = 5.0,
-           grade_part = self.grade_part_1
-        )
+        GradePart.objects.grade(self.grade_part_1, self.student, 5)
 
         sg = StudentGrade()
         grade_student(self.activity, self.student, sg)
@@ -170,17 +161,9 @@ class TestGrading(TestFixture):
 
     def test_grade_calculated_when_all_activities_finished(self):
 
-        PartialGrade.objects.create(
-           student = self.student,
-           grade = 3,
-           grade_part = self.grade_part_2
-        )
 
-        PartialGrade.objects.create(
-           student = self.student,
-           grade = 3.0,
-           grade_part = self.grade_part_1
-        )
+        GradePart.objects.grade(self.grade_part_2, self.student, 3)
+        GradePart.objects.grade(self.grade_part_1, self.student, 3)
 
         sg = StudentGrade()
         grade_student(self.activity, self.student, sg)
@@ -189,17 +172,8 @@ class TestGrading(TestFixture):
 
     def test_default_grade_returned_when_regired_activity_has_grade_below_passing(self):
 
-        PartialGrade.objects.create(
-           student = self.student,
-           grade = 3,
-           grade_part = self.grade_part_2
-        )
-
-        PartialGrade.objects.create(
-           student = self.student,
-           grade = 2,
-           grade_part = self.grade_part_1
-        )
+        GradePart.objects.grade(self.grade_part_1, self.student, 2)
+        GradePart.objects.grade(self.grade_part_2, self.student, 3)
 
         sg = StudentGrade()
         grade_student(self.activity, self.student, sg)
@@ -208,11 +182,7 @@ class TestGrading(TestFixture):
 
     def test_grade_gets_updated(self):
 
-       PartialGrade.objects.create(
-           student = self.student,
-           grade = 5.0,
-           grade_part = self.grade_part_1
-       )
+       GradePart.objects.grade(self.grade_part_1, self.student, 5.0)
 
        self.assertEqual(StudentGrade.objects.get(student=self.student, activity=self.activity).grade, 3)
 
