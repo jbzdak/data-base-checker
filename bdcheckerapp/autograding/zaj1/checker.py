@@ -8,7 +8,7 @@ from django.conf import settings
 from configparser import ConfigParser
 from django import forms
 from bdcheckerapp.forms import SQLInputForm
-from grading.autograding.autograders import CompareQueriesAutograder, CompareFilesAutograder
+from grading.autograding.autograders import ConfigBackedCompareQueries, CompareFilesAutograder
 from grading.autograding.autograders.form_autograder import FormAutograder
 
 DIRNAME = os.path.join(settings.BD_AUTOGRADER_CONFIG_DIR, "zaj1")
@@ -18,15 +18,12 @@ CONFIG_FILE = os.path.join(DIRNAME, 'expected_sql.ini')
 cp = ConfigParser()
 cp.read(CONFIG_FILE)
 
-for key in cp['DEFAULT']:
-    if key.endswith('description'):
-        continue
+for section in cp.sections():
 
-    class Zaj1Checker(CompareQueriesAutograder):
+    class Zaj1Checker(ConfigBackedCompareQueries):
 
-        NAME = key
+        NAME = section
         CONFIG_FILE = CONFIG_FILE
-        DESCRIPTION = cp.get('DEFAULT', key + '.description', fallback=None)
         DJANGO_DB = "zaj1db"
 
         @property

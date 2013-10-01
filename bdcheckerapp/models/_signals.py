@@ -9,7 +9,7 @@ from bdcheckerapp.models import Team
 from grading.models import PartialGrade, AutogradingResult
 
 __local = local()
-__local.executing=False
+__local.__dict__.setdefault('executing', False)
 
 def sync_students_in_team_autograding(autograding_result):
     partial_grade = autograding_result.partial_grade
@@ -69,7 +69,7 @@ def autograding_result_signal(instance, **kwargs):
     if kwargs.get('raw', False):
         return
 
-    if not __local.executing:
+    if not getattr(__local, "executing", False):
         try:
             __local.executing = True
             if not getattr(instance, "team_synced", False):
@@ -83,7 +83,7 @@ def partial_grade_result_signal(instance, **kwargs):
     if kwargs.get('raw', False):
         return
 
-    if not __local.executing:
+    if not getattr(__local, "executing", False):
         try:
             __local.executing = True
             sync_students_in_team_partial_grade(instance)

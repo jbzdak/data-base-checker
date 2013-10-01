@@ -86,6 +86,10 @@ class Autograder(six.with_metaclass(AutograderMetaclass)):
         raise ValueError
 
     @property
+    def description(self):
+        return self.DESCRIPTION
+
+    @property
     def SubmissionModel(self):
         return self.SubmissionForm._meta.model
 
@@ -107,3 +111,5 @@ class Autograder(six.with_metaclass(AutograderMetaclass)):
         :raises:`AutogradingException` This exception is alternate way to return
         grade it typically means thtah student input was invalid
         """
+
+

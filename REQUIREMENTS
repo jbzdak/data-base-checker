@@ -1,7 +1,7 @@
 django
 south
 django-celery
-hg+ssh://hg@bitbucket.org/jbzdak/django-registration-hg#egg=django-registration
+hg+https://bitbucket.org/jbzdak/django-registration-hg#egg=django-registration
 psycopg2
 #numpy
 sphinx

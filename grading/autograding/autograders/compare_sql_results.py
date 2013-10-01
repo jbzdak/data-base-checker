@@ -11,10 +11,11 @@ from django.forms.models import ModelForm
 from django.forms.widgets import Textarea
 
 from grading.autograding import Autograder, GradingResult, AutogradingException
+from grading.autograding.autograders.base import ConfigFileBackedAudograder
 from grading.models import GradingTextInput
 
 
-__all__ = ['CompareQueriesAutograder']
+__all__ = ['CompareQueriesAutograder', 'ConfigBackedCompareQueries']
 
 class SQLInputForm(ModelForm):
 
@@ -36,8 +37,6 @@ class SQLAutograder(Autograder):
 
 class CompareQueriesAutograder(SQLAutograder):
 
-    CONFIG_FILE = None
-
     DJANGO_DB = None
 
     __INVALID_KEYWORDS = [
@@ -48,10 +47,6 @@ class CompareQueriesAutograder(SQLAutograder):
         super(CompareQueriesAutograder, self).__init__()
         self.cf = ConfigParser()
         self.cf.read(self.CONFIG_FILE)
-
-    @property
-    def expected_sql(self):
-        return self.cf.get('DEFAULT', self.NAME)
 
     @property
     def __tc(self):
@@ -85,6 +80,28 @@ class CompareQueriesAutograder(SQLAutograder):
         )
         raise AutogradingException(gr) from exc
 
+    def _check_sql(self, sql):
+        errors = []
+        sql = sql.lower()
+        for word in getattr(self, "required_words", []):
+            if not word in sql:
+                errors.append(_("You did not use word '{}' which is required".format(word)))
+        for word in getattr(self, "forbidden_words", []):
+            if not word in sql:
+                errors.append(_("You did use word '{}' which is forbidden".format(word)))
+        subselect_count = getattr(self, "subselect_count", None)
+        detected_count = sql.count("select")
+        if subselect_count:
+            if detected_count <= subselect_count:
+                errors.append(_("You must use at least {} subselects, I detected you used {}".format(subselect_count, detected_count)))
+        if subselect_count == 0:
+            if detected_count != 1:
+                errors.append(_("You used a subselect which is forbidden".format(subselect_count, detected_count)))
+
+
+        return errors
+
+
 
     def autograde(self, current_grade, model_instance):
 
@@ -93,6 +110,10 @@ class CompareQueriesAutograder(SQLAutograder):
             sql = model_instance.user_input
 
             self.__verify_user_sql(sql)
+            errors = self._check_sql(sql)
+
+            if errors:
+                return GradingResult(2.0, "Query is invalid!", errors)
 
             user_sql = connections[self.DJANGO_DB].cursor()
             expected_sql = connections[self.DJANGO_DB].cursor()
@@ -104,7 +125,9 @@ class CompareQueriesAutograder(SQLAutograder):
                 self.__raise_from_exception(e)
 
             try:
-                self.__assert_metadata(expected_sql, user_sql)
+                if getattr(self, "test_columns", True):
+                    self.__assert_metadata(expected_sql, user_sql)
+
                 self.__tc.assertEqual(list(user_sql.fetchall()), list(expected_sql.fetchall()))
             except AssertionError as e:
                 return GradingResult(
@@ -113,3 +136,32 @@ class CompareQueriesAutograder(SQLAutograder):
             return GradingResult(5.0, _("OK"))
 
 
+class ConfigBackedCompareQueries(
+    ConfigFileBackedAudograder, CompareQueriesAutograder):
+
+    @property
+    def test_columns(self):
+        return self.cd.get(self.NAME, "test_columns", fallback=True)
+
+    @property
+    def required_words(self):
+        words = self.cd.get(self.NAME, "required_words", fallback=None)
+        if words is None:
+            return []
+        return map(lambda x: x.lower(), words.split(","))
+
+    @property
+    def forbidden_words(self):
+        words = self.cd.get(self.NAME, "forbidden_words", fallback=None)
+        if words is None:
+            return []
+        return map(lambda x: x.lower(), words.split(","))
+
+    @property
+    def subselect_count(self):
+        return self.cf.getint(self.NAME, "subselect_count", fallback=None)
+
+
+    @property
+    def expected_sql(self):
+        return self.cf.get(self.NAME, "sql")
