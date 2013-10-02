@@ -1,6 +1,6 @@
 django
 south
-django-celery
+#django-celery
 hg+https://bitbucket.org/jbzdak/django-registration-hg#egg=django-registration
 psycopg2
 #numpy
@@ -10,3 +10,4 @@ sqlalchemy
 pyro4
 argcomplete
 django-picklefield
+gunicorn
