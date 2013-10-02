@@ -109,7 +109,7 @@ class Course(UniqueNamedSortable):
     pass
 
     def get_absolute_url(self):
-        return reverse("student-course", args=[self.name])
+        return reverse("student-course", args=[self.slug_field])
 
 
 
