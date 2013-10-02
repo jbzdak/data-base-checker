@@ -76,14 +76,20 @@ class BDRegistrationView(RegistrationView):
         class of this backend as the sender.
 
         """
-        user = super().register(request, **cleaned_data)
-        user.first_name = cleaned_data['first_name']
-        user.last_name = cleaned_data['last_name']
-        user.save()
-        student, __ = Student.objects.get_or_create(user=user)
-        student.student_id = cleaned_data['student_id']
-        student.save()
-        return user
+        username, email, password = cleaned_data['username'], cleaned_data['email'], cleaned_data['password1']
+        if Site._meta.installed:
+            site = Site.objects.get_current()
+        else:
+            site = RequestSite(request)
+        new_user = RegistrationProfile.objects.create_inactive_user(
+            username, email,
+            password, site,
+            send_email=False)
+        signals.user_registered.send(sender=self.__class__,
+                                     user=new_user,
+                                     request=request)
+        return new_user
+
 
 
 class BDActivationView(ActivationView):

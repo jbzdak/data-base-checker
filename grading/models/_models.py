@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 from django.db import models
 
 # Create your models here.
@@ -88,10 +89,11 @@ class Student(BaseModel):
         "Course", related_name="students", null=True, blank=True)
 
     def __str__(self):
-        return "{} {}".format(self.user.first_name, self.user.last_name)
-
-
-
+        if self.user.last_name:
+            name_part = "{} {}".format(self.user.first_name, self.user.last_name)
+        else:
+            name_part = self.user.username
+        return name_part
 
     class Meta:
         abstract = False
@@ -105,6 +107,10 @@ class Course(UniqueNamedSortable):
     each of these activities students will get grades.
     """
     pass
+
+    def get_absolute_url(self):
+        return reverse("student-course", args=[self.name])
+
 
 
 class GradeableActivity(NamedSortable):

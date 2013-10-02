@@ -16,8 +16,8 @@ class BDRegistrationForm(RegistrationForm):
     email = forms.EmailField(label=_("E-mail"))
 
 
-    first_name = forms.CharField(label="Imię")
-    last_name = forms.CharField(label="Nazwisko")
+    #first_name = forms.CharField(label="Imię")
+    #last_name = forms.CharField(label="Nazwisko")
     student_id = forms.CharField(label="Numer indeksu")
 
 

@@ -24,10 +24,10 @@ class UserInline(admin.StackedInline):
     fields = ('firtst_name', 'last_name', 'email')
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('user__first_name', 'user__last_name', 'user__email', 'course')
+    list_display = ('user__username', 'user__first_name', 'user__last_name', 'user__email', 'course')
     search_fields = list_display
 
-    list_display_links = ('user__first_name', 'user__last_name', 'user__email')
+    list_display_links = ('user__username', 'user__first_name', 'user__last_name', 'user__email')
 
     list_filter = ['course']
     list_editable = ['course']
@@ -50,6 +50,11 @@ class StudentAdmin(admin.ModelAdmin):
     user__email.short_description = "Email"
     user__email.admin_order_field = "user__email"
 
+    def user__username(self, obj):
+        return obj.user.username
+
+    user__username.short_description = "Username"
+    user__username.admin_order_field = "user__username"
 class StudentGradeAdmin(admin.ModelAdmin):
 
     list_display = ('grade', 'student__user__first_name', 'student__user__last_name', 'student__user__email', 'activity__name')

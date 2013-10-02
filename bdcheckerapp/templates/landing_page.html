@@ -1,0 +1,38 @@
+{%  extends "base.html" %}
+
+{% block contents %}
+    <h1>Witaj {{ student }}!</h1>
+
+    <h2>Ważne linki:</h2>
+
+    <ul>
+        <li>Uczęszczas na kurs <a href="{{ course.get_absolute_url }}">{{ course.name }}</a></li>
+        <li>Twoje oceny <a href="{% url "my-grades" %}">Są tutaj</a> </li>
+    </ul>
+
+    <h2>Zespoły</h2>
+
+    <p>
+        Zespoły zaznacza w systemie Prowadzący.
+    </p>
+
+    <p> Aktualnie jesteś przypusany do takich zespołów</p>
+    {% if teams %}
+    <table>
+    <tr>
+        <th>Zadanie  </th>
+        <th>Student 1</th>
+        <th>Student 2</th>
+    </tr>
+    {% for team in teams %}
+        <tr>
+            <td>{{ team.activity.name }}</td>
+            <td>{{ team.student_1 }}</td>
+            <td>{{ team.student_2 }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+     {% else %}
+        <p> Brak zespołów</p>
+    {% endif %}
+{% endblock contents %}

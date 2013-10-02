@@ -38,7 +38,7 @@
         {% with student=row.0 grades=row.1 final=row.2%}
             <td>
                 <span class="student">
-                    {{ student.user.first_name }} {{ student.user.last_name}}
+                    {{ student }}
                 </span>
             </td>
             {% for grade in grades %}

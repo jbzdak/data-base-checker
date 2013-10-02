@@ -29,10 +29,11 @@ class LandingPage(TemplateView):
             return ctx
 
         ctx['student'] = student
-
         ctx['team'] = Team.objects.all_teams_for_student(student)
+        ctx['course'] = student.course
+        ctx['activities'] = student.course.activities.all()
 
-        return
+        return ctx
 
 
 

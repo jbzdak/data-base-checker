@@ -13,7 +13,8 @@ urlpatterns = patterns('grading.views',
     ),
     url(
         r'my_grades',
-        ShowMyGrades.as_view()
+        ShowMyGrades.as_view(),
+        name="my-grades"
     ),
     url(r'autograde/(?P<grade_part>\d+)', GradeTask.as_view(), name="do-autograde"),
     url(r'autograde/view/(?P<pk>\d+)', GradingResult.as_view(), name="show-result"),

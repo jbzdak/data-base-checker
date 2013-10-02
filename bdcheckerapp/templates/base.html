@@ -14,6 +14,12 @@
             {%  include template_to_include %}
         {% endif %}
     {% endblock contents %}
+
+    <div style="clear: both">
+        {% if not user.is_anonymous %}
+        Zalogowano: {{ user.username }} <a href="{% url "auth_logout" %}">Wyloguj</a>
+        {% endif %}
+    </div>
     {% endblock body %}
 </body>
 </html>
