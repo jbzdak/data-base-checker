@@ -10,4 +10,4 @@ sqlalchemy
 pyro4
 argcomplete
 django-picklefield
-gunicorn
+gunicorn==17.5.2
