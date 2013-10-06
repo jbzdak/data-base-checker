@@ -19,7 +19,7 @@ def on_user_create(instance, **kwargs):
     try:
         if kwargs.get('raw', False):
             return
-        if instance.is_active and not instance.is_staff and instance.groups.filter(name = "students"):
+        if instance.is_active and not instance.is_staff:
             Student.objects.get_or_create(user=instance)
     except ProgrammingError as e:
         print(e.message)

@@ -23,6 +23,7 @@ class LandingPage(TemplateView):
         ctx = super().get_context_data(**kwargs)
         user = self.request.user
         student = None
+
         try:
             student = user.student
         except Student.DoesNotExist:
@@ -31,7 +32,9 @@ class LandingPage(TemplateView):
         ctx['student'] = student
         ctx['team'] = Team.objects.all_teams_for_student(student)
         ctx['course'] = student.course
-        ctx['activities'] = student.course.activities.all()
+
+        if student.course:
+            ctx['activities'] = student.course.activities.all()
 
         return ctx
 
