@@ -50,5 +50,5 @@ class SQLInputForm(ModelForm):
         js = [
             __js_pref + '/codemirror.js',
             __js_pref + '/sql.js',
-            'bdhecker/load_codemirror.js'
+            'bdchecker/load_codemirror.js'
         ]
