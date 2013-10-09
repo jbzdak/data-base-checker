@@ -3,8 +3,14 @@ import abc
 from copy import copy
 from datetime import datetime
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from django.utils import six
+
+__all__ = [
+    'get_autograders', 'GradingResult', 'AutogradingException', 'Autograder',
+    'OfflineAutograder'
+]
 
 _AUTOGRADER_CACHE = {}
 
@@ -24,7 +30,6 @@ def get_autograders():
     False
     """
     return copy(_AUTOGRADER_CACHE)
-
 
 class AutograderMetaclass(abc.ABCMeta):
     def __new__(cls, *args, **kwargs):
@@ -71,14 +76,16 @@ class GradingResult(object):
     def render(self):
         return render_to_string(self.get_template_name(), self.grading_ctx())
 
-class Autograder(six.with_metaclass(AutograderMetaclass)):
-
+class BaseAutograder(six.with_metaclass(AutograderMetaclass)):
 
     NAME = None
 
     DESCRIPTION = None
 
     # TODO: Add question randomisation
+
+    # TODO: Convert parameters from most methods to __init__ args so we can
+    # customize behavioiu in all megtods
 
     @property
     @abc.abstractmethod
@@ -102,14 +109,64 @@ class Autograder(six.with_metaclass(AutograderMetaclass)):
             return True
         return datetime.now() < grade_part.may_be_autograded_to
 
+    @property
+    def redirect(self, autograding_result):
+        return reverse("show-result", pk=autograding_result.pk)
+
+
+class Autograder(BaseAutograder):
+
+    """
+    Subclasses of this class encapsulate autograding process in cases when
+    autograding process is performed on-line (is fast and can be peformed
+    during request processing)
+    """
+
     @abc.abstractmethod
     def autograde(self, current_grade, model_instance):
         """
+        :param current_grade: Current grade for this activity part,
+        :type current_grade: :class:`.GradePart`
+        :param model_instance: User sumbission
+        :type: :attr:`SubmissionModel`
+
         :returns: verification results
         :rtype:VerifyResult
 
         :raises:`AutogradingException` This exception is alternate way to return
         grade it typically means thtah student input was invalid
         """
+
+class OfflineAutograder(Autograder):
+
+    """
+    Subclasses of this class encapsulate autograding process when autograding
+    can take long time.
+    """
+
+    @abc.abstractmethod
+    def autograde_offline(self, current_grade, model_instance, grading_result_model):
+        """
+        This method takes similar parameters to :meth:`.Autograder.autograde`,
+
+        This instance should  initiate grading process and then exit.
+
+        To store intermediate grading results you might update:
+        ``grading_result_model.grading_result`` (and then save this model).
+
+        To finish grading set `grading_result_model.is_pending`` to true
+        (and then save this model).
+
+        :param current_grade: Current grade for this activity part,
+        :type current_grade: :class:`.GradePart`
+        :param model_instance: User sumbission
+        :type: :attr:`SubmissionModel`
+        :param grading_result_model: Model that should be used to store
+          grading result, when grading process is finished.
+        :type: :class:`.AutogradingResult`
+
+        """
+
+
 
 

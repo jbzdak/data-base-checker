@@ -56,4 +56,6 @@ def when_partial_grade_is_saved_update_student_grade(instance, **kwargs):
 @receiver(post_save, sender=AutogradingResult)
 def sync_partial_grade_with_autograde_signal(instance, **kwargs):
     if not kwargs.get('raw', False):
+        if instance.is_pending:
+            return
         sync_partial_grade_with_autograde(instance)

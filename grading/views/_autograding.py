@@ -44,7 +44,8 @@ class GradeTask(AutogradeGradePartView, FormView):
 
 class GradingResult(StudentView, GradingBase):
 
-    mixin_template = "autograding/autograde_result.html"
+    template_name = "autograding/autograde_result.html"
+
 
     def dispatch(self, request, *args, **kwargs):
         self.autograde_result = AutogradingResult.objects.get(pk = kwargs['pk'])

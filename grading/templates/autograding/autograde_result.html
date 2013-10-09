@@ -1,26 +1,49 @@
+{% extends "grading/base.html" %}
 {% load i18n %}
-
 {% load tgrading %}
 
+{% block grading_additional_head %}
+    {% comment %}TODO: Use something that sucks less!{% endcomment %}
+    {% if object.is_pending %}<meta http-equiv="REFRESH" content="5">{% endif %}
+{% endblock %}
+
+{% block grading_contents %}
 <div id="autograding-result">
-    <h1>Wyniki</h1>
+    {% if object.is_pending %}
+    <h1>{% trans "Results pending!" %}</h1>
+    <p>
+        {% trans "Please wait until we will finish grading" %} <br/>
+        <a href="{{ request.path }}">{% trans "Refresh this page manually." %}</a>
+    </p>
+
+    {% if object.grading_result %}
+        <h2>{% trans "Current grading state is:" %}</h2>
+        {{ object.grading_result.render }}
+    {% endif %}
+    <p>
+
+    </p>
+    {% else %}
+    <h1>{% trans "Results" %}</h1>
     <p>
         {{ object.grading_result.render }}
     </p>
-    <p>
-     {% with activity=object.grade_part.activity part=object.grade_part  %}
-        <ul>
-            <li>
-                <a href="{% url "activity" name=activity.slug_field %}#{{ part.slug_field  }}">
-                    {% trans "Return to activity" %}
-                </a>
-            </li>
-            {% if part|can_grade:student %}
-            <li>
-                <a href="{% url "do-autograde" grade_part=part.pk %}">{% trans "Perform this activity again" %}</a>
-            </li>
-            {% endif %}
-        </ul>
+
+    {% with activity=object.grade_part.activity part=object.grade_part  %}
+    <ul>
+        <li>
+            <a href="{% url "activity" name=activity.slug_field %}#{{ part.slug_field  }}">
+                {% trans "Return to activity" %}
+            </a>
+        </li>
+        {% if part|can_grade:student %}
+        <li>
+            <a href="{% url "do-autograde" grade_part=part.pk %}">{% trans "Perform this activity again" %}</a>
+        </li>
+        {% endif %}
+    </ul>
     {% endwith %}
-    </p>
+
+    {% endif %}
 </div>
+{% endblock grading_contents %}

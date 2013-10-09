@@ -1,3 +1,4 @@
+from celery.result import AsyncResult
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
@@ -243,11 +244,19 @@ class AutogradingResult(BasePartialGrade):
 
     partial_grade = models.ForeignKey(PartialGrade, related_name="autogrades", null=True, blank=True)
 
+    is_pending = models.BooleanField("Is autograding in progress", default=False)
+
+    celery_task_id = PickledObjectField()
+
     def fill(self, student_input, grading_result):
         self.autograder_input = student_input
         self.grade = grading_result.grade
         self.short_description = grading_result.comment
         self.grading_result = grading_result
+
+    @property
+    def celery_task(self):
+        return AsyncResult(self.celery_task_id)
 
 class AutogradedActivity(GradeableActivity):
 
