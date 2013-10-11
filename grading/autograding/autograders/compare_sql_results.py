@@ -141,18 +141,18 @@ class ConfigBackedCompareQueries(
 
     @property
     def test_columns(self):
-        return self.cd.get(self.NAME, "test_columns", fallback=True)
+        return self.cf.getboolean(self.NAME, "test_columns", fallback=True)
 
     @property
     def required_words(self):
-        words = self.cd.get(self.NAME, "required_words", fallback=None)
+        words = self.cf.get(self.NAME, "required_words", fallback=None)
         if words is None:
             return []
         return map(lambda x: x.lower(), words.split(","))
 
     @property
     def forbidden_words(self):
-        words = self.cd.get(self.NAME, "forbidden_words", fallback=None)
+        words = self.cf.get(self.NAME, "forbidden_words", fallback=None)
         if words is None:
             return []
         return map(lambda x: x.lower(), words.split(","))
