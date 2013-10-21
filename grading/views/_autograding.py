@@ -1,13 +1,12 @@
 # coding=utf-8
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse_lazy, reverse
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from grading.autograding._base import AutogradingException
+from grading.autograding import AutogradingException
 
 from grading.views._base import *
 

@@ -9,6 +9,7 @@ from django.forms import CharField
 
 from django.forms.models import ModelForm
 from django.forms.widgets import Textarea
+from bdcheckerapp.utils import make_tc
 
 from grading.autograding import Autograder, GradingResult, AutogradingException
 from grading.autograding.autograders.base import ConfigFileBackedAudograder
@@ -50,10 +51,7 @@ class CompareQueriesAutograder(SQLAutograder):
 
     @property
     def __tc(self):
-        tc = unittest.TestCase()
-        tc.longMessage = True
-        tc.maxDiff = 2000
-        return tc
+        return make_tc()
 
     def __verify_user_sql(self, user_sql):
 
@@ -100,7 +98,6 @@ class CompareQueriesAutograder(SQLAutograder):
 
 
         return errors
-
 
 
     def autograde(self, current_grade, model_instance):

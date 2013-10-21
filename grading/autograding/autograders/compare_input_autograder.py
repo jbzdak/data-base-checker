@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+from bdcheckerapp.utils import make_tc
 from grading.autograding import Autograder
 from django import forms
 from django.utils.translation import ugettext_lazy as _
@@ -41,10 +42,7 @@ class CompareFilesAutograder(Autograder):
 
     @property
     def __tc(self):
-        tc = unittest.TestCase()
-        tc.longMessage = True
-        tc.maxDiff = 1024 * 1024
-        return tc
+        return make_tc()
 
     @property
     def SubmissionModel(self):
