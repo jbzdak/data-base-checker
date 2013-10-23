@@ -1,4 +1,4 @@
-django
+django>=1.6.0
 south
 #django-celery
 hg+https://bitbucket.org/jbzdak/django-registration-hg#egg=django-registration

@@ -25,7 +25,12 @@ for section in cp.sections():
 
         NAME = section
         CONFIG_FILE = CONFIG_FILE
-        DJANGO_DB = "za21db"
+        DJANGO_DB = "zaj1db"
+
+        @property
+        def forbidden_words(self):
+            original =  super().forbidden_words
+            return list(original) + ['zaj1']
 
         @property
         def SubmissionForm(self):

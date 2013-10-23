@@ -3,12 +3,13 @@
 from configparser import ConfigParser
 import unittest
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.db import transaction, connections, DatabaseError
 from django.forms import CharField
 
 from django.forms.models import ModelForm
 from django.forms.widgets import Textarea
+from bdcheckerapp.utils import make_tc
 
 from grading.autograding import Autograder, GradingResult, AutogradingException
 from grading.autograding.autograders.base import ConfigFileBackedAudograder
@@ -50,10 +51,7 @@ class CompareQueriesAutograder(SQLAutograder):
 
     @property
     def __tc(self):
-        tc = unittest.TestCase()
-        tc.longMessage = True
-        tc.maxDiff = 2000
-        return tc
+        return make_tc()
 
     def __verify_user_sql(self, user_sql):
 
@@ -87,7 +85,7 @@ class CompareQueriesAutograder(SQLAutograder):
             if not word in sql:
                 errors.append(_("You did not use word '{}' which is required".format(word)))
         for word in getattr(self, "forbidden_words", []):
-            if not word in sql:
+            if word in sql:
                 errors.append(_("You did use word '{}' which is forbidden".format(word)))
         subselect_count = getattr(self, "subselect_count", None)
         detected_count = sql.count("select")
@@ -99,8 +97,7 @@ class CompareQueriesAutograder(SQLAutograder):
                 errors.append(_("You used a subselect which is forbidden".format(subselect_count, detected_count)))
 
 
-        return errors
-
+        return [str(e) for e in errors]
 
 
     def autograde(self, current_grade, model_instance):
@@ -141,18 +138,18 @@ class ConfigBackedCompareQueries(
 
     @property
     def test_columns(self):
-        return self.cd.get(self.NAME, "test_columns", fallback=True)
+        return self.cf.getboolean(self.NAME, "test_columns", fallback=True)
 
     @property
     def required_words(self):
-        words = self.cd.get(self.NAME, "required_words", fallback=None)
+        words = self.cf.get(self.NAME, "required_words", fallback=None)
         if words is None:
             return []
         return map(lambda x: x.lower(), words.split(","))
 
     @property
     def forbidden_words(self):
-        words = self.cd.get(self.NAME, "forbidden_words", fallback=None)
+        words = self.cf.get(self.NAME, "forbidden_words", fallback=None)
         if words is None:
             return []
         return map(lambda x: x.lower(), words.split(","))

@@ -1,13 +1,6 @@
-from copy import copy
+
 from django.db import models
 from django.db.models.query_utils import Q
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
-import bdcheckerapp.autograding
-
-from grading.models._models import PartialGrade, AutogradingResult
-
 __all__= ['Team']
 
 class TeamManager(models.Manager):

@@ -50,6 +50,12 @@ class Zaj1Task8(FormAutograder):
         __lbl = "Średnia prędkość wiatru dla dni w których nie został przekroczony został poziom pyłu zawieszonego PM10"
         not_exceeded_wind_speed = forms.CharField(label=__lbl)
 
+        def clean_exceeded_wind_speed(self):
+            return self.cleaned_data.get("exceeded_wind_speed", "").replace(",", ".")
+
+        def clean_not_exceeded_wind_speed(self):
+            return self.cleaned_data.get("not_exceeded_wind_speed", "").replace(",", ".")
+
     INTERNAL_FORM = QuestionForm
 
     NAME="zaj1task8"
@@ -63,6 +69,9 @@ class Zaj1Task11(FormAutograder):
     class QuestionForm(forms.Form):
         max_avg = forms.CharField(label="Proszę wybrać miesiąc z najwyżym średnim poziomem pm_10, z dokładnością do 0.01")
 
+        def clean_max_avg(self):
+            return self.cleaned_data.get("max_avg", "").replace(",", ".")
+
     INTERNAL_FORM = QuestionForm
 
     NAME="zaj1task11"
@@ -75,10 +84,13 @@ class Zaj1Task12(FormAutograder):
     class QuestionForm(forms.Form):
         days = forms.CharField(label="Proszę wybrać ilość dni ze średnim poziomem pm_10 przekraczającym dopuszczalny poziom wynoszący 50 (mikrogramów na metr sześcienny). 1")
 
+        def clean_days(self):
+            return self.cleaned_data.get("days", "").replace(",", ".")
+
     INTERNAL_FORM = QuestionForm
 
     NAME="zaj1task12"
-    DESCRIPTION = "Zadanie 8: Podaj średnie prędkości wiatru dla danych spełniających kryteria"
+    DESCRIPTION = "Zadanie 12: Podaj średnie prędkości wiatru dla danych spełniających kryteria"
 
-    with open(os.path.join(DIRNAME, "task11expected.json")) as f:
+    with open(os.path.join(DIRNAME, "task12expected.json")) as f:
         EXPECTED_DATA = json.load(f)

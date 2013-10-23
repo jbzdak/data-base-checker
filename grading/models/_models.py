@@ -57,7 +57,7 @@ class NamedSortable(models.Model):
 
     name = models.CharField("Object name", max_length=100, null=False, blank=False)
     sort_key = models.CharField("Sort key", max_length=100, null=False, blank=True)
-    slug_field = models.SlugField(max_length=100, unique=True, null=True, blank=True)
+    slug_field = models.SlugField(max_length=100, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -279,7 +279,7 @@ class AutogradeableGradePart(GradePart):
     def __init__(self, *args, **kwargs):
         super(AutogradeableGradePart, self).__init__(*args, **kwargs)
         self._meta.get_field('name').blank = True
-        self._meta.get_field('autograding_controller')._choices = [(name, name) for name in get_autograders().keys()]
+        self._meta.get_field('autograding_controller')._choices = [(name, name) for name in sorted(get_autograders().keys())]
 
     def save(self, *args, **kwargs):
         if not self.name:
