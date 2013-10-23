@@ -29,7 +29,7 @@ for section in cp.sections():
 
         @property
         def forbidden_words(self):
-            original =  super().forbidden_words()
+            original =  super().forbidden_words
             return list(original) + ['zaj1']
 
         @property
