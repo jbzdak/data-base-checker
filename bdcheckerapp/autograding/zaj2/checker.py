@@ -27,6 +27,7 @@ for section in cp.sections():
         CONFIG_FILE = CONFIG_FILE
         DJANGO_DB = "zaj1db"
 
+        @property
         def forbidden_words(self):
             original =  super().forbidden_words()
             return list(original) + ['zaj1']
