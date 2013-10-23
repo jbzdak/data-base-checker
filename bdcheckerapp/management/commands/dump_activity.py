@@ -29,9 +29,10 @@ class Command(BaseCommand):
         with open(file_name, 'w') as str:
             activity = GradeableActivity.objects.get(pk = pk)
             agp = AutogradeableGradePart.objects.filter(activity=activity)
-            grade_parts = list(agp)
+            grade_parts = list()
             ids = agp.values_list("pk")
             grade_parts.extend(GradePart.objects.filter(~Q(pk__in=ids,activity=activity)))
+            grade_parts.extend(agp)
             grade_parts.append(activity)
             json_serializer.serialize(grade_parts, stream=str)
 
