@@ -97,7 +97,7 @@ class CompareQueriesAutograder(SQLAutograder):
                 errors.append(_("You used a subselect which is forbidden".format(subselect_count, detected_count)))
 
 
-        return errors
+        return [str(e) for e in errors]
 
 
     def autograde(self, current_grade, model_instance):
