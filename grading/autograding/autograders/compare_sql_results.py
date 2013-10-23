@@ -3,7 +3,7 @@
 from configparser import ConfigParser
 import unittest
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.db import transaction, connections, DatabaseError
 from django.forms import CharField
 
