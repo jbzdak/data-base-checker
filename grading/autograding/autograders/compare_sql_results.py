@@ -85,7 +85,7 @@ class CompareQueriesAutograder(SQLAutograder):
             if not word in sql:
                 errors.append(_("You did not use word '{}' which is required".format(word)))
         for word in getattr(self, "forbidden_words", []):
-            if not word in sql:
+            if word in sql:
                 errors.append(_("You did use word '{}' which is forbidden".format(word)))
         subselect_count = getattr(self, "subselect_count", None)
         detected_count = sql.count("select")
