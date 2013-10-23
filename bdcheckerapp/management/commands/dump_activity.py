@@ -8,7 +8,8 @@ dumps Activity and all related grade parts to a json file.
 """
 from django.core import serializers
 from django.core.management import BaseCommand, CommandError
-from grading.models._models import GradeableActivity
+from django.db.models.query_utils import Q
+from grading.models._models import GradeableActivity, AutogradeableGradePart, GradePart
 
 
 class Command(BaseCommand):
@@ -27,7 +28,10 @@ class Command(BaseCommand):
 
         with open(file_name, 'w') as str:
             activity = GradeableActivity.objects.get(pk = pk)
-            grade_parts = list(activity.grade_parts.all())
+            agp = AutogradeableGradePart.objects.filter(activity=activity)
+            grade_parts = list(agp)
+            ids = agp.values_list("pk")
+            grade_parts.extend(GradePart.objects.filter(~Q(pk__in=ids,activity=activity)))
             grade_parts.append(activity)
             json_serializer.serialize(grade_parts, stream=str)
 
