@@ -1,0 +1,324 @@
+[
+    {
+        "model": "grading.autogradeablegradepart",
+        "pk": 19,
+        "fields": {
+            "may_be_autograded_to": null,
+            "autograding_controller": "zaj2task1"
+        }
+    },
+    {
+        "model": "grading.autogradeablegradepart",
+        "pk": 20,
+        "fields": {
+            "may_be_autograded_to": null,
+            "autograding_controller": "zaj2task2"
+        }
+    },
+    {
+        "model": "grading.autogradeablegradepart",
+        "pk": 22,
+        "fields": {
+            "may_be_autograded_to": null,
+            "autograding_controller": "zaj2task3"
+        }
+    },
+    {
+        "model": "grading.autogradeablegradepart",
+        "pk": 23,
+        "fields": {
+            "may_be_autograded_to": null,
+            "autograding_controller": "zaj2task4"
+        }
+    },
+    {
+        "model": "grading.autogradeablegradepart",
+        "pk": 24,
+        "fields": {
+            "may_be_autograded_to": null,
+            "autograding_controller": "zaj2task5"
+        }
+    },
+    {
+        "model": "grading.autogradeablegradepart",
+        "pk": 25,
+        "fields": {
+            "may_be_autograded_to": null,
+            "autograding_controller": "zaj2task5"
+        }
+    },
+    {
+        "model": "grading.autogradeablegradepart",
+        "pk": 26,
+        "fields": {
+            "may_be_autograded_to": null,
+            "autograding_controller": "zaj2task7"
+        }
+    },
+    {
+        "model": "grading.autogradeablegradepart",
+        "pk": 27,
+        "fields": {
+            "may_be_autograded_to": null,
+            "autograding_controller": "zaj2task8"
+        }
+    },
+    {
+        "model": "grading.autogradeablegradepart",
+        "pk": 28,
+        "fields": {
+            "may_be_autograded_to": null,
+            "autograding_controller": "zaj2task9"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 6,
+        "fields": {
+            "slug_field": "t5",
+            "required": false,
+            "sort_key": "t5",
+            "default_grade": "2.00",
+            "activity": 2,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "t5"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 5,
+        "fields": {
+            "slug_field": null,
+            "required": false,
+            "sort_key": "test",
+            "default_grade": "2.00",
+            "activity": 2,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "test"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 7,
+        "fields": {
+            "slug_field": "zaj1task1",
+            "required": true,
+            "sort_key": "Zadanie 01",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 1"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 8,
+        "fields": {
+            "slug_field": "zaj1task2",
+            "required": true,
+            "sort_key": "Zadanie 02",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 2"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 9,
+        "fields": {
+            "slug_field": "zadanie-3",
+            "required": true,
+            "sort_key": "Zadanie 03",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 3"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 10,
+        "fields": {
+            "slug_field": "zadanie-4",
+            "required": true,
+            "sort_key": "Zadanie 04",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 4"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 11,
+        "fields": {
+            "slug_field": "zadanie-5",
+            "required": true,
+            "sort_key": "Zadanie 05",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 5"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 12,
+        "fields": {
+            "slug_field": "zadanie-6",
+            "required": true,
+            "sort_key": "Zadanie 06",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 6"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 13,
+        "fields": {
+            "slug_field": "zadanie-7",
+            "required": true,
+            "sort_key": "Zadanie 07",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 7"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 14,
+        "fields": {
+            "slug_field": "zadanie-8",
+            "required": true,
+            "sort_key": "Zadanie 08",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 8"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 15,
+        "fields": {
+            "slug_field": "zadanie-9",
+            "required": true,
+            "sort_key": "Zadanie 09",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 9"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 2,
+        "fields": {
+            "slug_field": "task1",
+            "required": true,
+            "sort_key": "Zadanie 1",
+            "default_grade": "2.00",
+            "activity": 1,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "task1"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 16,
+        "fields": {
+            "slug_field": "zadanie-10",
+            "required": false,
+            "sort_key": "Zadanie 10",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 10"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 17,
+        "fields": {
+            "slug_field": "zadanie-11",
+            "required": false,
+            "sort_key": "Zadanie 11",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 11"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 18,
+        "fields": {
+            "slug_field": "zadanie-12",
+            "required": false,
+            "sort_key": "Zadanie 12",
+            "default_grade": "2.00",
+            "activity": 3,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "Zadanie 12"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 3,
+        "fields": {
+            "slug_field": "task2",
+            "required": true,
+            "sort_key": "Zadanie 2",
+            "default_grade": "2.00",
+            "activity": 1,
+            "weight": "2.00",
+            "passing_grade": "3.00",
+            "name": "task2"
+        }
+    },
+    {
+        "model": "grading.gradepart",
+        "pk": 4,
+        "fields": {
+            "slug_field": "task3",
+            "required": false,
+            "sort_key": "Zadanie 3",
+            "default_grade": "2.00",
+            "activity": 1,
+            "weight": "1.00",
+            "passing_grade": "3.00",
+            "name": "task3"
+        }
+    },
+    {
+        "model": "grading.gradeableactivity",
+        "pk": 4,
+        "fields": {
+            "slug_field": "zajecia-2",
+            "may_be_autograded_to": null,
+            "sort_key": "Zaj\u0119cia 2",
+            "default_grade": "2.00",
+            "courses": [1],
+            "name": "Zaj\u0119cia 2"
+        }
+    }
+]
