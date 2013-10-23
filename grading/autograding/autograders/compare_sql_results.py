@@ -3,7 +3,7 @@
 from configparser import ConfigParser
 import unittest
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.db import transaction, connections, DatabaseError
 from django.forms import CharField
 
@@ -85,7 +85,7 @@ class CompareQueriesAutograder(SQLAutograder):
             if not word in sql:
                 errors.append(_("You did not use word '{}' which is required".format(word)))
         for word in getattr(self, "forbidden_words", []):
-            if not word in sql:
+            if word in sql:
                 errors.append(_("You did use word '{}' which is forbidden".format(word)))
         subselect_count = getattr(self, "subselect_count", None)
         detected_count = sql.count("select")
@@ -97,7 +97,7 @@ class CompareQueriesAutograder(SQLAutograder):
                 errors.append(_("You used a subselect which is forbidden".format(subselect_count, detected_count)))
 
 
-        return errors
+        return [str(e) for e in errors]
 
 
     def autograde(self, current_grade, model_instance):
