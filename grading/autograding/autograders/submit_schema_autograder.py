@@ -11,8 +11,8 @@ class CompareFileForm(forms.Form):
 
     MAX_FILE_SIZE=None
 
-    submitted_text = forms.CharField(_("Submitted schema"), widget=forms.Textarea, required=False)
-    submitted_file = forms.FileField(_("Submitted schema file"), required=False)
+    submitted_text = forms.CharField(label=_("Submitted schema"), widget=forms.Textarea, required=False)
+    submitted_file = forms.FileField(label=_("Submitted schema file"), required=False)
 
     def clean(self):
 

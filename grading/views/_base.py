@@ -68,7 +68,10 @@ class AutogradeGradePartView(ContextMixin):
 
         self.current_grade, __ = PartialGrade.objects.get_or_create(
             grade_part=self.grade_part,
-            student=self.student
+            student=self.student,
+            defaults = {
+                'grade': self.grade_part.default_grade
+            }
         )
 
         return super(AutogradeGradePartView, self).dispatch(request, *args,

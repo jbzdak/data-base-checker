@@ -1,7 +1,6 @@
 from operator import itemgetter
 import re
 from sqlalchemy.orm import sessionmaker
-from bdchecker.unit_util import get_bd_checker
 
 __author__ = 'jb'
 
