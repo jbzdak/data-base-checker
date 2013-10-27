@@ -65,3 +65,5 @@ EMAIL_FILE_PATH = '/tmp/app-messages'
 #        'TEST_NAME': 'zaj1_test'
 #    }
 #}
+
+INSTALLED_APPS += ('celery_test_app', )

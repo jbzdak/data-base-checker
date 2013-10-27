@@ -1,6 +1,6 @@
-django>=1.6.0
+#django>=1.6
 south
-#django-celery
+django-celery
 hg+https://bitbucket.org/jbzdak/django-registration-hg#egg=django-registration
 psycopg2
 #numpy
@@ -9,5 +9,5 @@ ipython
 sqlalchemy
 pyro4
 argcomplete
-django-picklefield
+git+https://github.com/jbzdak/django-picklefield.git#egg=django-picklefield
 gunicorn==17.5
