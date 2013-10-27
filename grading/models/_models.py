@@ -11,6 +11,7 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 from grading.autograding import get_autograders
 from picklefield.fields import PickledObjectField
+from grading.autograding._base import GradingResult
 
 __all__ = [
     'Student', 'StudentGrade', 'Course',
@@ -243,7 +244,7 @@ class AutogradingResult(BasePartialGrade):
 
     grading_result = PickledObjectField(null=True)
 
-    partial_grade = models.ForeignKey(PartialGrade, related_name="autogrades", null=True, blank=True)
+    partial_grade = models.ForeignKey(PartialGrade, related_name="autogrades", null=False, blank=False)
 
     is_pending = models.BooleanField("Is autograding in progress", default=False)
 
@@ -261,6 +262,25 @@ class AutogradingResult(BasePartialGrade):
         self.grade = grading_result.grade
         self.short_description = grading_result.comment
         self.grading_result = grading_result
+
+    def fill_grading_failed(self):
+        gr = GradingResult(
+            self.grade_part.default_grade,
+            ugettext("Grading failed with micalleneus error. Please consult your instructor")
+        )
+        self.fill(None, gr)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        try:
+            self.partial_grade
+        except PartialGrade.DoesNotExist:
+            self.partial_grade, __ = PartialGrade.objects.get_or_create(
+                student = self.student,
+                grade_part = self.grade_part
+            )
+        super().save(force_insert, force_update, using, update_fields)
+
 
     @property
     def celery_task(self):
