@@ -20,7 +20,7 @@ class CeleryAutograder(OfflineAutograder):
         delayed = task.apply_async(
             **self._apply_async_kwargs(args=[
                 current_grade.pk, model_instance.pk, grading_result_model.pk,
-                type(self)
+                self.NAME
             ])
         )
 

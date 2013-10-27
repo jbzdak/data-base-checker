@@ -13,6 +13,12 @@ __all__ = [
 ]
 
 _AUTOGRADER_CACHE = {}
+"""
+Whole idea with cache is here so we don't need to pickle Autograder types,
+and so autograders don't have to be module level constatns.
+
+When you want to pickle autograder you shoud pickle it's name instead.
+"""
 
 def get_autograders():
     """

@@ -4,6 +4,7 @@ import abc
 from celery import Task
 from django.db.transaction import atomic
 from django.utils.translation import ugettext
+from grading.autograding._base import get_autograders
 from grading.models._models import GradePart, AutogradingResult, PartialGrade
 
 
@@ -15,9 +16,10 @@ class AutograderTask(Task):
             grading_result_model, autograder):
         pass
 
-    def run(self, current_grade, model_instance, grading_result_model, AutograderClass, *args, **kwargs):
+    def run(self, current_grade, model_instance, grading_result_model, autograder_name, *args, **kwargs):
 
         with atomic():
+            AutograderClass = get_autograders()[autograder_name]
             autograder = AutograderClass()
             current_grade = PartialGrade.objects.get(pk = current_grade)
             model_instance = autograder.SubmissionModel.objects.get(pk=model_instance)
