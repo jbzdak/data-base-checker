@@ -8,7 +8,6 @@ __author__ = 'jb'
 import uuid
 import settings
 from .db_utils import *
-from .database.functions import save_grade
 import os
 import unittest
 import io
@@ -16,22 +15,6 @@ import io
 import logging
 
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-
-
-class DataPackage(object):
-    def __init__(self, user_id_1, user_id_2, user_pass_1, user_pass_2, unit_no,
-                 task_no, super_password, args, kwargs):
-        super().__init__()
-        self.user_id_1 = user_id_1
-        self.user_id_2 = user_id_2
-        self.user_pass_1 = user_pass_1
-        self.user_pass_2 = user_pass_2
-        self.unit_no = unit_no
-        self.task_no = task_no
-        self.super_password = super_password
-        self.args = args
-        self.kwargs = kwargs
-
 
 @contextmanager
 def capture():
@@ -49,30 +32,23 @@ def capture():
         out[0] = out[0].getvalue()
         out[0] = re.sub(r"\\\\n", "\\n", out[0])
 
-
-
 class BaseTaskChecker(object):
 
     TestSuite = None
-    unit_no = None
-    task_no = None
 
     display_failure_cause = True
 
     display_stdout = False
 
-    def __init__(self, package):
-        """
-        :param DataPackage package:
-        :return:
-        """
+    def __init__(self, *args, **kwargs):
         super().__init__()
-        self.data_package = package
+        self.args = args
+        self.kwargs = kwargs
 
     def create_test_suite(self):
         suite = self.TestSuite
-        suite.args = self.data_package.args
-        suite.kwargs = self.data_package.kwargs
+        suite.args = self.args
+        suite.kwargs = self.kwargs
         return suite
 
     def dispose_test_suite(self, suite):
@@ -86,9 +62,6 @@ class BaseTaskChecker(object):
 
     def perform_grading(self, result):
         passes, mark = self.grade_result(result)
-        save_grade(self.data_package.user_id_1, self.data_package.user_id_2,
-                   self.data_package.unit_no, self.data_package.task_no, passes,
-                   mark, self.data_package)
         return passes, mark, result
 
     def perform_test(self):
@@ -182,73 +155,6 @@ class BDTester(unittest.TestCase):
         if max(len(list1), len(list2)) >= 100:
             self.assertTrue(list1 == list2, msg)
         super(BDTester, self).assertListEqual(list1, list2, msg)
-
-class QueryChecker(BDTester):
-
-    expected_query = None
-
-    test_columns = True
-    distinct = None
-    subselect_count = None
-    join = None
-
-    @property
-    def query(self):
-        return self.kwargs['query']
-
-    def test_query(self):
-        user_query = self.kwargs['query']
-
-        expected_content = self._get_rs(self.expected_query)
-        user_content = self._get_rs(user_query)
-
-        if self.test_columns:
-            self.assertEqual(expected_content.keys(), user_content.keys(), "Kolmny zapytania różne od oczekiwanych")
-
-        expected_content = list(expected_content)
-
-        user_content = list(user_content)
-
-        self.assertEqual(expected_content, user_content, "Wynik zapytania różny od oczekiwanego")
-
-    def test_no_distinct(self):
-        if self.distinct is False:
-            self.assertNotIn("distinct", self.query.lower())
-
-    def test_distinct(self):
-        if self.distinct is True:
-            self.assertIn("distinct", self.query.lower())
-
-    def test_subselect_count(self):
-        if self.subselect_count is not None:
-            self.assertGreaterEqual(
-                self.query.lower().count("select"), self.subselect_count + 1
-            )
-
-    def test_join(self):
-        if self.join is True:
-            self.assertIn("join", self.query.lower())
-
-    def test_no_join(self):
-        if self.join is False:
-            self.assertNotIn("join", self.query.lower())
-
-
-
-    def _get_rs(self, query):
-        return self.session.execute(query)
-
-class EqualityChecker(unittest.TestCase):
-
-    expected_args = None
-    expected_kwargs = None
-
-    def test_equality(self):
-        if self.expected_args:
-            self.assertEqual(self.expected_args, self.args)
-        if self.expected_kwargs:
-            self.assertEqual(self.expected_kwargs, self.kwargs)
-
 
 class SessionTest(BDTester):
 

@@ -158,3 +158,9 @@ djcelery.setup_loader()
 BROKER_URL = 'django://'
 
 ZAJ1_DATABASE = "bdchecker_zaj1"
+
+# Tester config
+
+from sqlalchemy import create_engine
+
+SCHEMA_CHECKER_ENGINE = create_engine('postgresql+psycopg2://@/postgres')

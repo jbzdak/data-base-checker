@@ -2,6 +2,7 @@
 from django.forms.models import ModelForm
 from django.utils.translation import ugettext_lazy as _
 from django import forms
+from grading.autograding.autograders.submit_schema_autograder import CompareFileForm
 
 from grading.models import GradingTextInput
 
@@ -37,6 +38,25 @@ class SQLInputForm(ModelForm):
         model = GradingTextInput
 
     class Media:
+
+        __js_pref = 'codemirror/js/'
+        __css_pref = 'codemirror/css/'
+
+        css = {
+            "all": [
+                __css_pref + 'codemirror.css',
+                __css_pref + 'base16-dark.css'
+            ]
+        }
+        js = [
+            __js_pref + '/codemirror.js',
+            __js_pref + '/sql.js',
+            'bdchecker/load_codemirror.js'
+        ]
+
+class SchemaInputForm(CompareFileForm):
+
+   class Media:
 
         __js_pref = 'codemirror/js/'
         __css_pref = 'codemirror/css/'

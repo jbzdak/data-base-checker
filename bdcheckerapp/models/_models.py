@@ -40,4 +40,3 @@ class Team(models.Model):
             ['activity', 'student_2']
         ]
         app_label = "bdcheckerapp"
-
