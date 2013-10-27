@@ -65,7 +65,7 @@ class GradingResult(StudentView, GradingBase):
         return result
 
     def get_context_data(self, **kwargs):
-        ctx =  super(GradingResult, self).get_context_data(**kwargs)
+        ctx = super(GradingResult, self).get_context_data(**kwargs)
         ctx['object'] = self.autograde_result
         return ctx
 

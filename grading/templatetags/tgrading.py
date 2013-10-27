@@ -1,6 +1,9 @@
 # coding=utf-8
 
 from django import template
+from django.template.defaultfilters import force_escape
+import re
+from django.utils.safestring import mark_safe
 from grading.models import GradePart, PartialGrade, AutogradeableGradePart
 
 register = template.Library()
@@ -26,3 +29,7 @@ def can_grade(grade_part, student):
         except AutogradeableGradePart.DoesNotExist:
             return False
     return grade_part.autograder().can_grade_student(grade_part, student)
+
+@register.filter
+def insert_breaks(string):
+    return mark_safe(re.sub(r"\n+", "<br>", force_escape(string)))

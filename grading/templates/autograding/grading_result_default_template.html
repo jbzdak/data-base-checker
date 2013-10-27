@@ -1,4 +1,4 @@
-
+{% load tgrading %}
 <p>Your grade is: {{obj.grade}}</p>
 
 {% if obj.comment %}
@@ -11,7 +11,7 @@
 {% if obj.long_message %}
     <h4>Additional details</h4>
     <p>
-        {{obj.long_message}}
+        {{obj.long_message|insert_breaks}}
     </p>
 {% endif %}
 

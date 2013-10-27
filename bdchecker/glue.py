@@ -19,8 +19,8 @@ class BaseTaskCheckerAutograder(CeleryAutograder):
         return GradingTextInput
 
     def autograde(self, current_grade, model_instance):
-        tc = self.TaskChecker(schema=model_instance.user_input)
-        passed, mark, long_description = tc.perform_grading()
+        tc = self.TaskChecker(script=model_instance.user_input)
+        passed, mark, long_description = tc.perform_test()
         grade = mark/2
         if passed:
             short_description = ugettext("OK")

@@ -94,13 +94,6 @@ class BaseTaskChecker(object):
                 stream.write("\nend captured stdout\n")
                 stream.write("=" * 30 + "\n")
 
-            if not getattr(self.data_package, 'uses_versioned_api', False):
-                stream.write("\n\n")
-                stream.write("=" * 30)
-                stream.write("\nPobierz nową wersję oprogramowania "
-                             "do sprawdzania zadań ze strony: "
-                             "https://bitbucket.org/jbzdak/bazy_danych_checker")
-
             stream.seek(0)
             return passes, mark, stream.read()
         except Exception as e:
