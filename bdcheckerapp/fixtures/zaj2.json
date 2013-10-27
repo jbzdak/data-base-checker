@@ -169,7 +169,7 @@
         "model": "grading.autogradeablegradepart",
         "fields": {
             "may_be_autograded_to": null,
-            "autograding_controller": "zaj2task5"
+            "autograding_controller": "zaj2task6"
         },
         "pk": 25
     },
