@@ -1,6 +1,6 @@
 __author__ = 'jb'
 
-from .util import NewDatabaseTaskChecker, Zaj3TestSuite, Zaj23askChecker
+from .util import Zaj3TestSuite, Zaj23askChecker
 
 
 class TaskChecker(Zaj23askChecker):

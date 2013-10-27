@@ -1,15 +1,6 @@
-import random
-from sqlalchemy.orm import Query
-from sqlalchemy.sql import Delete
-from units.unit3.meta.orm import PracaDyplomowa, Tag, Student, Pracownik
-
-__author__ = 'jb'
+from .meta.orm import Tag, Student, Pracownik
 from sqlalchemy.exc import IntegrityError
-
-__author__ = 'jb'
-
-from .util import NewDatabaseTaskChecker, Zaj3TestSuite, Zaj23askChecker
-
+from .util import  Zaj3TestSuite, Zaj23askChecker
 
 class TaskChecker(Zaj23askChecker):
 

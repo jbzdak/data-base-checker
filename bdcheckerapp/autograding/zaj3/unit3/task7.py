@@ -1,9 +1,9 @@
 import random
 from sqlalchemy.orm import Query
-from units.unit3.meta.orm import PracaDyplomowa
+from .meta.orm import PracaDyplomowa
 from sqlalchemy.exc import IntegrityError
 
-from .util import NewDatabaseTaskChecker, Zaj3TestSuite, Zaj23askChecker
+from .util import Zaj3TestSuite, Zaj23askChecker
 
 
 class TaskChecker(Zaj23askChecker):

@@ -4,10 +4,10 @@ import os
 from sqlalchemy.orm import sessionmaker
 from bdchecker import db_utils
 from bdchecker.api import NewDatabaseTaskChecker, SessionTest
-from units.unit3.meta.orm import Base
+from .meta.orm import Base
 from bdchecker.db_utils import load_script
-from units.unit3.meta.data import TAGS, TITLE
-from units.unit3.meta.orm import Student, Pracownik, PracaDyplomowa
+from .meta.data import TAGS, TITLE
+from .meta.orm import Student, Pracownik, PracaDyplomowa
 import random
 
 DIRNAME = os.path.split(__file__)[0]

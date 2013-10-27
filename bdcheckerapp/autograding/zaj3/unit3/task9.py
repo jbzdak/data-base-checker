@@ -1,6 +1,6 @@
 from . import task1, task2, task3, task4, task5, task6, task7, task8
 
-from .util import NewDatabaseTaskChecker, Zaj3TestSuite, Zaj23askChecker
+from .util import Zaj23askChecker
 
 
 class TaskChecker(Zaj23askChecker):

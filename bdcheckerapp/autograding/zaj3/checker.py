@@ -10,5 +10,5 @@ for idx in range(1, 10):
 
     class Autograder(BaseTaskCheckerAutograder):
 
-        NAME = "zaj3task{}"
+        NAME = "zaj3task{}".format(idx)
         TaskChecker = tc

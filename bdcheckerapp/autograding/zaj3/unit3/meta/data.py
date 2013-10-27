@@ -1,5 +1,5 @@
 from operator import attrgetter
-from units.unit3.meta.orm import Tag
+from .orm import Tag
 
 __author__ = 'jb'
 

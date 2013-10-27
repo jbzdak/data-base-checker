@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Query
-from bdchecker.api import SessionTest
-from units.unit3.meta.data import TAGS
-from units.unit3.meta.orm import Tag
+from .meta.data import TAGS
+from .meta.orm import Tag
 
 __author__ = 'jb'
 
