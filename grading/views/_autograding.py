@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from grading.autograding import AutogradingException
+from grading.autograding._base import OfflineAutograder
 
 from grading.views._base import *
 
@@ -27,17 +28,27 @@ class GradeTask(AutogradeGradePartView, FormView):
         if not self.autograder.can_grade_student(self.grade_part, self.student):
             raise PermissionDenied()
 
-        try:
-            resut = self.autograder.autograde(self.current_grade, instance)
-        except AutogradingException as e:
-            resut = e.grading_result
 
         autograding_result_model = AutogradingResult(
             student = self.student,
             grade_part = self.grade_part
         )
-        autograding_result_model.fill(instance, resut)
+        autograding_result_model.fill_empty(instance)
         autograding_result_model.save()
+
+        if isinstance(self.autograder, OfflineAutograder):
+            self.autograder.autograde_offline(
+                self.current_grade,
+                instance,
+                autograding_result_model
+            )
+        else:
+            try:
+                resut = self.autograder.autograde(self.current_grade, instance)
+            except AutogradingException as e:
+                resut = e.grading_result
+            autograding_result_model.fill(instance, resut)
+            autograding_result_model.save()
 
         return redirect("show-result", pk=autograding_result_model.pk)
 

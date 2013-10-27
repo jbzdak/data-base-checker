@@ -12,9 +12,8 @@ __local = local()
 __local.__dict__.setdefault('executing', False)
 
 def sync_students_in_team_autograding(autograding_result):
-    partial_grade = autograding_result.partial_grade
-    grade_part = partial_grade.grade_part
-    sender_student = partial_grade.student
+    grade_part = autograding_result.grade_part
+    sender_student = autograding_result.student
     activity = grade_part.activity
 
     other = Team.objects.get_other_student(sender_student, activity)

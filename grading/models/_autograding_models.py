@@ -5,8 +5,6 @@ from django.db import models
 
 __all__ = ['GradingBooleanInput', 'GradingTextInput']
 
-
-
 class GradingBooleanInput(models.Model):
 
     user_input = models.BooleanField(default=False)

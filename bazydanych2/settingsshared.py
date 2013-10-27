@@ -142,6 +142,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.humanize',
+    'djcelery',
+    'kombu.transport.django',
     'south',
     'grading',
     'registration',
@@ -149,6 +151,9 @@ INSTALLED_APPS = (
 )
 
 # DJCELERY CONFIG
+
+import djcelery
+djcelery.setup_loader()
 
 BROKER_URL = 'django://'
 

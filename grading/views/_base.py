@@ -45,12 +45,13 @@ class StudentView(LoginView):
         self.student = get_object_or_404(Student, user = self.request.user)
         return super(StudentView, self).dispatch(request, *args, **kwargs)
 
-class AutogradeGradePartView(ContextMixin, StudentView, ):
+class AutogradeGradePartView(ContextMixin):
     def __init__(self, **kwargs):
         super(AutogradeGradePartView, self).__init__(**kwargs)
         self.grade_part = None
         self.autograder = None
         self.current_grade = None
+        self.student = None
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -61,15 +62,15 @@ class AutogradeGradePartView(ContextMixin, StudentView, ):
 
 
     def dispatch(self, request, *args, **kwargs):
+        self.student = get_object_or_404(Student, user = self.request.user)
         self.grade_part = get_object_or_404(AutogradeableGradePart, pk = kwargs['grade_part'])
         self.autograder = self.grade_part.autograder()
-        try:
-            self.current_grade = PartialGrade.objects.get(
-                grade_part=self.grade_part,
-                student=self.student
-            )
-        except PartialGrade.DoesNotExist:
-            pass
+
+        self.current_grade, __ = PartialGrade.objects.get_or_create(
+            grade_part=self.grade_part,
+            student=self.student
+        )
+
         return super(AutogradeGradePartView, self).dispatch(request, *args,
                                                             **kwargs)
 

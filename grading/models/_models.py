@@ -3,6 +3,7 @@ from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.utils.translation import ugettext
 
 # Create your models here.
 from django.db.models.manager import Manager
@@ -240,15 +241,22 @@ class AutogradingResult(BasePartialGrade):
     autograder_input_pk = models.PositiveIntegerField(null=True, blank=True, editable=False)
     autograder_input = GenericForeignKey('content_type', 'object_id')
 
-    grading_result = PickledObjectField()
+    grading_result = PickledObjectField(null=True)
 
     partial_grade = models.ForeignKey(PartialGrade, related_name="autogrades", null=True, blank=True)
 
     is_pending = models.BooleanField("Is autograding in progress", default=False)
 
-    celery_task_id = PickledObjectField()
+    celery_task_id = PickledObjectField(null=True)
 
-    def fill(self, student_input, grading_result):
+    def fill_empty(self, student_input):
+        self.is_pending=True
+        self.autograder_input = student_input
+        self.grade = self.grade_part.default_grade
+        self.short_description = ugettext("Grading in progress")
+
+    def fill(self, student_input, grading_result=None):
+        self.is_pending=False
         self.autograder_input = student_input
         self.grade = grading_result.grade
         self.short_description = grading_result.comment
