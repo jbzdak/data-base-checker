@@ -29,6 +29,8 @@ class LandingPage(TemplateView):
         except Student.DoesNotExist:
             return ctx
 
+        student.save() # Fires lots of signals that sync stuff. Needed!
+
         ctx['student'] = student
         ctx['teams'] = Team.objects.all_teams_for_student(student)
         ctx['course'] = student.course
