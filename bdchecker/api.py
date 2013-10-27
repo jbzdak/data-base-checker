@@ -5,7 +5,6 @@ from sqlalchemy.orm import sessionmaker
 __author__ = 'jb'
 
 import uuid
-import settings
 from .db_utils import *
 import os
 import unittest
@@ -14,6 +13,14 @@ import io
 import logging
 
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
+def create_engine_for(user, password, database, echo=False):
+
+    from sqlalchemy import create_engine
+    return create_engine(
+        'postgresql+psycopg2://{}:{}@localhost/{}'.format(user, password, database), echo=echo
+    )
+
 
 @contextmanager
 def capture():
@@ -126,7 +133,7 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
         self.db_pass = self.db_name
         create_role(self.db_name, self.db_pass)
         create_database(self.db_name, self.db_name)
-        self.engine = settings.create_engine_for(self.db_name,
+        self.engine = create_engine_for(self.db_name,
                                                  self.db_pass, self.db_name,
                                                  self.ECHO)
 
