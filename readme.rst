@@ -22,7 +22,7 @@ Things to note before you hack it:
 ----------------------------------
 
 * It uses python 3.3 (you'll have to hack it to use 2.6)
-* It used django 1.6
+* It uses django 1.6
 * Grading application is in polish and english, but database checker is in polish.
 * You'll be able to test it when I prepare code for third classes --- validation code
   for classes one and two is missing by design (as it contains queries student's will
