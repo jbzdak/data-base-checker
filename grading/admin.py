@@ -16,7 +16,8 @@ class NamedSortableAdmin(admin.ModelAdmin):
 class GradePartInline(admin.TabularInline):
     model = GradePart
 
-class ActivityAdmin(admin.ModelAdmin):
+class ActivityAdmin(NamedSortableAdmin):
+
     inlines = [GradePartInline]
 
 class UserInline(admin.StackedInline):
@@ -55,6 +56,7 @@ class StudentAdmin(admin.ModelAdmin):
 
     user__username.short_description = "Username"
     user__username.admin_order_field = "user__username"
+
 class StudentGradeAdmin(admin.ModelAdmin):
 
     list_display = ('grade', 'student__user__first_name', 'student__user__last_name', 'student__user__email', 'activity__name')
