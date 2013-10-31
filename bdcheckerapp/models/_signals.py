@@ -26,6 +26,9 @@ def sync_students_in_team_autograding(autograding_result):
     grade_copy.partial_grade, __ = PartialGrade.objects.get_or_create(
         student = other,
         grade_part = grade_part,
+        defaults = {
+            "grade" : grade_part.default_grade
+        }
     )
     grade_copy.student = other
     grade_copy.short_description = "[From team!]:{}".format(autograding_result.short_description)
