@@ -27,7 +27,7 @@ def sync_students_in_team_autograding(autograding_result):
         student = other,
         grade_part = grade_part,
         defaults = {
-            "grade" : grade_part.grade
+            "grade" : grade_part.default_grade
         }
     )
     grade_copy.student = other
