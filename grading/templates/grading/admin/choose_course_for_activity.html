@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+    <h1>{% trans "Grade Activity" %}</h1>
+    <ul>
+        {%  for course in courses %}
+
+            <li>
+                <a href="{% url "grade-activity" group_id=course.pk activity_id=activity.pk %}">{% blocktrans with name=activity.name course=course.name%}Grade activity {{ name }} for course {{ course }}{% endblocktrans %}</a>
+            </li>
+        {% empty %}
+            <li>
+                {% trans "This activity was not attached to any c" %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

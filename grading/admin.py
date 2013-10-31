@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.contrib import admin
+from django.contrib import admin, messages
 
 # Register your models here.
+from django.shortcuts import redirect
+from django.utils.translation import ugettext_lazy
 
 from grading.models import *
 
@@ -16,9 +18,31 @@ class NamedSortableAdmin(admin.ModelAdmin):
 class GradePartInline(admin.TabularInline):
     model = GradePart
 
+
 class ActivityAdmin(NamedSortableAdmin):
 
     inlines = [GradePartInline]
+
+
+    def grade_activity(self, request, qs):
+        if len(qs) != 1:
+            messages.warning(request, ugettext("Select only one activity"))
+            return None
+        act = qs[0]
+        courses = act.courses.all()
+
+        if len(courses) == 0:
+            messages.warning(request, ugettext("Activity is not attached to any course"))
+
+        if len(courses) == 1:
+            return redirect("grade-activity", activity_id=act.pk, group_id=courses[0].pk)
+
+        return redirect("grade-activity-select-course", activity_id=act.pk)
+
+    grade_activity.short_description = ugettext_lazy('Grade this activity')
+
+    actions = [grade_activity]
+
 
 class UserInline(admin.StackedInline):
     model = get_user_model()
