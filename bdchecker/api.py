@@ -94,12 +94,16 @@ class BaseTaskChecker(object):
                 stream.write("\nend captured stdout\n")
                 stream.write("=" * 30 + "\n")
 
+            if Suite.additional_output_list:
+                for it in suite.additional_output_list:
+                    stream.write(it)
             stream.seek(0)
             return passes, mark, stream.read()
-        except Exception as e:
-            logging.exception("While executing tests")
+        #except Exception as e:
+        #    logging.exception("While executing tests")
         finally:
             self.dispose_test_suite(Suite)
+
 
 
 class DatabaseTaskChecker(BaseTaskChecker):
@@ -130,10 +134,12 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
                                                  self.db_pass, self.db_name,
                                                  self.ECHO)
 
+
         suite = super().create_test_suite()
 
         suite.db_name = self.db_name
         suite.engine = self.engine
+        suite.create_engine_for
 
         return suite
 
@@ -150,6 +156,14 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
 
 
 class BDTester(unittest.TestCase):
+
+    additional_output_list = []
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.additional_output_list = []
+
     def assertListEqual(self, list1, list2, msg=None):
         if max(len(list1), len(list2)) >= 100:
             self.assertTrue(list1 == list2, msg)

@@ -64,7 +64,7 @@ def load_script(script_file_name, database_name, change_owner_to=None):
             script_file_name = file
         call = ['psql','-Ppager=off', '-qnte', '-f', script_file_name, database_name]
         print(call)
-        subprocess.check_call(call)
+        subprocess.check_output(call)
     finally:
         try:
             if del_script_file:
