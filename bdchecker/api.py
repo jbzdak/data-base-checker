@@ -128,7 +128,7 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
     def create_test_suite(self):
         self.db_name = str(uuid.uuid4())
         self.db_pass = self.db_name
-        create_role(self.db_name, self.db_pass)
+        create_user(self.db_name, self.db_pass)
         create_database(self.db_name, self.db_name)
         self.engine = create_engine_for(self.db_name,
                                                  self.db_pass, self.db_name,
@@ -139,7 +139,6 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
 
         suite.db_name = self.db_name
         suite.engine = self.engine
-        suite.create_engine_for
 
         return suite
 
@@ -150,7 +149,7 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
             try:
                 drop_database(self.db_name)
             finally:
-                drop_role(self.db_name)
+                drop_user(self.db_name)
 
         return
 
@@ -242,4 +241,83 @@ SELECT column_name
             self.session.commit()
 
         self.session.close()
+
+class MultiUserSessionTest(SessionTest):
+
+    """
+    Test that allows me to login to the database using many roles.
+    """
+
+    ROLES = {}
+    """
+    Dictionary that maps arbitrary keys to lists of strings. Each item represents
+    user with given list of roles, so:
+
+    .. code-block::
+
+        ROLES = {
+            "foo": ["bar", "baz"]
+        }
+
+    will create user with random username that is assinged to roles:
+    "bar" and "baz" (we assume that these roles exists).
+
+    You'll be able to obtain session to the database using:
+
+    self.sessions("foo");
+    """
+
+
+    __ROLE_USERS = {}
+
+    __ROLE_ENGINES = {}
+
+    @classmethod
+    def setUpClass(cls):
+        for key_name, role_list in cls.ROLES.items():
+            user = uuid.uuid4()
+            create_user(user, user, role_list)
+            cls.__ROLE_USERS[key_name] = user
+            cls.__ROLE_ENGINES[key_name] = create_engine_for(user, user, cls.dbname)
+
+    @classmethod
+    def tearDownClass(cls):
+        for engine in cls.__ROLE_ENGINES.values():
+            engine.dispose()
+        for user in cls.__ROLE_USERS.keys():
+            drop_user(user)
+
+
+    def get_session(self, name):
+        if name in self.sessions:
+            return self.sessions[name]
+
+        engine = self.__ROLE_ENGINES[name]
+        session =  sessionmaker(bind=engine)()
+        self.sessions[name] = session
+
+        return  session
+
+    def setUp(self):
+        self.sessions = {}
+
+    def tearDown(self):
+        super().tearDown()
+        for session in self.sessions.values():
+            session.rollback()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

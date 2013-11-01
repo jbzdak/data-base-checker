@@ -18,11 +18,13 @@ def connect(using=settings.SCHEMA_CHECKER_ENGINE, auto_commit=None):
     finally:
         conn.close()
 
-def create_role(name, password):
+def create_user(name, password, roles = tuple()):
     with connect(using=settings.SCHEMA_CHECKER_ENGINE, auto_commit=True) as conn:
         conn.execute('CREATE USER "{}" PASSWORD \'{}\''.format(name, password))
+        for r in roles:
+            conn.execute('GRANT "{}" TO "{}"'.format(r, name))
 
-def drop_role(name, ignore_exists = False):
+def drop_user(name, ignore_exists = False):
     try:
         with connect(using=settings.SCHEMA_CHECKER_ENGINE, auto_commit=True) as conn:
             conn.execute('DROP ROLE "{}"'.format(name))
