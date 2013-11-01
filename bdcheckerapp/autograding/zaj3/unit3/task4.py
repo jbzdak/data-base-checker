@@ -1,4 +1,4 @@
-
+from sqlalchemy.exc import IntegrityError
 from .util import Zaj3TestSuite, Zaj23askChecker
 
 
@@ -23,3 +23,13 @@ class TaskChecker(Zaj23askChecker):
                 self.session.add(st)
                 self.session.flush()
                 self.assertIsNotNone(st.id)
+
+        def test_pracownik_has_pk(self):
+            with self.assertRaises(IntegrityError):
+                for _ in range(3):
+                    st = self.create_student()
+                    st.id = 3
+                    self.session.add(st)
+                    self.session.flush()
+                    self.assertIsNotNone(st.id)
+

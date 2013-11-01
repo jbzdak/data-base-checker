@@ -1,8 +1,9 @@
 from itertools import chain
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.views.generic.list import ListView
@@ -14,7 +15,7 @@ from grading.models import Student
 from grading.views._base import StudentView, LoginView
 
 __all__ = [
-    "GradeGroupActivity", "ShowMyGrades"
+    "GradeGroupActivity", "ShowMyGrades", "GradeActivityChooseCourse"
 ]
 
 class GradeGroupActivity(LoginView, TemplateView):
@@ -125,5 +126,25 @@ class ShowMyGrades(StudentView, ListView):
     def get_queryset(self):
         return self.student.grades.all()
 
+class GradeActivityChooseCourse(TemplateView):
+
+    template_name = "grading/admin/choose_course_for_activity.html"
 
 
+    @method_decorator(login_required)
+    @method_decorator(staff_member_required)
+    def dispatch(self, request, activity_id, *args, **kwargs):
+        self.activity = get_object_or_404(GradeableActivity, pk=activity_id)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['activity'] = self.activity
+        ctx['courses'] = self.activity.courses.all()
+        return ctx
+
+    def get(self, request, *args, **kwargs):
+        if len(self.activity.courses.all()) == 1:
+            course = self.activity.courses.all()[0]
+            return redirect("grade-activity", group_id=course.pk, activity_id=self.activity.pk)
+        return super().get(request, *args, **kwargs)

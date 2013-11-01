@@ -7,9 +7,14 @@ admin.autodiscover()
 
 urlpatterns = patterns('grading.views',
     url(
+        r'grade/course/decide/acitvity/(?P<activity_id>\d+)',
+        GradeActivityChooseCourse.as_view(),
+        name = "grade-activity-select-course"
+    ),
+    url(
         r'grade/course/(?P<group_id>\d+)/acitvity/(?P<activity_id>\d+)',
         GradeGroupActivity.as_view(),
-        name = "autograde-activity"
+        name = "grade-activity"
     ),
     url(
         r'my_grades',
