@@ -62,7 +62,7 @@ def load_script(script_file_name, database_name, change_owner_to=None):
                 script_file_name.seek(0)
                 f.write(script_file_name.read())
             script_file_name = file
-        call = ['psql', '-f', script_file_name, database_name]
+        call = ['psql','-Ppager=off', '-qnte', '-f', script_file_name, database_name]
         print(call)
         subprocess.check_call(call)
     finally:
