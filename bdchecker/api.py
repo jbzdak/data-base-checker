@@ -125,8 +125,10 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
     ECHO = False
     DISPOSE = True
 
+    PREFIX = "drop-me"
+
     def create_test_suite(self):
-        self.db_name = str(uuid.uuid4())
+        self.db_name = self.PREFIX + str(uuid.uuid4())
         self.db_pass = self.db_name
         create_user(self.db_name, self.db_pass)
         create_database(self.db_name, self.db_name)
@@ -143,15 +145,17 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
         return suite
 
     def dispose_test_suite(self, suite):
-
+        super().dispose_test_suite(suite)
         self.engine.dispose()
+        self.engine.pool = None
+        self.engine = None
+        #dispose = getattr(suite, 'tearDownClass', None)
+        #if dispose:
+        #    dispose()
         if self.DISPOSE:
-            try:
-                drop_database(self.db_name)
-            finally:
-                drop_user(self.db_name)
+            drop_database(self.db_name)
+            drop_user(self.db_name)
 
-        return
 
 
 class BDTester(unittest.TestCase):
@@ -241,6 +245,7 @@ SELECT column_name
             self.session.commit()
 
         self.session.close()
+        super().tearDownClass()
 
 class MultiUserSessionTest(SessionTest):
 
@@ -274,18 +279,26 @@ class MultiUserSessionTest(SessionTest):
 
     @classmethod
     def setUpClass(cls):
+        super().setUpClass()
         for key_name, role_list in cls.ROLES.items():
             user = uuid.uuid4()
             create_user(user, user, role_list)
             cls.__ROLE_USERS[key_name] = user
-            cls.__ROLE_ENGINES[key_name] = create_engine_for(user, user, cls.dbname)
+            cls.__ROLE_ENGINES[key_name] = create_engine_for(user, user, cls.db_name)
 
     @classmethod
     def tearDownClass(cls):
+
         for engine in cls.__ROLE_ENGINES.values():
             engine.dispose()
-        for user in cls.__ROLE_USERS.keys():
-            drop_user(user)
+
+        for user in cls.__ROLE_USERS.values():
+            drop_user(user, drop_owned_by=True)
+
+        cls.__ROLE_USERS = {}
+        cls.__ROLE_ENGINES = {}
+
+        super().tearDownClass()
 
 
     def get_session(self, name):
@@ -299,12 +312,14 @@ class MultiUserSessionTest(SessionTest):
         return  session
 
     def setUp(self):
+        super().setUp()
         self.sessions = {}
 
     def tearDown(self):
         super().tearDown()
         for session in self.sessions.values():
             session.rollback()
+            session.close()
 
 
 

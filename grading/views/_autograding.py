@@ -36,7 +36,7 @@ class GradeTask(AutogradeGradePartView, FormView):
         autograding_result_model.fill_empty(instance)
         autograding_result_model.save()
 
-        if isinstance(self.autograder, OfflineAutograder):
+        if isinstance(self.autograder, OfflineAutograder) and False:
             self.autograder.autograde_offline(
                 self.current_grade,
                 instance,

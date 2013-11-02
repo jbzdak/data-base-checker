@@ -7,7 +7,7 @@ class TaskChecker(NewDatabaseTaskChecker):
 
     display_stdout = True
 
-    class TaskChecker(Zaj5TaskChecker):
+    class TestSuite(Zaj5TaskChecker):
 
         def test_has_table(self):
             self.assert_has_table("USERS", "Tabela \"USERS\" nie istnieje")

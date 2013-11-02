@@ -7,6 +7,8 @@ from sqlalchemy.exc import ProgrammingError
 from django.conf import settings
 from contextlib import contextmanager
 import subprocess
+import time
+
 
 @contextmanager
 def connect(using=settings.SCHEMA_CHECKER_ENGINE, auto_commit=None):
@@ -24,9 +26,11 @@ def create_user(name, password, roles = tuple()):
         for r in roles:
             conn.execute('GRANT "{}" TO "{}"'.format(r, name))
 
-def drop_user(name, ignore_exists = False):
+def drop_user(name, ignore_exists = False, drop_owned_by=False):
     try:
         with connect(using=settings.SCHEMA_CHECKER_ENGINE, auto_commit=True) as conn:
+            if drop_owned_by:
+                conn.execute('DROP OWNED BY "{}" CASCADE'.format(name))
             conn.execute('DROP ROLE "{}"'.format(name))
     except ProgrammingError:
         if not ignore_exists:
@@ -43,7 +47,12 @@ def create_database(name, owner = None):
 def drop_database(name, ignore_exists=False):
     try:
         with connect(using=settings.SCHEMA_CHECKER_ENGINE, auto_commit=True) as conn:
-            conn.execute('DROP DATABASE "{}"'.format(name))
+            # This one is really neccessary, it seems that if I drop users with connections
+            # and this is the case, as users are already dropped
+            # stat_get_activity will not return connections for these users.
+            conn.execute("select pg_terminate_backend(procpid) from pg_stat_get_activity(NULL::integer) where datid=(SELECT oid from pg_database where datname='{}');".format(name))
+            conn.execute('DROP DATABASE "{}";'.format(name))
+
     except ProgrammingError:
         if not ignore_exists:
             raise
