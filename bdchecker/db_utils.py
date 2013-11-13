@@ -50,7 +50,7 @@ def drop_database(name, ignore_exists=False):
             # This one is really neccessary, it seems that if I drop users with connections
             # and this is the case, as users are already dropped
             # stat_get_activity will not return connections for these users.
-            conn.execute("select pg_terminate_backend(procpid) from pg_stat_get_activity(NULL::integer) where datid=(SELECT oid from pg_database where datname='{}');".format(name))
+            conn.execute("select pg_terminate_backend(pid) from pg_stat_get_activity(NULL::integer) where datid=(SELECT oid from pg_database where datname='{}');".format(name))
             conn.execute('DROP DATABASE "{}";'.format(name))
 
     except ProgrammingError:
