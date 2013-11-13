@@ -12,5 +12,5 @@ for idx in tasks:
 
     class Autograder(BaseTaskCheckerAutograder):
 
-        NAME = "zaj3task{}".format(idx)
+        NAME = "zaj4task{}".format(idx)
         TaskChecker = tc
