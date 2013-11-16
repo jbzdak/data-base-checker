@@ -1,6 +1,7 @@
 from io import StringIO
 from operator import attrgetter
 import os
+from subprocess import SubprocessError
 from sqlalchemy.orm import sessionmaker
 from bdchecker.api import NewDatabaseTaskChecker, SessionTest
 from .meta.orm import Base
@@ -170,7 +171,10 @@ class Zaj3TestSuite(SessionTest):
         super().setUpClass()
         if not "script" in cls.kwargs:
             raise ValueError("Proszę podać skrypt stawiający bazę danych jako argument --script")
-        load_script(StringIO(cls.kwargs['script']), cls.db_name, cls.db_name)
+        try:
+            load_script(StringIO(cls.kwargs['script']), cls.db_name, cls.db_name)
+        except SubprocessError as e:
+            cls.additional_output_list.append(e.output)
 
     create_student = create_student
 

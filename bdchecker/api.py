@@ -94,12 +94,16 @@ class BaseTaskChecker(object):
                 stream.write("\nend captured stdout\n")
                 stream.write("=" * 30 + "\n")
 
+            if Suite.additional_output_list:
+                for it in suite.additional_output_list:
+                    stream.write(it)
             stream.seek(0)
             return passes, mark, stream.read()
-        except Exception as e:
-            logging.exception("While executing tests")
+        #except Exception as e:
+        #    logging.exception("While executing tests")
         finally:
             self.dispose_test_suite(Suite)
+
 
 
 class DatabaseTaskChecker(BaseTaskChecker):
@@ -121,14 +125,17 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
     ECHO = False
     DISPOSE = True
 
+    PREFIX = "drop-me"
+
     def create_test_suite(self):
-        self.db_name = str(uuid.uuid4())
+        self.db_name = self.PREFIX + str(uuid.uuid4())
         self.db_pass = self.db_name
-        create_role(self.db_name, self.db_pass)
+        create_user(self.db_name, self.db_pass)
         create_database(self.db_name, self.db_name)
         self.engine = create_engine_for(self.db_name,
                                                  self.db_pass, self.db_name,
                                                  self.ECHO)
+
 
         suite = super().create_test_suite()
 
@@ -138,18 +145,28 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
         return suite
 
     def dispose_test_suite(self, suite):
-
+        super().dispose_test_suite(suite)
         self.engine.dispose()
+        self.engine.pool = None
+        self.engine = None
+        #dispose = getattr(suite, 'tearDownClass', None)
+        #if dispose:
+        #    dispose()
         if self.DISPOSE:
-            try:
-                drop_database(self.db_name)
-            finally:
-                drop_role(self.db_name)
+            drop_database(self.db_name)
+            drop_user(self.db_name)
 
-        return
 
 
 class BDTester(unittest.TestCase):
+
+    additional_output_list = []
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.additional_output_list = []
+
     def assertListEqual(self, list1, list2, msg=None):
         if max(len(list1), len(list2)) >= 100:
             self.assertTrue(list1 == list2, msg)
@@ -228,4 +245,94 @@ SELECT column_name
             self.session.commit()
 
         self.session.close()
+        super().tearDownClass()
+
+class MultiUserSessionTest(SessionTest):
+
+    """
+    Test that allows me to login to the database using many roles.
+    """
+
+    ROLES = {}
+    """
+    Dictionary that maps arbitrary keys to lists of strings. Each item represents
+    user with given list of roles, so:
+
+    .. code-block::
+
+        ROLES = {
+            "foo": ["bar", "baz"]
+        }
+
+    will create user with random username that is assinged to roles:
+    "bar" and "baz" (we assume that these roles exists).
+
+    You'll be able to obtain session to the database using:
+
+    self.sessions("foo");
+    """
+
+
+    __ROLE_USERS = {}
+
+    __ROLE_ENGINES = {}
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        for key_name, role_list in cls.ROLES.items():
+            user = uuid.uuid4()
+            create_user(user, user, role_list)
+            cls.__ROLE_USERS[key_name] = user
+            cls.__ROLE_ENGINES[key_name] = create_engine_for(user, user, cls.db_name)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        for engine in cls.__ROLE_ENGINES.values():
+            engine.dispose()
+
+        for user in cls.__ROLE_USERS.values():
+            drop_user(user, drop_owned_by=True)
+
+        cls.__ROLE_USERS = {}
+        cls.__ROLE_ENGINES = {}
+
+        super().tearDownClass()
+
+
+    def get_session(self, name):
+        if name in self.sessions:
+            return self.sessions[name]
+
+        engine = self.__ROLE_ENGINES[name]
+        session =  sessionmaker(bind=engine)()
+        self.sessions[name] = session
+
+        return  session
+
+    def setUp(self):
+        super().setUp()
+        self.sessions = {}
+
+    def tearDown(self):
+        super().tearDown()
+        for session in self.sessions.values():
+            session.rollback()
+            session.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

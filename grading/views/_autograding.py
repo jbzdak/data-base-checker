@@ -12,7 +12,6 @@ from grading.autograding._base import OfflineAutograder
 from grading.views._base import *
 
 from grading.models import *
-from django.conf import settings
 
 
 class GradeTask(AutogradeGradePartView, FormView):
@@ -60,13 +59,13 @@ class GradingResult(StudentView, GradingBase):
 
     def dispatch(self, request, *args, **kwargs):
         self.autograde_result = AutogradingResult.objects.get(pk = kwargs['pk'])
-        result = super().dispatch(request, *args, **kwargs)
+        result = super(GradingResult, self).dispatch(request, *args, **kwargs)
         if self.autograde_result.student != self.student:
             return HttpResponse(status=403)
         return result
 
     def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
+        ctx = super(GradingResult, self).get_context_data(**kwargs)
         ctx['object'] = self.autograde_result
         return ctx
 

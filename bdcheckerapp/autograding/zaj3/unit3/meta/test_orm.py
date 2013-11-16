@@ -25,8 +25,8 @@ class TestBase(unittest.TestCase):
     def create_db(cls, db):
         cls.db = db
         db_utils.drop_database(cls.db, ignore_exists=True)
-        db_utils.drop_role(cls.db, ignore_exists=True)
-        db_utils.create_role(cls.db, cls.db)
+        db_utils.drop_user(cls.db, ignore_exists=True)
+        db_utils.create_user(cls.db, cls.db)
         db_utils.create_database(cls.db, cls.db)
         cls.engine = settings.create_engine_for(cls.db, cls.db, cls.db)
 
@@ -36,7 +36,7 @@ class TestBase(unittest.TestCase):
         cls.engine.dispose()
         if cls.CLEANUP:
             db_utils.drop_database(cls.db)
-            db_utils.drop_role(cls.db)
+            db_utils.drop_user(cls.db)
 
 # class TestOrmCreation(TestBase):
 #
