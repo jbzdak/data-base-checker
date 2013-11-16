@@ -2,7 +2,6 @@ from io import StringIO
 from operator import attrgetter
 import os
 from sqlalchemy.orm import sessionmaker
-from bdchecker import db_utils
 from bdchecker.api import NewDatabaseTaskChecker, SessionTest
 from .meta.orm import Base
 from bdchecker.db_utils import load_script
