@@ -128,7 +128,7 @@
     {
         "pk": 40,
         "fields": {
-            "autograding_controller": "zaj3task100",
+            "autograding_controller": "zaj4task100",
             "may_be_autograded_to": null
         },
         "model": "grading.autogradeablegradepart"
@@ -136,7 +136,7 @@
     {
         "pk": 41,
         "fields": {
-            "autograding_controller": "zaj3task101",
+            "autograding_controller": "zaj4task101",
             "may_be_autograded_to": null
         },
         "model": "grading.autogradeablegradepart"
@@ -144,7 +144,7 @@
     {
         "pk": 42,
         "fields": {
-            "autograding_controller": "zaj3task102",
+            "autograding_controller": "zaj4task102",
             "may_be_autograded_to": null
         },
         "model": "grading.autogradeablegradepart"
@@ -152,7 +152,7 @@
     {
         "pk": 43,
         "fields": {
-            "autograding_controller": "zaj3task103",
+            "autograding_controller": "zaj4task103",
             "may_be_autograded_to": null
         },
         "model": "grading.autogradeablegradepart"
@@ -160,7 +160,7 @@
     {
         "pk": 44,
         "fields": {
-            "autograding_controller": "zaj3task104",
+            "autograding_controller": "zaj4task104",
             "may_be_autograded_to": null
         },
         "model": "grading.autogradeablegradepart"
@@ -168,7 +168,7 @@
     {
         "pk": 45,
         "fields": {
-            "autograding_controller": "zaj3task200",
+            "autograding_controller": "zaj4task200",
             "may_be_autograded_to": null
         },
         "model": "grading.autogradeablegradepart"
@@ -176,7 +176,7 @@
     {
         "pk": 46,
         "fields": {
-            "autograding_controller": "zaj3task201",
+            "autograding_controller": "zaj4task201",
             "may_be_autograded_to": null
         },
         "model": "grading.autogradeablegradepart"
@@ -184,7 +184,7 @@
     {
         "pk": 47,
         "fields": {
-            "autograding_controller": "zaj3task202",
+            "autograding_controller": "zaj4task202",
             "may_be_autograded_to": null
         },
         "model": "grading.autogradeablegradepart"
@@ -192,7 +192,7 @@
     {
         "pk": 48,
         "fields": {
-            "autograding_controller": "zaj3task203",
+            "autograding_controller": "zaj4task203",
             "may_be_autograded_to": null
         },
         "model": "grading.autogradeablegradepart"
