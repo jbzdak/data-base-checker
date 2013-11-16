@@ -163,4 +163,6 @@ ZAJ1_DATABASE = "bdchecker_zaj1"
 
 from sqlalchemy import create_engine
 
-SCHEMA_CHECKER_ENGINE = create_engine('postgresql+psycopg2://@/postgres')
+SCHEMA_CHECKER_ENGINE = create_engine('postgresql+psycopg2://192.168.56.30/postgres')
+SCHEMA_CHECKER_HOST = None
+ALLOW_OFFILNE_GRADING = True

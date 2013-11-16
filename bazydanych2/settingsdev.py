@@ -46,3 +46,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/app-messages'
 
 INSTALLED_APPS += ('celery_test_app', )
+
+ALLOW_OFFILNE_GRADING = False
+
+SCHEMA_CHECKER_HOST = '192.168.56.30'

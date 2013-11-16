@@ -52,8 +52,10 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO "{username}";
 GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO "{username}";
 """
 
-def load_script(script_file_name, database_name, change_owner_to=None):
+def load_script(script_file_name, database_name, change_owner_to=None, host=None):
     del_script_file = False
+    if host is None:
+        host = settings.SCHEMA_CHECKER_HOST
     try:
         if isinstance(script_file_name, StringIO):
             file = os.path.join(gettempdir(), str(uuid.uuid4()))
@@ -63,6 +65,8 @@ def load_script(script_file_name, database_name, change_owner_to=None):
                 f.write(script_file_name.read())
             script_file_name = file
         call = ['psql', '-f', script_file_name, database_name]
+        if host is not None:
+            call[1:2] = ['--host', host]
         print(call)
         subprocess.check_call(call)
     finally:
