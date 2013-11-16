@@ -21,7 +21,7 @@ class TaskChecker(Zaj4askChecker):
                 "OSOBA", "TAG", "PRACA_DYPLOMOWA", "PRACOWNIK", "STUDENT"
             ]
 
-            self.assert_tables_are(expected, "Niepotrzebne tabele")
+            self.assert_tables_are(expected, "Baza danych zawiera inny niż oczekiwany zestaw tabel")
 
         def test_columns_osoba(self):
             expected = """
@@ -30,7 +30,7 @@ class TaskChecker(Zaj4askChecker):
  name
 surname""".split()
 
-            self.assert_table_columns("OSOBA", expected, "Niepotrzebne kolumny w tabeli osoba")
+            self.assert_table_columns("OSOBA", expected, "Tabela osoba zawiera inny niż oczekiwany zbiór kolumn")
 
         def test_columns_student(self):
             expected = """
@@ -41,7 +41,7 @@ surname""".split()
  status
 surname""".split()
 
-            self.assert_table_columns("STUDENT", expected, "Niepotrzebne kolumny w tabeli student")
+            self.assert_table_columns("STUDENT", expected, "Tabela student zawiera inny niż oczekiwany zbiór kolumn")
 
         def test_columns_pracownik(self):
             expected = """
@@ -51,4 +51,4 @@ surname""".split()
  tel_no
 surname""".split()
 
-            self.assert_table_columns("PRACOWNIK", expected, "Niepotrzebne kolumny w tableli pracownik")
+            self.assert_table_columns("PRACOWNIK", expected, "Tabela pracownik zawiera inny niż oczekiwany zbiór kolumn")
