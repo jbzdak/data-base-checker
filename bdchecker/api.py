@@ -14,11 +14,20 @@ import logging
 
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
-def create_engine_for(user, password, database, echo=False):
+def create_engine_for(user, password, database, echo=False, host=None):
+
+    if host is None:
+        host = settings.SCHEMA_CHECKER_HOST
 
     from sqlalchemy import create_engine
+    url = 'postgresql+psycopg2://{user}:{password}@{host}/{database}'.format(
+        user=user,
+        password=password,
+        database=database,
+        host=host)
     return create_engine(
-        'postgresql+psycopg2://{}:{}@localhost/{}'.format(user, password, database), echo=echo
+      url
+     , echo=echo
     )
 
 
@@ -55,7 +64,7 @@ class BaseTaskChecker(object):
         suite = self.TestSuite
         suite.args = self.args
         suite.kwargs = self.kwargs
-        return suite
+        return type("LocalTestSuite", (suite,), {})
 
     def dispose_test_suite(self, suite):
         pass
@@ -85,6 +94,10 @@ class BaseTaskChecker(object):
             if not self.display_failure_cause:
                 return passes, mark, ''
 
+            if Suite.additional_output_list:
+                for it in Suite.additional_output_list:
+                    stream.write(it)
+
             if self.display_stdout:
                 stream.write("=" * 30)
                 stream.write("\ncaptured stdout\n")
@@ -94,9 +107,6 @@ class BaseTaskChecker(object):
                 stream.write("\nend captured stdout\n")
                 stream.write("=" * 30 + "\n")
 
-            if Suite.additional_output_list:
-                for it in suite.additional_output_list:
-                    stream.write(it)
             stream.seek(0)
             return passes, mark, stream.read()
         #except Exception as e:
@@ -138,7 +148,6 @@ class NewDatabaseTaskChecker(BaseTaskChecker):
 
 
         suite = super().create_test_suite()
-
         suite.db_name = self.db_name
         suite.engine = self.engine
 
@@ -216,6 +225,17 @@ SELECT column_name
             sorted(columns),
             msg
         )
+
+    @property
+    def list_procedures(self):
+        return list(map(itemgetter(0), self.session.execute("select proname from pg_proc where proowner <> 10;")))
+
+    def assert_has_procedure(self, procedures):
+        if isinstance(procedures, str):
+            procedures = [procedures]
+        db_proc = self.list_procedures
+        for p in procedures:
+            self.assertIn(p, db_proc)
 
     def __init__(self, methodName='runTest'):
         super().__init__(methodName)

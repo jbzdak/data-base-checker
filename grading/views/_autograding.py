@@ -6,6 +6,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from django.conf import settings
 from grading.autograding import AutogradingException
 from grading.autograding._base import OfflineAutograder
 

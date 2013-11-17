@@ -7,6 +7,7 @@ from sqlalchemy.exc import ProgrammingError
 from django.conf import settings
 from contextlib import contextmanager
 import subprocess
+from subprocess import Popen, PIPE, STDOUT, TimeoutExpired, CalledProcessError, DEVNULL
 import time
 
 
@@ -50,7 +51,7 @@ def drop_database(name, ignore_exists=False):
             # This one is really neccessary, it seems that if I drop users with connections
             # and this is the case, as users are already dropped
             # stat_get_activity will not return connections for these users.
-            conn.execute("select pg_terminate_backend(procpid) from pg_stat_get_activity(NULL::integer) where datid=(SELECT oid from pg_database where datname='{}');".format(name))
+            conn.execute("select pg_terminate_backend(pid) from pg_stat_get_activity(NULL::integer) where datid=(SELECT oid from pg_database where datname='{}');".format(name))
             conn.execute('DROP DATABASE "{}";'.format(name))
 
     except ProgrammingError:
@@ -63,8 +64,27 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO "{username}";
 GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO "{username}";
 """
 
+def check_err(*popenargs, timeout=None, **kwargs):
+
+    with Popen(*popenargs, stdout=DEVNULL, stderr=PIPE, **kwargs) as process:
+        try:
+            output, err = process.communicate(timeout=timeout)
+        except TimeoutExpired:
+            process.kill()
+            output, err = process.communicate()
+            raise TimeoutExpired(process.args, timeout, output=err)
+        except:
+            process.kill()
+            process.wait()
+            raise
+        retcode = process.poll()
+        if retcode:
+            raise CalledProcessError(retcode, process.args, output=err)
+    return err
+
 def load_script(script_file_name, database_name, change_owner_to=None, host=None):
     del_script_file = False
+    output = None
     if host is None:
         host = settings.SCHEMA_CHECKER_HOST
     try:
@@ -75,11 +95,11 @@ def load_script(script_file_name, database_name, change_owner_to=None, host=None
                 script_file_name.seek(0)
                 f.write(script_file_name.read())
             script_file_name = file
-        call = ['psql','-Ppager=off', '-qnte', '-f', script_file_name, database_name]
+        call = ['psql','-Ppager=off', '-n', '-f', script_file_name, database_name]
         if host is not None:
             call[1:2] = ['--host', host]
         print(call)
-        subprocess.check_output(call)
+        output = check_err(call)
     finally:
         try:
             if del_script_file:
@@ -90,4 +110,6 @@ def load_script(script_file_name, database_name, change_owner_to=None, host=None
     if change_owner_to is not None:
         load_script(StringIO(GRANT_ALL_SCRIPT.format(username=change_owner_to)),
                     database_name, None)
+
+    return output
 
