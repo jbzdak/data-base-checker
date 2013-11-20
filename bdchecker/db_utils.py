@@ -85,8 +85,6 @@ def check_err(*popenargs, timeout=None, **kwargs):
 def load_script(script_file_name, database_name, change_owner_to=None, host=None):
     del_script_file = False
     output = None
-    if host is None:
-        host = settings.SCHEMA_CHECKER_HOST
     try:
         if isinstance(script_file_name, StringIO):
             file = os.path.join(gettempdir(), str(uuid.uuid4()))
@@ -95,7 +93,7 @@ def load_script(script_file_name, database_name, change_owner_to=None, host=None
                 script_file_name.seek(0)
                 f.write(script_file_name.read())
             script_file_name = file
-        call = ['psql','-Ppager=off', '-n', '-f', script_file_name, database_name]
+        call = ['psql','-Ppager=off', '-n', '-w', '-f', script_file_name, database_name]
         if host is not None:
             call[1:2] = ['--host', host]
         print(call)
