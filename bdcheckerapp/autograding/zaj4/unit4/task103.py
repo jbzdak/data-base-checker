@@ -18,7 +18,7 @@ class TaskChecker(Zaj4askChecker):
                 "OSOBA", "TAG", "PRACA_DYPLOMOWA"
             ]
 
-            self.assert_tables_are(expected, "Zbędne tabele w schemacie")
+            self.assert_tables_are(expected, "Zestaw tabel inny niż oczekiwany")
 
         def test_columns(self):
             expected = """
@@ -31,7 +31,7 @@ class TaskChecker(Zaj4askChecker):
  tel_no
  type""".split()
 
-            self.assert_table_columns("OSOBA", expected, "Zbędne kolumny w schemacie")
+            self.assert_table_columns("OSOBA", expected, "Zestaw kolumn inny niż oczekiwany")
 
 
 
