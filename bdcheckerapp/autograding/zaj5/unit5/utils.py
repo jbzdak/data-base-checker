@@ -52,5 +52,5 @@ class Zaj5TaskChecker(MultiUserSessionTest):
             cls.additional_output_list.append(pattern + load_result.decode('utf-8') + pattern)
         except SubprocessError as e:
             pattern = '='*30 + '\nPSQL error\n' + '='*30 + '\n'
-            cls.additional_output_list.append(pattern + e.output + pattern)
+            cls.additional_output_list.append(pattern + e.output.decode('utf-8') + pattern)
 

@@ -19,7 +19,8 @@ class TaskChecker(NewDatabaseTaskChecker):
             self.session.add(self.Users(username="foo", is_admin=1, password="bar"))
             self.session.flush()
             user = self.get_user("foo")
-            self.assertEqual(crypt.crypt('bar', user.password), user.password)
+            password = self.session.execute("SELECT crypt('bar', '{}');".format(user.password)).first()[0]
+            self.assertEqual(password, user.password)
 
 
 
