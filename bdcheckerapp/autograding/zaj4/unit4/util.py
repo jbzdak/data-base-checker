@@ -83,10 +83,16 @@ class Zaj41TestSuite(Zaj4TestSuite):
     Osoba = singletable.Osoba
 
     @classmethod
-    def load_migration(self):
-        if not "script" in self.kwargs:
+    def load_migration(cls):
+        if not "script" in cls.kwargs:
             raise ValueError("Proszę podać skrypt stawiający bazę danych jako argument --script")
-        load_script(StringIO(self.kwargs['script']), self.db_name, self.db_name)
+        try:
+            load_result = load_script(StringIO(cls.kwargs['script']), cls.db_name, cls.db_name)
+            pattern = '='*30 + '\nPSQL output\n' + '='*30 + '\n'
+            cls.additional_output_list.append(pattern + load_result.decode('utf-8') + pattern)
+        except SubprocessError as e:
+            pattern = '='*30 + '\nPSQL error\n' + '='*30 + '\n'
+            cls.additional_output_list.append(pattern + e.output.decode('utf-8') + pattern)
 
 
 class Zaj42TestSuite(Zaj4TestSuite):
@@ -102,8 +108,14 @@ class Zaj42TestSuite(Zaj4TestSuite):
     OldStudent = singletable.Student
 
     @classmethod
-    def load_migration(self):
-        if not "script" in self.kwargs:
+    def load_migration(cls):
+        if not "script" in cls.kwargs:
             raise ValueError("Proszę podać skrypt stawiający bazę danych jako argument --script")
-        load_script(StringIO(self.kwargs['script']), self.db_name, self.db_name)
+        try:
+            load_result = load_script(StringIO(cls.kwargs['script']), cls.db_name, cls.db_name)
+            pattern = '='*30 + '\nPSQL output\n' + '='*30 + '\n'
+            cls.additional_output_list.append(pattern + load_result.decode('utf-8') + pattern)
+        except SubprocessError as e:
+            pattern = '='*30 + '\nPSQL error\n' + '='*30 + '\n'
+            cls.additional_output_list.append(pattern + e.output.decode('utf-8') + pattern)
 
