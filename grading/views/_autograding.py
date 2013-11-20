@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.conf import settings
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.decorators import method_decorator
@@ -59,13 +60,13 @@ class GradingResult(StudentView, GradingBase):
 
     def dispatch(self, request, *args, **kwargs):
         self.autograde_result = AutogradingResult.objects.get(pk = kwargs['pk'])
-        result = super(GradingResult, self).dispatch(request, *args, **kwargs)
+        result = super().dispatch(request, *args, **kwargs)
         if self.autograde_result.student != self.student:
             return HttpResponse(status=403)
         return result
 
     def get_context_data(self, **kwargs):
-        ctx = super(GradingResult, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx['object'] = self.autograde_result
         return ctx
 
