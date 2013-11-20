@@ -20,7 +20,7 @@ def create_engine_for(user, password, database, echo=False, host=None):
         host = settings.SCHEMA_CHECKER_HOST
 
     if host is None:
-        host = ''
+        host = 'localhost'
 
     from sqlalchemy import create_engine
     url = 'postgresql+psycopg2://{user}:{password}@{host}/{database}'.format(
