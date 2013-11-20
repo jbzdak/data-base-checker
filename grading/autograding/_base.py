@@ -1,11 +1,12 @@
 # coding=utf-8
 import abc
 from copy import copy
-from datetime import datetime
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from django.utils import six
+from django.utils.datetime_safe import datetime
+from django.utils import timezone
 
 __all__ = [
     'get_autograders', 'GradingResult', 'AutogradingException', 'Autograder',
@@ -111,9 +112,12 @@ class BaseAutograder(six.with_metaclass(AutograderMetaclass)):
         return ContentType.objects.get_for_model(self.SubmissionModel)
 
     def can_grade_student(self, grade_part, student):
+        autograde_to = grade_part.may_be_autograded_to
         if grade_part.may_be_autograded_to is None:
-            return True
-        return datetime.now() < grade_part.may_be_autograded_to
+            if grade_part.activity.may_be_autograded_to is None:
+                return True
+            autograde_to = grade_part.activity.may_be_autograded_to
+        return timezone.now() < autograde_to
 
     @property
     def redirect(self, autograding_result):
