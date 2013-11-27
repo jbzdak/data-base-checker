@@ -10,8 +10,6 @@ class TaskChecker(NewDatabaseTaskChecker):
 
     class TestSuite(Zaj5TaskChecker):
 
-
-
         def test_has_procedura(self):
             self.assert_has_procedure("add_user")
             self.assert_has_procedure("check_password")
