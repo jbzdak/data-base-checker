@@ -19,8 +19,8 @@ class TaskChecker(NewDatabaseTaskChecker):
         def test_view_1(self):
 
             meas_date  =  datetime.now()
-            self.session.add(self.dph(point_type=1, data_source=1, value=5, date=meas_date, insert=meas_date))
-            self.session.add(self.dph(point_type=1, data_source=1, value=6, date=meas_date, insert=meas_date + timedelta(1)))
+            self.session.add(self.dph(point_type=1, data_source=1, value=5, date=meas_date, insert_timestamp=meas_date))
+            self.session.add(self.dph(point_type=1, data_source=1, value=6, date=meas_date, insert_timestamp=meas_date + timedelta(1)))
             self.session.flush()
             data = list(self.session.query(self._tested_object.value))
             self.assertEqual(1, len(data))
@@ -29,8 +29,8 @@ class TaskChecker(NewDatabaseTaskChecker):
         def test_view_2(self):
 
             meas_date  =  datetime.now()
-            self.session.add(self.dph(point_type=1, data_source=1, value=5, date=meas_date, insert=meas_date))
-            self.session.add(self.dph(point_type=1, data_source=405036284, value=6, date=meas_date, insert=meas_date + timedelta(1)))
+            self.session.add(self.dph(point_type=1, data_source=1, value=5, date=meas_date, insert_timestamp=meas_date))
+            self.session.add(self.dph(point_type=1, data_source=405036284, value=6, date=meas_date, insert_timestamp=meas_date + timedelta(1)))
             self.session.flush()
             data = list(self.session.query(self._tested_object.value))
             self.assertEqual(2, len(data))
@@ -38,8 +38,8 @@ class TaskChecker(NewDatabaseTaskChecker):
         def test_view_3(self):
 
             meas_date  =  datetime.now()
-            self.session.add(self.dph(point_type=1, data_source=1, value=5, date=meas_date, insert=meas_date))
-            self.session.add(self.dph(point_type=2, data_source=1, value=6, date=meas_date, insert=meas_date + timedelta(1)))
+            self.session.add(self.dph(point_type=1, data_source=1, value=5, date=meas_date, insert_timestamp=meas_date))
+            self.session.add(self.dph(point_type=2, data_source=1, value=6, date=meas_date, insert_timestamp=meas_date + timedelta(1)))
             self.session.flush()
             data = list(self.session.query(self._tested_object.value))
             self.assertEqual(2, len(data))
@@ -48,8 +48,8 @@ class TaskChecker(NewDatabaseTaskChecker):
         def test_view_4(self):
 
             meas_date  =  datetime.now()
-            self.session.add(self.dph(point_type=1, data_source=1, value=5, date=meas_date, insert=meas_date))
-            self.session.add(self.dph(point_type=2, data_source=1, value=6, date=meas_date, insert=meas_date + timedelta(1)))
+            self.session.add(self.dph(point_type=1, data_source=1, value=5, date=meas_date, insert_timestamp=meas_date))
+            self.session.add(self.dph(point_type=2, data_source=1, value=6, date=meas_date, insert_timestamp=meas_date + timedelta(1)))
             self.session.flush()
             data = list(self.session.query(self._tested_object.value))
             self.assertEqual(2, len(data))
