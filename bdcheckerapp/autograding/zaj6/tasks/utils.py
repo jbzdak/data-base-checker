@@ -15,7 +15,7 @@ class DataPointHistory(Base):
     data_source = Column(Integer(), primary_key=True)
     point_type = Column(Integer(), primary_key=True)
     date = Column(TIMESTAMP(), primary_key=True)
-    insert = Column(TIMESTAMP(), primary_key=True)
+    insert_timestamp = Column(TIMESTAMP(), primary_key=True)
     value = Column(FLOAT(precision=64))
 
 class DataPointCurrent(Base):
