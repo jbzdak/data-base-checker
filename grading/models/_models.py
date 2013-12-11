@@ -250,6 +250,8 @@ class AutogradingResult(BasePartialGrade):
 
     celery_task_id = PickledObjectField(null=True)
 
+    is_current = models.BooleanField(default=True)
+
     def fill_empty(self, student_input):
         self.is_pending=True
         self.autograder_input = student_input
@@ -279,6 +281,10 @@ class AutogradingResult(BasePartialGrade):
                 student = self.student,
                 grade_part = self.grade_part
             )
+
+        type(self).objects.filter(
+            grade=self.grade, grade_part=self.grade_part, student=self.student
+        ).update(is_current=False)
         super().save(force_insert, force_update, using, update_fields)
 
 
