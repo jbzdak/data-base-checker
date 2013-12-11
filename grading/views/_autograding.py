@@ -1,4 +1,6 @@
 # coding=utf-8
+from django.contrib.admin.views.decorators import staff_member_required
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
@@ -106,4 +108,28 @@ class GradeActivity(StudentView, GradingBase):
         })
         return ctx
 
+
+class DisplayGradingInput(TemplateView):
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.agr = AutogradingResult.objects.get(pk=kwargs['pk'])
+        self.input = self.agr.autograder_input
+        self.ct = self.agr.autograder_input_content_type
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx =  super().get_context_data(**kwargs)
+        ctx.update({
+            'grading_resultt': self.agr,
+            'input': self.input,
+            'partial_grade': self.agr.partial_grade
+        })
+        return ctx
+
+    def get_template_names(self):
+        return [
+            'autograding/display/autogradeable_grade_part/{}/{}.html'.format(self.ct.app_label, self.ct.model),
+            'autograding/display/autogradeable_grade_part/generic.html'
+        ]
 

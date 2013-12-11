@@ -3,6 +3,8 @@ from django.contrib import admin, messages
 
 # Register your models here.
 from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy
 
 from grading.models import *
@@ -126,8 +128,31 @@ class AutogradeableActivityAdmin(NamedSortableAdmin):
         AutoGraderGradePartAdmin
     ]
 
+class AutogradingResultAdmin(admin.ModelAdmin):
+
+    list_display = [
+        'student__user__username', 'grade', 'grade_part', 'is_current', 'view_link'
+    ]
+
+    list_filter = ['is_current', 'student__user__username', 'grade_part__activity__name', 'grade_part__name']
+
+    def student__user__username(self, obj):
+        return obj.student.user.username
+
+    student__user__username.short_description = "Username"
+    student__user__username.admin_order_field = "student__user__username"
+
+    def view_link(self, obj):
+        if obj.autograder_input:
+            return mark_safe(
+                '<a href="{}">view student\'s input</a>'.format(
+                reverse('view-student-input', kwargs={'pk':obj.pk})))
+        else:
+            return "Student input not recoverable"
+
 admin.site.register(AutogradedActivity, AutogradeableActivityAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(StudentGrade, StudentGradeAdmin)
 admin.site.register(Course, NamedSortableAdmin)
 admin.site.register(GradeableActivity, ActivityAdmin)
+admin.site.register(AutogradingResult, AutogradingResultAdmin)

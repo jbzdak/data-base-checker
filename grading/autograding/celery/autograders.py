@@ -8,7 +8,7 @@ class CeleryAutograder(OfflineAutograder):
     TASK = DefaultAutograderTask
 
     def _apply_async_kwargs(self, **kwargs):
-        kwargs['countdown'] = 3
+        kwargs['countdown'] = 1
         return kwargs
 
     def autograde_offline(self, current_grade, model_instance,

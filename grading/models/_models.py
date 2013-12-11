@@ -240,7 +240,7 @@ class AutogradingResult(BasePartialGrade):
 
     autograder_input_content_type = models.ForeignKey(ContentType, null=True, blank=True, editable=False)
     autograder_input_pk = models.PositiveIntegerField(null=True, blank=True, editable=False)
-    autograder_input = GenericForeignKey('content_type', 'object_id')
+    autograder_input = GenericForeignKey('autograder_input_content_type', 'autograder_input_pk')
 
     grading_result = PickledObjectField(null=True)
 

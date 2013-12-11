@@ -1,0 +1,16 @@
+{% extends "grading/base.html" %}
+
+{% load i18n %}
+{% load tgrading %}
+{% block grading_contents %}
+
+    <h1>{% blocktrans with name=partial_grade.grade_part.name|lower %}
+        Displaying input for: "{{ name }}"
+    {% endblocktrans %}</h1>
+
+
+    {% block input %}
+        {{ input.user_input|insert_breaks }}
+    {% endblock input %}
+
+{% endblock %}

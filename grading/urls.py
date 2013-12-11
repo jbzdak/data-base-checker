@@ -22,6 +22,7 @@ urlpatterns = patterns('grading.views',
         name="my-grades"
     ),
     url(r'autograde/(?P<grade_part>\d+)', GradeTask.as_view(), name="do-autograde"),
+    url(r'autograde/view_input/(?P<pk>\d+)', DisplayGradingInput.as_view(), name="view-student-input"),
     url(r'autograde/view/(?P<pk>\d+)', GradingResult.as_view(), name="show-result"),
     url(r'activity/(?P<name>[\w\d\-]+)', GradeActivity.as_view(), name="activity"),
     url(r'course/(?P<name>[\w\d\-]+)', CourseView.as_view(), name="student-course")
