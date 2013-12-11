@@ -49,7 +49,7 @@ class TaskChecker(NewDatabaseTaskChecker):
 
             meas_date  =  datetime.now()
             self.session.add(self.dph(point_type=1, data_source=1, value=5, date=meas_date, insert_timestamp=meas_date))
-            self.session.add(self.dph(point_type=2, data_source=1, value=6, date=meas_date, insert_timestamp=meas_date + timedelta(1)))
+            self.session.add(self.dph(point_type=1, data_source=1, value=6, date=meas_date+ timedelta(1), insert_timestamp=meas_date + timedelta(1)))
             self.session.flush()
             data = list(self.session.query(self._tested_object.value))
             self.assertEqual(2, len(data))
