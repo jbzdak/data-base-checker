@@ -131,6 +131,19 @@ class TaskChecker(NewDatabaseTaskChecker):
             for row in data:
                 self.assertAlmostEqual(row.date.day, row.value)
 
+        def test_simple_delete(self):
+
+            self.session.execute('DELETE FROM "DATA_POINT_CURRENT";')
+
+            self.session.flush()
+
+            data = list(self.session.query(self._tested_object))
+
+            for d in data:
+                self.assertIsNone(d.value)
+
+
+
 
 
 
