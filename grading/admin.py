@@ -150,6 +150,7 @@ class AutogradingResultAdmin(admin.ModelAdmin):
         else:
             return "Student input not recoverable"
 
+
 admin.site.register(AutogradedActivity, AutogradeableActivityAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(StudentGrade, StudentGradeAdmin)
